@@ -37,11 +37,13 @@ def tags(im, pix, items, fs=24):
 yaw, pitch, spin = 0.0, TILT3, 90.0
 A = P.assembly(yaw, pitch, spin)
 A["dongle"] = (A["dongle"][0], "H", ORANGE, False)
+TEAL = "#1F9E8F"
+A["dongle2"] = (A["dongle2"][0], "H", TEAL, False)
 hp = lambda p: HP(p, yaw, pitch)
-pts = {"dongle": hp((BX0 + DONGLE["x"], -PI_T / 2 - DONGLE["up"], BZ0 - 14)), "ant": hp((0, -2.5, 0)), "pi": hp((-20, -3, -45))}
+pts = {"dongle": hp((BX0 + DONGLE["x"], -PI_T / 2 - DONGLE["up"], BZ0 - 14)), "dongle2": hp((BX0 + DONGLE2["x"], -PI_T / 2 - DONGLE2["up"], BZ0 - 14)), "ant": hp((0, -2.5, 0)), "pi": hp((-20, -3, -45))}
 ghost = ("head_shell", "head_lid", "crown", "sector", "blade", "rotor_bar", "foil", "yoke", "pin_r", "pin_l")
 pix = render.render(A, TMP + 'alone_a.png', cam_az=152, cam_el=14, dist=520, focus=(-5, 0, 118), size=(900, 760), label_pts=pts, ground=False, ghost=ghost, ghost_opacity=0.2)
-pa = tags(Image.open(TMP + 'alone_a.png').convert("RGB"), pix, [("dongle", "무선 동글 (주황)\n파이의 USB 에 꽂는다. 폰과 통신", 110, 170), ("ant", "내장 Wi-Fi 안테나\nCSI 를 받는 데만 쓴다", -90, -130), ("pi", "라즈베리파이\n캡처 · 계산 · 모터", -230, 60)], fs=22)
+pa = tags(Image.open(TMP + 'alone_a.png').convert("RGB"), pix, [("dongle", "무선 동글 (주황)\n폰과 통신", 150, 120), ("dongle2", "탐지 동글 (청록)\n둘레 기기를 엿듣는다. 없어도 된다", 60, 230), ("ant", "내장 Wi-Fi 안테나\nCSI 를 받는 데만 쓴다", -90, -130), ("pi", "라즈베리파이\n캡처 · 계산 · 모터", -230, 60)], fs=22)
 
 # ---------------------------------------------------------------- 왼쪽 아래: 버튼과 상태 불 (앞에서)
 A2 = P.assembly(0.0, 0.0, 90.0)
@@ -52,8 +54,8 @@ pb = tags(Image.open(TMP + 'alone_b.png').convert("RGB"), pix2, [("btn", "버튼
 # ---------------------------------------------------------------- 한 장으로
 W, H = 2360, 1720; m = 40
 sheet = Image.new('RGB', (W, H), BG); d = ImageDraw.Draw(sheet)
-d.text((m, 28), "수신기 혼자 동작: 노트북 없이 재고, 계산하고, 폰에 보여 준다", font=font(50, True), fill=INK)
-d.text((m, 100), "내장 Wi-Fi 는 CSI 를 받는 데만 쓰고, 폰과는 USB 무선 동글로 통신한다. 랜선은 개발할 때만 꽂는다.", font=font(28), fill=SUB)
+d.text((m, 28), "수신기 혼자 동작: 노트북 없이 찾고, 재고, 계산하고, 폰에 보여 준다", font=font(50, True), fill=INK)
+d.text((m, 100), "내장 Wi-Fi 는 CSI 를 받는 데만 쓴다. 폰과는 무선 동글로 통신하고, 둘레 기기는 탐지 동글로 엿듣는다. 랜선은 개발할 때만 꽂는다.", font=font(28), fill=SUB)
 sheet.paste(pa, (m, 170)); sheet.paste(pb, (m, 170 + 760 + 20))
 
 
@@ -82,7 +84,7 @@ def arrow(x0, y0, x1, y1, col, text=None, dash=False, both=True):
 
 
 X0 = m + 900 + 50; Y0 = 190
-box(X0, Y0, 640, 560, "수신기 (라즈베리파이 3B+)", ["· 내장 Wi-Fi: 카메라 신호(CSI) 받기", "· 모터 3개로 판을 돌린다", "· 받은 신호로 방향을 계산한다", "· 여러 자리의 결과를 합쳐", "  추정 구간을 구한다", "· 켜면 저절로 시작한다 (node.py)", "· 전원: 받침 속 보조배터리", "· 버튼 하나, 초록 불 하나"])
+box(X0, Y0, 640, 560, "수신기 (라즈베리파이 3B+)", ["· 탐지 동글: 둘레 기기 엿듣기", "· 내장 Wi-Fi: 카메라 신호(CSI) 받기", "· 모터 3개로 판을 돌려 방향을 잰다", "· 여러 자리의 결과를 합쳐", "  추정 구간을 구한다", "· 켜면 저절로 시작한다 (node.py)", "· 전원: 받침 속 보조배터리", "· 버튼 하나, 초록 불 하나"])
 box(X0 + 900, Y0, 430, 330, "폰", ["· 브라우저 (지금)", "· AR 앱 (만들 것)", "· 자리 알려 주기, 재기,", "  구간 보기"], col=BLUE)
 box(X0 + 900, Y0 + 400, 430, 160, "노트북", ["· 개발할 때만 (SSH)"], col=SUB)
 arrow(X0 + 640 + 14, Y0 + 165, X0 + 900 - 14, Y0 + 165, BLUE, "무선 동글의 Wi-Fi\nhttp://192.168.4.1")
@@ -91,16 +93,16 @@ ys = Y0 + 640
 d.text((X0, ys), "쓰는 순서", font=font(36, True), fill=INK)
 steps = [("1", "버튼을 눌러 켠다", "초록 불이 천천히 깜빡이면 준비된 것 (약 40초)"),
          ("2", "폰을 수신기의 Wi-Fi 에 붙인다", "이름 DeteCam-RX. 브라우저에서 192.168.4.1"),
-         ("3", "찾을 카메라를 고른다", "‘둘레 기기 찾기’ 에서 패킷이 많은 기기"),
-         ("4", "수신기를 놓고 ‘재기’", "한 자리에 약 1분. 사람은 1m 넘게 떨어진다"),
-         ("5", "권하는 자리로 옮겨 또 잰다", "보통 3자리. 구간이 1m 아래로 줄면 끝"),
-         ("6", "구간 안의 물건을 살펴본다", "끝나면 버튼을 2초 눌러 끈다")]
+         ("3", "탐지: ‘둘레 기기 찾기’", "약 30초. 큰 프레임을 많이 내보내는 기기 = 후보"),
+         ("4", "판별: 시키는 대로 걷다 멈추다", "55초. 전송량이 따라 변하면 이 방을 찍는 카메라"),
+         ("5", "위치: 수신기를 놓고 ‘재기’", "한 자리 약 1분. 권하는 자리로 옮겨 보통 3자리"),
+         ("6", "표시: 구간 안의 물건을 살펴본다", "AR 앱은 등판의 마커로 자리를 맞춘다")]
 for i, (n, t1, t2) in enumerate(steps):
     x = X0 + (i % 2) * 680; y = ys + 70 + (i // 2) * 150
     d.ellipse([x, y + 4, x + 56, y + 60], fill=NAVY); d.text((x + 28, y + 32), n, font=font(30, True), fill="#FFFFFF", anchor="mm")
     d.text((x + 76, y), t1, font=font(31, True), fill=INK); d.text((x + 76, y + 46), t2, font=font(25), fill=SUB)
-d.text((X0, ys + 70 + 3 * 150 + 20), "더 사야 하는 부품은 없다: 무선 동글은 가지고 있는 NETGEAR WNA3100M 을 쓴다 (2.4GHz, 34×16×8mm).", font=font(27, True), fill=INK)
-d.text((X0, ys + 70 + 3 * 150 + 64), "동글이 ‘자기 Wi-Fi 만들기’를 못 하면 폰 핫스팟에 붙는 방식으로 바꾼다 (pi/link_setup.sh). 동글 없이 블루투스로 하는 길도 있다.", font=font(25), fill=SUB)
+d.text((X0, ys + 70 + 3 * 150 + 20), "더 살 것은 탐지 동글 하나: 모니터 모드가 되는 USB 무선 동글 (칩 RT5370·MT7601U 등). 없어도 돈다.", font=font(27, True), fill=INK)
+d.text((X0, ys + 70 + 3 * 150 + 64), "폰과의 통신은 가지고 있는 NETGEAR WNA3100M 으로 한다. ‘자기 Wi-Fi 만들기’를 못 하면 폰 핫스팟에 붙는다 (pi/link_setup.sh).", font=font(25), fill=SUB)
 d.text((X0, ys + 70 + 3 * 150 + 104), "재는 동안에는 폰과의 통신을 줄인다: 동글이 CSI 안테나에서 9cm 떨어져 있어서, 동글이 보내는 전파가 측정을 흐릴 수 있다.", font=font(25), fill=SUB)
 sheet.save(OUT + '12_혼자_동작.png')
 print("saved", OUT + '12_혼자_동작.png', pix, pix2)

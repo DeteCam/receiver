@@ -266,6 +266,16 @@
  },
  {
   "group": "5",
+  "step": "탐지 동글 -> 파이 가운데 USB (머리를 올리기 전)",
+  "how": "아래에서 위로 꽂는다",
+  "path_overlap_mm3": 0.0,
+  "at_mm": null,
+  "seat_overlap_mm3": 0.0,
+  "ok": true,
+  "note": "먼저 꽂은 무선 동글 옆(틈 2mm)으로 들어간다"
+ },
+ {
+  "group": "5",
   "step": "머리 -> 요크 (모터 2와 작은 기어가 달린 채)",
   "how": "위에서 내리며 조금 끄덕인다",
   "path_overlap_mm3": 0.0,

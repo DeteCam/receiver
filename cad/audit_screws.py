@@ -39,7 +39,7 @@ PARTS = {   # 이름: (형상(세계 좌표, 받침 0도, 끄덕임 0도, 판 0�
     "드라이버 3": (Hd((db + dc).transform(P.driver_T(0))), False), "드라이버 2": (Hd((db + dc).transform(P.driver_T(1))), False), "드라이버 1": (Hd((db + dc).transform(P.driver_T(2))), False),
     "회전 막대": (Rt(P.rotor_bar()), True), "판": (Rt(P.blade(150.0)), True), "균형 조각": (Rt(P.trim_plate()), True),
     "배터리": (P.battery_dummy("S"), False),
-    "랜 플러그": (Hd(P.lan_plug_dummy()), False), "무선 동글": (Hd(P.dongle_dummy()), False), "랜선 홈 마개": (P.lan_cap(), True), "버튼 모듈": (Hd(P.button_dummy()[0] + P.button_dummy()[1]), False),
+    "랜 플러그": (Hd(P.lan_plug_dummy()), False), "무선 동글": (Hd(P.dongle_dummy()), False), "탐지 동글": (Hd(P.dongle_dummy(DONGLE2)), False), "랜선 홈 마개": (P.lan_cap(), True), "버튼 모듈": (Hd(P.button_dummy()[0] + P.button_dummy()[1]), False),
 }
 BAL = Rt(P.balance_200())
 px, pz = P.pin2_xz(); lx, lz = P.lock_xz(); zt = (POD_Z0 + BAR_Z0) / 2

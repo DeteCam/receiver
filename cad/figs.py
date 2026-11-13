@@ -199,11 +199,12 @@ if "3" in WANT:
         A["d%d" % k] = (db.transform(P.driver_T(k)), "H", "#3B8F5E", False); A["dp%d" % k] = (dc.transform(P.driver_T(k)), "H", C["dark"], False)
     bpcb, bsw = P.button_dummy()
     A["btn_pcb"] = (bpcb, "H", "#B03A2E", False); A["btn_sw"] = (bsw, "H", C["dark"], False); A["dongle"] = (P.dongle_dummy(), "H", "#5E6B85", False)
+    A["dongle2"] = (P.dongle_dummy(DONGLE2), "H", "#C9772E", False)
     A["wbtn"] = (tube([(BTN_X, BTN_PCB_Y - 1.5, BTN_Z - 30), (BTN_X + 6, -22, -62), (-20, -24, -58), (4, -22, -30), (10.5, -12, -8.5)], 1.0), "H", "#8E5BD9", False)
     A["w3"] = (tube([(-25, 0, 16), (-21, -15, 9), (-21, -15, -6), (20, -8, -8), (DRV_X0 + 17.5, -7, DRV_ZC[0] - 9)], 1.5), "H", "#D9B13B", False)
     A["wpw"] = (tube([(-18, -24, -8), (8, -24, -10), (DRV_X0 + 6, -10, -6)], 1.2), "H", "#C0392B", False)
     pts = {"pi": (-20, -3, -50), "ant": (0, -2.5, 0), "plug": (BX0 - 5.7, -4, -10), "d3": (DRV_X0 + 17.5, 0, DRV_ZC[0]), "d2": (DRV_X0 + 17.5, 0, DRV_ZC[1]),
-           "d1": (DRV_X0 + 17.5, 0, DRV_ZC[2]), "m3": (-8, -14, 20), "gpio": (BX0 + 52.5, -8, -28), "lan": (BX0 + 10.25, -14.0, BZ0 + 6), "dongle": (BX0 + DONGLE["x"], -PI_T / 2 - DONGLE["up"] - 4.0, BZ0 - 12), "cable": (BX0 - 5.6, -4.2, -95),
+           "d1": (DRV_X0 + 17.5, 0, DRV_ZC[2]), "m3": (-8, -14, 20), "gpio": (BX0 + 52.5, -8, -28), "lan": (BX0 + 10.25, -14.0, BZ0 + 6), "dongle": (BX0 + DONGLE["x"], -PI_T / 2 - DONGLE["up"] - 4.0, BZ0 - 12), "dongle2": (BX0 + DONGLE2["x"], -PI_T / 2 - DONGLE2["up"] - 4.0, BZ0 - 12), "cable": (BX0 - 5.6, -4.2, -95),
            "win": (-HX, -4, -14), "hole": (-21, -15, 8), "btn": (BTN_X, BTN_PCB_Y - 5.0, BTN_Z), "pin56": (10.5, -12, -8.5)}
     cam = dict(cam_az=-78, cam_el=12, dist=470, focus=(0, 0, -40))
     vis_check(A, pts, tag="3a", **cam)
@@ -219,10 +220,11 @@ if "3" in WANT:
         ("ant", "안테나\n판 회전축이 여기를 지난다", 'R', 230),
         ("pin56", "버튼 선 2가닥 (보라)\nGPIO 5번, 6번 핀에 꽂는다", 'R', 420),
         ("gpio", "GPIO 핀\n점퍼선 10cm로 바로 옆 드라이버에", 'R', 610),
-        ("d3", "드라이버 3 (판 회전)", 'R', 800),
-        ("d2", "드라이버 2 (끄덕임)", 'R', 930),
-        ("d1", "드라이버 1 (받침 회전)\n셋 다 뒷벽에 폼테이프로 붙인다", 'R', 1060),
-        ("dongle", "무선 동글 (폰과 통신)\n아래 USB 자리에 꽂는다", 'R', 1220),
+        ("d3", "드라이버 3 (판 회전)", 'R', 760),
+        ("d2", "드라이버 2 (끄덕임)", 'R', 870),
+        ("d1", "드라이버 1 (받침 회전)\n셋 다 뒷벽에 폼테이프로 붙인다", 'R', 980),
+        ("dongle", "무선 동글 (폰과 통신)\n아래 USB 자리에 꽂는다", 'R', 1130),
+        ("dongle2", "탐지 동글 (주황. 둘레 기기 엿듣기)\n가운데 USB 의 위 칸. 없어도 된다", 'R', 1280),
     ], foot="노란 선 = 모터 3 전선, 빨간 선 = 점퍼선 한 가닥(예), 보라 선 = 버튼 선. 실제로는 점퍼선 18가닥이 파이와 드라이버 사이를 오간다.", title="머리 속 (뚜껑을 떼고 앞에서 본 모습)", sub="안쪽 크기 108 × 33.6 × 108mm · 드라이버 자리 폭 37mm (보드 35mm) · 점퍼선을 꽂고도 뚜껑까지 5mm 넘게 남는다", pad_side=380)
 
     # (나) 전체: 껍데기를 반투명하게 하고 모터, 배터리, 전선 길을 보여 준다 (전선 길은 room_check.py 에서 길이를 잰 그 길)
@@ -312,7 +314,7 @@ if "5" in WANT:
     yoke = {"yoke": Yk(P.yoke()), "clip": P.clip(), "motor1": Yk((mb + mc).transform(P.motor1_T())), "pinion1": Yk(P.pinion1())}
     bpcb, bsw = P.button_dummy()
     headi = {"shell": P.head_shell(), "pi": pb + pc, "d0": (db + dc).transform(P.driver_T(0)), "d1": (db + dc).transform(P.driver_T(1)), "d2": (db + dc).transform(P.driver_T(2)), "plug": P.usb_plug_dummy(),
-             "btn": bpcb + bsw, "dongle": P.dongle_dummy()}
+             "btn": bpcb + bsw, "dongle": P.dongle_dummy() + P.dongle_dummy(DONGLE2)}
     heado = {"crown": P.crown(), "motor3": v1._m1(mb) + v1._m1(mc), "sector": P.sector_head()}
     lid = {"lid": P.head_lid()}                                  # 뚜껑은 머리를 요크에 올리고 전선을 다 꽂은 뒤 마지막에 닫는다
     join = {"pin_r": Yk(P.pin(1)), "pin_l": Yk(P.pin(-1)), "motor2": Yk((mb + mc).transform(P.motor2_T())), "pinion2": Yk(P.pinion2()), "m2_ring": Yk(P.m2_ring())}
@@ -333,7 +335,7 @@ if "5" in WANT:
     steps = [
         ("① 받침", "전원선을 덮개의 가운데 통으로 올려 둔다.\n통 뒤쪽 홈에 마개를 위에서 끼우고,\n덮개를 나사 4개로 덮는다.", scene({"tub": base["tub"], "battery": base["battery"]}, {"cover": base["cover"], "cap": base["cap"]}), dict(cam_az=-60, cam_el=28, dist=520, focus=(0, 0, 25))),
         ("② 요크", "모터 1을 상자 속 돋은 자리에 나사 2개로 달고,\n아래에서 작은 기어를 축에 끼운다. 전원선을 꿰며\n요크를 받침에 얹고, 고리를 뒤에서 밀어 잠근다.", scene(base, yoke), dict(cam_az=-60, cam_el=24, dist=640, focus=(-10, 0, 70))),
-        ("③ 머리 속", "몸통 기둥에 파이를 꽂고, 드라이버 3장을 폼테이프로\n붙인다. 점퍼선, ㄱ자 젠더, 전원 버튼 모듈(왼쪽 받침\n살)을 달고, 무선 동글을 아래 USB 에 꽂는다.", scene({"shell": headi["shell"]}, {k: v for k, v in headi.items() if k != "shell"}), dict(cam_az=-72, cam_el=18, dist=430, focus=(0, 0, -46))),
+        ("③ 머리 속", "몸통 기둥에 파이를 꽂고, 드라이버 3장을 폼테이프로\n붙인다. 점퍼선, ㄱ자 젠더, 전원 버튼 모듈(왼쪽 받침\n살)을 달고, 동글 두 개를 아래 USB 에 꽂는다.", scene({"shell": headi["shell"]}, {k: v for k, v in headi.items() if k != "shell"}), dict(cam_az=-72, cam_el=18, dist=430, focus=(0, 0, -46))),
         ("④ 머리 겉", "모터 3을 넣은 모터 자리(나사 4)를 얹고\n전선을 드라이버 3에 꽂는다. 부채꼴 기어(나사 2)를\n붙인다. 뚜껑은 아직 닫지 않는다.", scene(headi, heado), dict(cam_az=-40, cam_el=20, dist=520, focus=(10, 0, -40))),
         ("⑤ 머리 올리기", "모터 2에 맞춤 링과 작은 기어를 끼워 오른쪽 팔\n바깥에서 넣는다. 머리를 내리며 이를 맞물리고 핀 2개를\n민다. 전선을 다 꽂은 뒤 뚜껑(나사 4)을 닫는다.", scene({**base, **yoke, **posed_head}, {**join, **posed_lid}), dict(cam_az=62, cam_el=16, dist=820, focus=(0, 0, 120))),
         ("⑥ 판", "회전 막대를 모터 3 축에 꽂고,\n테이프를 붙인 판을 막대 끝에 끼워\n나사 1개로 고정한다.", scene({**base, **yoke, **posed_head, **posed_lid, **join}, rot, ("rotor_bar", "blade")), dict(cam_az=-58, cam_el=14, dist=900, focus=(0, 0, 150))),

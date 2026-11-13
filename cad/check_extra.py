@@ -53,7 +53,7 @@ for name, ROT in SETS.items():
     res[name] = dict(bad=bad, min_gap={k: [round(g, 2), w] for k, (g, w) in worst.items()})
 # 나사 머리를 단 머리와 요크: 끄덕임 전 범위
 worst = (1e9, ""); bad = []
-HEAD_ONLY = union([P.head_shell(), P.head_lid(), P.crown(), v1._m1(mb), v1._m1(mc), HEAD_SCREWS, b, cc, P.lan_plug_dummy(), P.usb_plug_dummy(), P.dongle_dummy()] + list(P.button_dummy()))
+HEAD_ONLY = union([P.head_shell(), P.head_lid(), P.crown(), v1._m1(mb), v1._m1(mc), HEAD_SCREWS, b, cc, P.lan_plug_dummy(), P.usb_plug_dummy(), P.dongle_dummy(), P.dongle_dummy(DONGLE2)] + list(P.button_dummy()))
 YOKE_NOPIN = union([P.yoke(), mb.transform(P.motor1_T()), mc.transform(P.motor1_T()), mb.transform(P.motor2_T()), mc.transform(P.motor2_T()), YOKE_SCREWS])
 lug = P.extrude_z(P.poly([(-HX + 0.1, Y_T - 3.0), (-HX - 4.5, Y_T - 3.0), (-HX - 4.5, Y_T - 1.5), (-HX + 0.1, Y_T + 3.1)]), S_T - LUG_R - 2.5, S_T - LUG_R + 2.5)
 for pitch in list(np.arange(PITCH_MIN + 1.0, PITCH_MAX - 0.5, 4.0)) + [TILT3]:

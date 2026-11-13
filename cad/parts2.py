@@ -132,7 +132,7 @@ def tub(size="S"):
     cut.append(cy(5.0, 0, R + 2, 0, 2.3 + BATT_T / 2))                                # 왼쪽: 배터리를 밀어 빼는 구멍 (지름 10)
     for x, y in POSTS:
         cut.append(cz(1.3, 14.0, TUB_H + 1, x, y))
-    for a in (-20, -10, 0, 10, 20):                                                   # 앞쪽 눈금. 가운데 줄은 바닥까지: 깔판의 앞 표시에 맞출 때 쓴다
+    for a in (-20, -10, 0, 10, 20):                                                   # 앞쪽 눈금. 가운데 줄은 바닥까지: 수신기의 앞을 맞출 때 쓴다
         cut.append(box(R - 0.8, R + 1, -0.9, 0.9, -1 if a == 0 else 9, 21).rotate([0, 0, a]))
     return m - union(cut)
 
@@ -241,7 +241,8 @@ def cable_box():
     t = BOX_T; zb = DECK_Z1 - 0.1
     front = box(WING_X1 - t, WING_X1, -ARM_Y0 - 0.1, CHEEK_Y, zb, BOX_ZF)
     # 앞벽 아래 한가운데는 받침의 가운데 통(반지름 13.5)과 고리가 지나는 자리라 문처럼 파 놓는다. 통이 그 구멍을 안에서 막고 있어 속은 안 보인다
-    front = front - prism_xy_to_yz(poly([(-18.0, zb - 1), (-18.0, 48.0), (-14.5, 51.5), (14.5, 51.5), (18.0, 48.0), (18.0, zb - 1)]), WING_X1 - t - 1, WING_X1 + 1)
+    # 문 위는 45도로 넓게 깎는다: 받침 없이 뽑을 때 허공을 건너는 길이가 28mm 에서 20mm 로 준다 (slicing/print_check.py). 고리와 통에서 2mm 넘게 떨어진다
+    front = front - prism_xy_to_yz(poly([(-18.0, zb - 1), (-18.0, DOOR[0]), (-DOOR[1], DOOR[2]), (DOOR[1], DOOR[2]), (18.0, DOOR[0]), (18.0, zb - 1)]), WING_X1 - t - 1, WING_X1 + 1)
     rear = box(WING_X0, WING_X0 + t, -ARM_Y0 - 0.1, ARM_Y0 + 0.1, zb, HOOD_Z0)
     rear_r = box(WING_X0, WING_X0 + t, CHEEK_Y - 0.1, ARM_Y0 + 0.1, zb, 86.0)              # 기어 칸의 뒤끝은 팔 높이까지 막는다
     th = t * np.sqrt(2.0)                                                                  # 45도로 기운 판을 수평으로 잰 두께 (수직 두께 = t)
@@ -402,7 +403,7 @@ def head_shell():
     add = [back, sides]
     for x, z in pi_hole_xz():                                                  # 파이 받침 기둥 + 꽂는 못
         add.append(cy(3.0, PI_T / 2, yb + 0.1, x, z))
-        add.append(cy(1.25, -3.0, PI_T / 2 + 0.1, x, z))
+        add.append(cy(PEG_R, -3.0, PI_T / 2 + 0.1, x, z))
     for sx, sy in CROWN_SCREWS:                                                # 모터 자리 고정 나사 받이 (모서리 덩어리)
         s = 1 if sx > 0 else -1
         x0, x1 = (sx - 3.5, xi + 0.1) if s > 0 else (-xi - 0.1, sx + 3.5)
@@ -562,8 +563,11 @@ def balance_200():
 
 
 def test_coupon():
-    """맞춤 시험 조각: 모터 축 구멍 3종(점 개수 = 번호), 세운 벽의 핀 구멍 2종(빡빡/헐렁), 판 꽂는 구멍, M3 나사 구멍 2종."""
+    """맞춤 시험 조각: 모터 축 구멍 3종(점 개수 = 번호), 세운 벽의 핀 구멍 2종(빡빡/헐렁), 판 꽂는 구멍, M3 나사 구멍 2종,
+    파이 기둥 못 2종(지름 2.5 = 머리 몸통과 같은 것, 2.3 = 옆에 점이 있는 것)."""
     m = box(0, 62, 0, 34, 0, 6)
+    for k, (px_, r_) in enumerate(((46.0, PEG_R), (56.0, PEG_R - 0.1))):          # 파이 기둥과 못: 머리 몸통에서와 같은 모양, 같은 방향(세워서)으로 뽑힌다
+        m = m + cz(3.0, 5.9, 7.6, px_, 21.0) + cz(r_, 7.5, 7.6 + 3.8, px_, 21.0)
     cut = []
     for i in (1, 2, 3):
         d, f, _ = FITS[i]
@@ -579,6 +583,7 @@ def test_coupon():
     cut.append(box(-TENON_W / 2 - c, TENON_W / 2 + c, -3 - c, 3 + c, -1, 7).translate([10, 25, 0]))      # 판 꽂는 구멍 (10 x 6)
     cut.append(cz(1.3, -1, 7, 24.0, 25.0))
     cut.append(cz(1.7, -1, 7, 32.0, 25.0))
+    cut.append(cz(0.9, 5.2, 7, 56.0, 28.5))                                       # 가는 못(2.3) 표시
     return m - union(cut)
 
 
@@ -631,9 +636,10 @@ def lan_plug_dummy():
     return plug + cz(3.0, BZ0 - 35.0, BZ0 - 26.0, xc, -t - 7.0)
 
 
-def dongle_dummy():
-    """무선 동글 (폰과 통신하는 둘째 Wi-Fi). 파이의 USB 에 꽂혀 아래(-Z)로 나온다. 머리 치마 안에 거의 다 들어간다"""
-    d = DONGLE; t = PI_T / 2; xc = BX0 + d["x"]; yc = -t - d["up"]; z1 = BZ0 - 2.0
+def dongle_dummy(d=None):
+    """무선 동글. 파이의 USB 에 꽂혀 아래(-Z)로 나온다. 머리 치마 안에 거의 다 들어간다.
+    d = DONGLE: 폰과 통신하는 동글 (GPIO 쪽 USB).  d = DONGLE2: 탐지용 모니터 모드 동글 (가운데 USB)"""
+    d = d or DONGLE; t = PI_T / 2; xc = BX0 + d["x"]; yc = -t - d["up"]; z1 = BZ0 - 2.0
     return box(xc - d["W"] / 2, xc + d["W"] / 2, yc - d["T"] / 2, yc + d["T"] / 2, z1 - (d["L"] - d["plug"]), z1)
 
 
@@ -697,6 +703,7 @@ def assembly(yaw=0.0, pitch=0.0, spin=0.0, size="S", length=150.0, dummies=True,
         if lan:
             A["lan_plug"] = (H(lan_plug_dummy()), "H", c["dark"], False)
         A["dongle"] = (H(dongle_dummy()), "H", c["dark"], False)
+        A["dongle2"] = (H(dongle_dummy(DONGLE2)), "H", c["dark"], False)
         bp, bs = button_dummy()
         A["button_board"] = (H(bp), "H", c["pcb"], False)
         A["button_parts"] = (H(bs), "H", c["dark"], False)

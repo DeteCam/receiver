@@ -2,5 +2,8 @@
 *.3mf binary
 *.png binary
 *.gif binary
+*.pdf binary
+*.npz binary
+*.pcap binary
 *.sh text eol=lf
 *.py text eol=lf

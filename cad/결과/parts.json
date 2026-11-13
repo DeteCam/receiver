@@ -107,10 +107,10 @@
   ],
   "volume_cm3": 159.6,
   "watertight": true,
-  "faces": 4214,
+  "faces": 4216,
   "bodies": 1,
-  "overhang_mm2": 152,
-  "flat_overhang_mm2": 72,
+  "overhang_mm2": 138,
+  "flat_overhang_mm2": 58,
   "ok": true
  },
  {
@@ -485,9 +485,9 @@
    34.0,
    24.0
   ],
-  "volume_cm3": 13.8,
+  "volume_cm3": 13.9,
   "watertight": true,
-  "faces": 1114,
+  "faces": 1606,
   "bodies": 1,
   "overhang_mm2": 0,
   "flat_overhang_mm2": 0,

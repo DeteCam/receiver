@@ -45,6 +45,7 @@ def report(fill=None, quiet=False):
     add("점퍼선·모터선", 22.0, (20, -12, -45)); add("전원 플러그와 선", 12.0, (-48, -4, -50)); add("나사", 8.0, (0, -10, -20))
     add("버튼 모듈과 선", 5.0, (BTN_X, BTN_PCB_Y, BTN_Z - 8))
     add("무선 동글", 4.0, (BX0 + DONGLE["x"], -PI_T / 2 - DONGLE["up"], BZ0 - 2.0 - (DONGLE["L"] - DONGLE["plug"]) / 2))
+    add("탐지 동글", 4.0, (BX0 + DONGLE2["x"], -PI_T / 2 - DONGLE2["up"], BZ0 - 2.0 - (DONGLE2["L"] - DONGLE2["plug"]) / 2))
     def calc(H):
         mass = sum(h[1] for h in H); my = sum(h[1] * h[2] for h in H) / mass; mz = sum(h[1] * h[3] for h in H) / mass
         # 끄덕임 각 p 에서 중력 모멘트: 무게중심 (요크 x, z) = 회전( -(dy), dz ).  mN·m (앞으로 넘어가려는 쪽이 +)

@@ -117,7 +117,11 @@ lanp = P.lan_plug_dummy(); dongle = P.dongle_dummy()
 sweep("5", "무선 동글 -> 파이 USB (머리를 올리기 전)", dongle, union([shell, pi, plug, btn, lanp]), (0, 0, -1), 30, "아래에서 위로 꽂는다", allow_seat=120.0,
       note="파이 단자와 겹치는 부피는 플러그가 들어간 것이라 뺀다" )
 rows[-1]["seat_overlap_mm3"] = round((dongle ^ union([shell, plug, btn, lanp])).volume(), 2); rows[-1]["ok"] = bool(rows[-1]["seat_overlap_mm3"] < 0.5)
-HEADALL = union([shell, crown, sec, m3, pi, drv, plug, btn, lanp, dongle])         # 뚜껑 없이. 랜선과 무선 동글도 꽂은 채
+dongle2 = P.dongle_dummy(DONGLE2)
+sweep("5", "탐지 동글 -> 파이 가운데 USB (머리를 올리기 전)", dongle2, union([shell, pi, plug, btn, lanp, dongle]), (0, 0, -1), 30, "아래에서 위로 꽂는다", allow_seat=120.0,
+      note="먼저 꽂은 무선 동글 옆(틈 2mm)으로 들어간다" )
+rows[-1]["seat_overlap_mm3"] = round((dongle2 ^ union([shell, plug, btn, lanp, dongle])).volume(), 2); rows[-1]["ok"] = bool(rows[-1]["seat_overlap_mm3"] < 0.5)
+HEADALL = union([shell, crown, sec, m3, pi, drv, plug, btn, lanp, dongle, dongle2])         # 뚜껑 없이. 랜선과 동글 둘도 꽂은 채
 YSET = union([yoke, m1, m2, P.pinion2(), ring])
 worst = 0.0; trace = []
 for dz in list(np.arange(60.0, 10.0, -5.0)) + list(np.arange(10.0, -0.01, -0.5)):

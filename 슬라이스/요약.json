@@ -1,0 +1,1847 @@
+{
+ "plates": {
+  "0판_시험조각": {
+   "name": "0판_시험조각",
+   "ok": true,
+   "infill": 15,
+   "items": [
+    [
+     "90_test_coupon",
+     105.0,
+     158.0,
+     0
+    ],
+    [
+     "91_tenon_gauge",
+     160.0,
+     158.0,
+     0
+    ],
+    [
+     "16_m2_ring",
+     186.0,
+     158.0,
+     0
+    ],
+    [
+     "13_pin_fit1",
+     73.0,
+     118.0,
+     0
+    ],
+    [
+     "13_pin_fit1",
+     95.0,
+     118.0,
+     0
+    ],
+    [
+     "13_pin_fit2",
+     117.0,
+     118.0,
+     0
+    ],
+    [
+     "13_pin_fit2",
+     139.0,
+     118.0,
+     0
+    ],
+    [
+     "13_pin_fit3",
+     161.0,
+     118.0,
+     0
+    ],
+    [
+     "13_pin_fit3",
+     183.0,
+     118.0,
+     0
+    ],
+    [
+     "05_pinion_fit1",
+     73.0,
+     88.0,
+     0
+    ],
+    [
+     "05_pinion_fit1",
+     95.0,
+     88.0,
+     0
+    ],
+    [
+     "05_pinion_fit2",
+     117.0,
+     88.0,
+     0
+    ],
+    [
+     "05_pinion_fit2",
+     139.0,
+     88.0,
+     0
+    ],
+    [
+     "05_pinion_fit3",
+     161.0,
+     88.0,
+     0
+    ],
+    [
+     "05_pinion_fit3",
+     183.0,
+     88.0,
+     0
+    ]
+   ],
+   "sec": 4055,
+   "model_sec": 3470,
+   "g": 21.23,
+   "m": 7.12,
+   "layers": 120,
+   "max_z": 24.0,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 1336,
+    "Outer wall": 1350,
+    "Bottom surface": 9,
+    "Gap infill": 503,
+    "Internal solid infill": 501,
+    "Sparse infill": 142,
+    "Floating vertical shell": 47,
+    "Bridge": 27,
+    "Top surface": 30
+   },
+   "settings": {
+    "layer_height": "0.2",
+    "initial_layer_print_height": "0.2",
+    "wall_loops": "3",
+    "sparse_infill_density": "15%",
+    "sparse_infill_pattern": "grid",
+    "top_shell_layers": "5",
+    "bottom_shell_layers": "3",
+    "enable_support": "0",
+    "nozzle_temperature": "220",
+    "nozzle_temperature_initial_layer": "220",
+    "textured_plate_temp": "55",
+    "curr_bed_type": "Textured PEI Plate",
+    "printer_model": "Bambu Lab X1 Carbon",
+    "filament_type": "PLA",
+    "brim_type": "auto_brim",
+    "printer_settings_id": "Bambu Lab X1 Carbon 0.4 nozzle",
+    "print_settings_id": "0.20mm Standard @BBL X1C",
+    "filament_settings_id": "\"Generic PLA\"",
+    "filament_max_volumetric_speed": "12",
+    "seam_position": "aligned"
+   },
+   "placed": [
+    {
+     "name": "90_test_coupon",
+     "bbox": [
+      74.0,
+      141.0,
+      136.0,
+      175.0
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "91_tenon_gauge",
+     "bbox": [
+      151.0,
+      152.0,
+      169.0,
+      164.0
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "16_m2_ring",
+     "bbox": [
+      178.25,
+      150.25,
+      193.75,
+      165.75
+     ],
+     "dev": 0.1
+    },
+    {
+     "name": "13_pin_fit1",
+     "bbox": [
+      66.0,
+      107.5,
+      80.0,
+      128.5
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "13_pin_fit1",
+     "bbox": [
+      88.0,
+      107.5,
+      102.0,
+      128.5
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "13_pin_fit2",
+     "bbox": [
+      110.0,
+      107.5,
+      124.0,
+      128.5
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "13_pin_fit2",
+     "bbox": [
+      132.0,
+      107.5,
+      146.0,
+      128.5
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "13_pin_fit3",
+     "bbox": [
+      154.0,
+      107.5,
+      168.0,
+      128.5
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "13_pin_fit3",
+     "bbox": [
+      176.0,
+      107.5,
+      190.0,
+      128.5
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "05_pinion_fit1",
+     "bbox": [
+      65.13,
+      80.45,
+      80.87,
+      95.55
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "05_pinion_fit1",
+     "bbox": [
+      87.13,
+      80.45,
+      102.87,
+      95.55
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "05_pinion_fit2",
+     "bbox": [
+      109.13,
+      80.45,
+      124.87,
+      95.55
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "05_pinion_fit2",
+     "bbox": [
+      131.13,
+      80.45,
+      146.87,
+      95.55
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "05_pinion_fit3",
+     "bbox": [
+      153.13,
+      80.45,
+      168.87,
+      95.55
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "05_pinion_fit3",
+     "bbox": [
+      175.13,
+      80.45,
+      190.87,
+      95.55
+     ],
+     "dev": 0.0
+    }
+   ],
+   "extent": [
+    65.34,
+    80.68,
+    193.63,
+    174.79,
+    24.0
+   ],
+   "gap_min": 6.3,
+   "edge_min": 61.9,
+   "notices": [
+    "bed_temperature_too_high_than_filament"
+   ],
+   "printer_model_id": "BL-P001",
+   "problems": [],
+   "desc": "맨 먼저 뽑는다: 시험 조각, 시험용 돌기, 모터 2 맞춤 링, 핀 3종 × 2개, 작은 기어 3종 × 2개 (핀·기어는 왼쪽부터 맞춤 1, 1, 2, 2, 3, 3)"
+  },
+  "1판_받침_S": {
+   "name": "1판_받침_S",
+   "ok": true,
+   "infill": 15,
+   "items": [
+    [
+     "02_base_cover_S",
+     71.5,
+     90.5,
+     0
+    ],
+    [
+     "01_base_tub_S",
+     182.5,
+     182.5,
+     0
+    ],
+    [
+     "03_clip",
+     222.0,
+     52.0,
+     0
+    ],
+    [
+     "17_lan_cap",
+     176.0,
+     62.0,
+     0
+    ]
+   ],
+   "sec": 12741,
+   "model_sec": 12156,
+   "g": 126.08,
+   "m": 42.27,
+   "layers": 150,
+   "max_z": 30.0,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 1651,
+    "Outer wall": 1690,
+    "Bottom surface": 4,
+    "Gap infill": 686,
+    "Internal solid infill": 147,
+    "Sparse infill": 789,
+    "Floating vertical shell": 62,
+    "Bridge": 24,
+    "Top surface": 32,
+    "Overhang wall": 20
+   },
+   "settings": {
+    "layer_height": "0.2",
+    "initial_layer_print_height": "0.2",
+    "wall_loops": "3",
+    "sparse_infill_density": "15%",
+    "sparse_infill_pattern": "grid",
+    "top_shell_layers": "5",
+    "bottom_shell_layers": "3",
+    "enable_support": "0",
+    "nozzle_temperature": "220",
+    "nozzle_temperature_initial_layer": "220",
+    "textured_plate_temp": "55",
+    "curr_bed_type": "Textured PEI Plate",
+    "printer_model": "Bambu Lab X1 Carbon",
+    "filament_type": "PLA",
+    "brim_type": "auto_brim",
+    "printer_settings_id": "Bambu Lab X1 Carbon 0.4 nozzle",
+    "print_settings_id": "0.20mm Standard @BBL X1C",
+    "filament_settings_id": "\"Generic PLA\"",
+    "filament_max_volumetric_speed": "12",
+    "seam_position": "aligned"
+   },
+   "placed": [
+    {
+     "name": "02_base_cover_S",
+     "bbox": [
+      3.5,
+      22.5,
+      139.5,
+      158.5
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "01_base_tub_S",
+     "bbox": [
+      113.9,
+      113.9,
+      251.1,
+      251.1
+     ],
+     "dev": 0.1
+    },
+    {
+     "name": "03_clip",
+     "bbox": [
+      208.13,
+      35.85,
+      235.87,
+      68.15
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "17_lan_cap",
+     "bbox": [
+      172.78,
+      53.0,
+      179.22,
+      71.0
+     ],
+     "dev": 0.0
+    }
+   ],
+   "extent": [
+    3.71,
+    22.71,
+    252.29,
+    252.29,
+    30.0
+   ],
+   "gap_min": 6.2,
+   "edge_min": 3.5,
+   "notices": [
+    "bed_temperature_too_high_than_filament"
+   ],
+   "printer_model_id": "BL-P001",
+   "problems": [],
+   "desc": "받침 통(작은 것), 받침 덮개, 고리, 랜선 홈 마개"
+  },
+  "2판_요크": {
+   "name": "2판_요크",
+   "ok": true,
+   "infill": 15,
+   "items": [
+    [
+     "04_yoke",
+     128.0,
+     130.0,
+     0
+    ]
+   ],
+   "sec": 12575,
+   "model_sec": 11989,
+   "g": 124.45,
+   "m": 41.73,
+   "layers": 462,
+   "max_z": 92.4,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 1894,
+    "Outer wall": 1901,
+    "Bottom surface": 1,
+    "Internal solid infill": 92,
+    "Sparse infill": 1444,
+    "Floating vertical shell": 501,
+    "Bridge": 34,
+    "Top surface": 40,
+    "Gap infill": 212,
+    "Overhang wall": 44
+   },
+   "settings": {
+    "layer_height": "0.2",
+    "initial_layer_print_height": "0.2",
+    "wall_loops": "3",
+    "sparse_infill_density": "15%",
+    "sparse_infill_pattern": "grid",
+    "top_shell_layers": "5",
+    "bottom_shell_layers": "3",
+    "enable_support": "0",
+    "nozzle_temperature": "220",
+    "nozzle_temperature_initial_layer": "220",
+    "textured_plate_temp": "55",
+    "curr_bed_type": "Textured PEI Plate",
+    "printer_model": "Bambu Lab X1 Carbon",
+    "filament_type": "PLA",
+    "brim_type": "auto_brim",
+    "printer_settings_id": "Bambu Lab X1 Carbon 0.4 nozzle",
+    "print_settings_id": "0.20mm Standard @BBL X1C",
+    "filament_settings_id": "\"Generic PLA\"",
+    "filament_max_volumetric_speed": "12",
+    "seam_position": "aligned"
+   },
+   "placed": [
+    {
+     "name": "04_yoke",
+     "bbox": [
+      60.0,
+      63.0,
+      196.0,
+      197.0
+     ],
+     "dev": 0.0
+    }
+   ],
+   "extent": [
+    60.21,
+    63.19,
+    195.79,
+    196.81,
+    92.4
+   ],
+   "gap_min": null,
+   "edge_min": 59.0,
+   "notices": [
+    "bed_temperature_too_high_than_filament"
+   ],
+   "printer_model_id": "BL-P001",
+   "problems": [],
+   "desc": "요크 (회전판 + 팔 + 전선 상자)"
+  },
+  "3판_머리": {
+   "name": "3판_머리",
+   "ok": true,
+   "infill": 15,
+   "items": [
+    [
+     "07_head_shell",
+     66.5,
+     86.0,
+     0
+    ],
+    [
+     "08_head_lid",
+     187.0,
+     86.0,
+     0
+    ],
+    [
+     "09_crown",
+     66.5,
+     184.0,
+     0
+    ],
+    [
+     "06_sector_gear",
+     187.0,
+     195.0,
+     0
+    ]
+   ],
+   "sec": 13327,
+   "model_sec": 12741,
+   "g": 107.43,
+   "m": 36.02,
+   "layers": 176,
+   "max_z": 35.2,
+   "features": {
+    "Custom": 2,
+    "Outer wall": 2616,
+    "Inner wall": 2130,
+    "Gap infill": 2448,
+    "Bottom surface": 5,
+    "Internal solid infill": 1546,
+    "Overhang wall": 53,
+    "Bridge": 41,
+    "Sparse infill": 678,
+    "Floating vertical shell": 119,
+    "Top surface": 63
+   },
+   "settings": {
+    "layer_height": "0.2",
+    "initial_layer_print_height": "0.2",
+    "wall_loops": "3",
+    "sparse_infill_density": "15%",
+    "sparse_infill_pattern": "grid",
+    "top_shell_layers": "5",
+    "bottom_shell_layers": "3",
+    "enable_support": "0",
+    "nozzle_temperature": "220",
+    "nozzle_temperature_initial_layer": "220",
+    "textured_plate_temp": "55",
+    "curr_bed_type": "Textured PEI Plate",
+    "printer_model": "Bambu Lab X1 Carbon",
+    "filament_type": "PLA",
+    "brim_type": "auto_brim",
+    "printer_settings_id": "Bambu Lab X1 Carbon 0.4 nozzle",
+    "print_settings_id": "0.20mm Standard @BBL X1C",
+    "filament_settings_id": "\"Generic PLA\"",
+    "filament_max_volumetric_speed": "12",
+    "seam_position": "aligned"
+   },
+   "placed": [
+    {
+     "name": "07_head_shell",
+     "bbox": [
+      14.14,
+      32.0,
+      123.36,
+      140.0
+     ],
+     "dev": 0.1
+    },
+    {
+     "name": "08_head_lid",
+     "bbox": [
+      132.39,
+      32.0,
+      241.61,
+      140.0
+     ],
+     "dev": 0.1
+    },
+    {
+     "name": "09_crown",
+     "bbox": [
+      10.5,
+      148.0,
+      122.5,
+      220.0
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "06_sector_gear",
+     "bbox": [
+      129.85,
+      147.88,
+      244.15,
+      242.12
+     ],
+     "dev": 0.0
+    }
+   ],
+   "extent": [
+    8.46,
+    32.21,
+    243.9,
+    241.91,
+    35.2
+   ],
+   "gap_min": 6.4,
+   "edge_min": 8.2,
+   "notices": [
+    "bed_temperature_too_high_than_filament"
+   ],
+   "printer_model_id": "BL-P001",
+   "problems": [],
+   "desc": "머리 몸통, 머리 뚜껑, 모터 자리, 부채꼴 기어"
+  },
+  "4판_회전부_맞춤1": {
+   "name": "4판_회전부_맞춤1",
+   "ok": true,
+   "infill": 100,
+   "items": [
+    [
+     "11_blade_100x150",
+     128.0,
+     80.0,
+     0
+    ],
+    [
+     "10_rotor_bar_fit1",
+     128.0,
+     162.0,
+     0
+    ],
+    [
+     "14_trim_plate",
+     30.0,
+     162.0,
+     0
+    ],
+    [
+     "14_trim_plate",
+     226.0,
+     162.0,
+     0
+    ]
+   ],
+   "sec": 7467,
+   "model_sec": 6882,
+   "g": 77.44,
+   "m": 25.96,
+   "layers": 125,
+   "max_z": 25.0,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 420,
+    "Outer wall": 424,
+    "Bottom surface": 4,
+    "Gap infill": 142,
+    "Internal solid infill": 132,
+    "Sparse infill": 203,
+    "Bridge": 2,
+    "Top surface": 21,
+    "Floating vertical shell": 62,
+    "Overhang wall": 9
+   },
+   "settings": {
+    "layer_height": "0.2",
+    "initial_layer_print_height": "0.2",
+    "wall_loops": "3",
+    "sparse_infill_density": "100%",
+    "sparse_infill_pattern": "zig-zag",
+    "top_shell_layers": "5",
+    "bottom_shell_layers": "3",
+    "enable_support": "0",
+    "nozzle_temperature": "220",
+    "nozzle_temperature_initial_layer": "220",
+    "textured_plate_temp": "55",
+    "curr_bed_type": "Textured PEI Plate",
+    "printer_model": "Bambu Lab X1 Carbon",
+    "filament_type": "PLA",
+    "brim_type": "auto_brim",
+    "printer_settings_id": "Bambu Lab X1 Carbon 0.4 nozzle",
+    "print_settings_id": "0.20mm Standard @BBL X1C",
+    "filament_settings_id": "\"Generic PLA\"",
+    "filament_max_volumetric_speed": "12",
+    "seam_position": "aligned"
+   },
+   "placed": [
+    {
+     "name": "11_blade_100x150",
+     "bbox": [
+      53.0,
+      30.0,
+      203.0,
+      130.0
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "10_rotor_bar_fit1",
+     "bbox": [
+      53.65,
+      141.4,
+      204.75,
+      182.6
+     ],
+     "dev": 0.1
+    },
+    {
+     "name": "14_trim_plate",
+     "bbox": [
+      22.5,
+      144.5,
+      37.5,
+      179.5
+     ],
+     "dev": 0.1
+    },
+    {
+     "name": "14_trim_plate",
+     "bbox": [
+      218.5,
+      144.5,
+      233.5,
+      179.5
+     ],
+     "dev": 0.1
+    }
+   ],
+   "extent": [
+    22.21,
+    30.21,
+    233.79,
+    184.79,
+    25.0
+   ],
+   "gap_min": 9.0,
+   "edge_min": 22.0,
+   "notices": [
+    "bed_temperature_too_high_than_filament"
+   ],
+   "printer_model_id": "BL-P001",
+   "problems": [],
+   "desc": "회전 막대(맞춤 1) + 판 100×150 + 균형 조각 2장. 채움 100%"
+  },
+  "4판_회전부_맞춤2": {
+   "name": "4판_회전부_맞춤2",
+   "ok": true,
+   "infill": 100,
+   "items": [
+    [
+     "11_blade_100x150",
+     128.0,
+     80.0,
+     0
+    ],
+    [
+     "10_rotor_bar_fit2",
+     128.0,
+     162.0,
+     0
+    ],
+    [
+     "14_trim_plate",
+     30.0,
+     162.0,
+     0
+    ],
+    [
+     "14_trim_plate",
+     226.0,
+     162.0,
+     0
+    ]
+   ],
+   "sec": 7464,
+   "model_sec": 6879,
+   "g": 77.43,
+   "m": 25.96,
+   "layers": 125,
+   "max_z": 25.0,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 420,
+    "Outer wall": 424,
+    "Bottom surface": 4,
+    "Gap infill": 142,
+    "Internal solid infill": 131,
+    "Sparse infill": 202,
+    "Bridge": 2,
+    "Top surface": 21,
+    "Floating vertical shell": 62,
+    "Overhang wall": 9
+   },
+   "settings": {
+    "layer_height": "0.2",
+    "initial_layer_print_height": "0.2",
+    "wall_loops": "3",
+    "sparse_infill_density": "100%",
+    "sparse_infill_pattern": "zig-zag",
+    "top_shell_layers": "5",
+    "bottom_shell_layers": "3",
+    "enable_support": "0",
+    "nozzle_temperature": "220",
+    "nozzle_temperature_initial_layer": "220",
+    "textured_plate_temp": "55",
+    "curr_bed_type": "Textured PEI Plate",
+    "printer_model": "Bambu Lab X1 Carbon",
+    "filament_type": "PLA",
+    "brim_type": "auto_brim",
+    "printer_settings_id": "Bambu Lab X1 Carbon 0.4 nozzle",
+    "print_settings_id": "0.20mm Standard @BBL X1C",
+    "filament_settings_id": "\"Generic PLA\"",
+    "filament_max_volumetric_speed": "12",
+    "seam_position": "aligned"
+   },
+   "placed": [
+    {
+     "name": "11_blade_100x150",
+     "bbox": [
+      53.0,
+      30.0,
+      203.0,
+      130.0
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "10_rotor_bar_fit2",
+     "bbox": [
+      53.65,
+      141.4,
+      204.75,
+      182.6
+     ],
+     "dev": 0.1
+    },
+    {
+     "name": "14_trim_plate",
+     "bbox": [
+      22.5,
+      144.5,
+      37.5,
+      179.5
+     ],
+     "dev": 0.1
+    },
+    {
+     "name": "14_trim_plate",
+     "bbox": [
+      218.5,
+      144.5,
+      233.5,
+      179.5
+     ],
+     "dev": 0.1
+    }
+   ],
+   "extent": [
+    22.21,
+    30.21,
+    233.79,
+    184.79,
+    25.0
+   ],
+   "gap_min": 9.0,
+   "edge_min": 22.0,
+   "notices": [
+    "bed_temperature_too_high_than_filament"
+   ],
+   "printer_model_id": "BL-P001",
+   "problems": [],
+   "desc": "회전 막대(맞춤 2) + 판 100×150 + 균형 조각 2장. 채움 100%"
+  },
+  "4판_회전부_맞춤3": {
+   "name": "4판_회전부_맞춤3",
+   "ok": true,
+   "infill": 100,
+   "items": [
+    [
+     "11_blade_100x150",
+     128.0,
+     80.0,
+     0
+    ],
+    [
+     "10_rotor_bar_fit3",
+     128.0,
+     162.0,
+     0
+    ],
+    [
+     "14_trim_plate",
+     30.0,
+     162.0,
+     0
+    ],
+    [
+     "14_trim_plate",
+     226.0,
+     162.0,
+     0
+    ]
+   ],
+   "sec": 7456,
+   "model_sec": 6870,
+   "g": 77.43,
+   "m": 25.96,
+   "layers": 125,
+   "max_z": 25.0,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 420,
+    "Outer wall": 424,
+    "Bottom surface": 4,
+    "Gap infill": 142,
+    "Internal solid infill": 132,
+    "Sparse infill": 202,
+    "Bridge": 2,
+    "Top surface": 21,
+    "Floating vertical shell": 64,
+    "Overhang wall": 9
+   },
+   "settings": {
+    "layer_height": "0.2",
+    "initial_layer_print_height": "0.2",
+    "wall_loops": "3",
+    "sparse_infill_density": "100%",
+    "sparse_infill_pattern": "zig-zag",
+    "top_shell_layers": "5",
+    "bottom_shell_layers": "3",
+    "enable_support": "0",
+    "nozzle_temperature": "220",
+    "nozzle_temperature_initial_layer": "220",
+    "textured_plate_temp": "55",
+    "curr_bed_type": "Textured PEI Plate",
+    "printer_model": "Bambu Lab X1 Carbon",
+    "filament_type": "PLA",
+    "brim_type": "auto_brim",
+    "printer_settings_id": "Bambu Lab X1 Carbon 0.4 nozzle",
+    "print_settings_id": "0.20mm Standard @BBL X1C",
+    "filament_settings_id": "\"Generic PLA\"",
+    "filament_max_volumetric_speed": "12",
+    "seam_position": "aligned"
+   },
+   "placed": [
+    {
+     "name": "11_blade_100x150",
+     "bbox": [
+      53.0,
+      30.0,
+      203.0,
+      130.0
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "10_rotor_bar_fit3",
+     "bbox": [
+      53.65,
+      141.4,
+      204.75,
+      182.6
+     ],
+     "dev": 0.1
+    },
+    {
+     "name": "14_trim_plate",
+     "bbox": [
+      22.5,
+      144.5,
+      37.5,
+      179.5
+     ],
+     "dev": 0.1
+    },
+    {
+     "name": "14_trim_plate",
+     "bbox": [
+      218.5,
+      144.5,
+      233.5,
+      179.5
+     ],
+     "dev": 0.1
+    }
+   ],
+   "extent": [
+    22.21,
+    30.21,
+    233.79,
+    184.79,
+    25.0
+   ],
+   "gap_min": 9.0,
+   "edge_min": 22.0,
+   "notices": [
+    "bed_temperature_too_high_than_filament"
+   ],
+   "printer_model_id": "BL-P001",
+   "problems": [],
+   "desc": "회전 막대(맞춤 3) + 판 100×150 + 균형 조각 2장. 채움 100%"
+  },
+  "선택_받침통_L": {
+   "name": "선택_받침통_L",
+   "ok": true,
+   "infill": 15,
+   "items": [
+    [
+     "01_base_tub_L",
+     128.0,
+     132.0,
+     0
+    ]
+   ],
+   "sec": 10659,
+   "model_sec": 10074,
+   "g": 117.42,
+   "m": 39.37,
+   "layers": 150,
+   "max_z": 30.0,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 1168,
+    "Outer wall": 1186,
+    "Bottom surface": 1,
+    "Internal solid infill": 46,
+    "Sparse infill": 526,
+    "Bridge": 5,
+    "Top surface": 18,
+    "Gap infill": 301,
+    "Floating vertical shell": 16,
+    "Overhang wall": 15
+   },
+   "settings": {
+    "layer_height": "0.2",
+    "initial_layer_print_height": "0.2",
+    "wall_loops": "3",
+    "sparse_infill_density": "15%",
+    "sparse_infill_pattern": "grid",
+    "top_shell_layers": "5",
+    "bottom_shell_layers": "3",
+    "enable_support": "0",
+    "nozzle_temperature": "220",
+    "nozzle_temperature_initial_layer": "220",
+    "textured_plate_temp": "55",
+    "curr_bed_type": "Textured PEI Plate",
+    "printer_model": "Bambu Lab X1 Carbon",
+    "filament_type": "PLA",
+    "brim_type": "auto_brim",
+    "printer_settings_id": "Bambu Lab X1 Carbon 0.4 nozzle",
+    "print_settings_id": "0.20mm Standard @BBL X1C",
+    "filament_settings_id": "\"Generic PLA\"",
+    "filament_max_volumetric_speed": "12",
+    "seam_position": "aligned"
+   },
+   "placed": [
+    {
+     "name": "01_base_tub_L",
+     "bbox": [
+      34.4,
+      38.4,
+      221.6,
+      225.6
+     ],
+     "dev": 0.1
+    }
+   ],
+   "extent": [
+    33.21,
+    37.21,
+    222.79,
+    226.79,
+    30.0
+   ],
+   "gap_min": null,
+   "edge_min": 29.0,
+   "notices": [
+    "bed_temperature_too_high_than_filament"
+   ],
+   "printer_model_id": "BL-P001",
+   "problems": [],
+   "desc": "큰 배터리용 받침 통 (지름 190)"
+  },
+  "선택_받침덮개_L": {
+   "name": "선택_받침덮개_L",
+   "ok": true,
+   "infill": 15,
+   "items": [
+    [
+     "02_base_cover_L",
+     128.0,
+     132.0,
+     0
+    ]
+   ],
+   "sec": 8324,
+   "model_sec": 7738,
+   "g": 79.87,
+   "m": 26.78,
+   "layers": 100,
+   "max_z": 20.0,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 402,
+    "Outer wall": 408,
+    "Bottom surface": 1,
+    "Internal solid infill": 76,
+    "Sparse infill": 210,
+    "Floating vertical shell": 41,
+    "Bridge": 19,
+    "Gap infill": 226,
+    "Top surface": 10
+   },
+   "settings": {
+    "layer_height": "0.2",
+    "initial_layer_print_height": "0.2",
+    "wall_loops": "3",
+    "sparse_infill_density": "15%",
+    "sparse_infill_pattern": "grid",
+    "top_shell_layers": "5",
+    "bottom_shell_layers": "3",
+    "enable_support": "0",
+    "nozzle_temperature": "220",
+    "nozzle_temperature_initial_layer": "220",
+    "textured_plate_temp": "55",
+    "curr_bed_type": "Textured PEI Plate",
+    "printer_model": "Bambu Lab X1 Carbon",
+    "filament_type": "PLA",
+    "brim_type": "auto_brim",
+    "printer_settings_id": "Bambu Lab X1 Carbon 0.4 nozzle",
+    "print_settings_id": "0.20mm Standard @BBL X1C",
+    "filament_settings_id": "\"Generic PLA\"",
+    "filament_max_volumetric_speed": "12",
+    "seam_position": "aligned"
+   },
+   "placed": [
+    {
+     "name": "02_base_cover_L",
+     "bbox": [
+      35.0,
+      39.0,
+      221.0,
+      225.0
+     ],
+     "dev": 0.0
+    }
+   ],
+   "extent": [
+    35.21,
+    39.21,
+    220.79,
+    224.79,
+    20.0
+   ],
+   "gap_min": null,
+   "edge_min": 31.0,
+   "notices": [
+    "bed_temperature_too_high_than_filament"
+   ],
+   "printer_model_id": "BL-P001",
+   "problems": [],
+   "desc": "큰 받침의 덮개 (지름 186)"
+  },
+  "선택_판200": {
+   "name": "선택_판200",
+   "ok": true,
+   "infill": 100,
+   "items": [
+    [
+     "12_blade_100x200",
+     128.0,
+     90.0,
+     0
+    ],
+    [
+     "15_balance_200",
+     128.0,
+     175.0,
+     0
+    ]
+   ],
+   "sec": 3963,
+   "model_sec": 3377,
+   "g": 37.78,
+   "m": 12.67,
+   "layers": 45,
+   "max_z": 9.0,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 272,
+    "Outer wall": 274,
+    "Bottom surface": 2,
+    "Internal solid infill": 93,
+    "Sparse infill": 39,
+    "Gap infill": 108,
+    "Top surface": 15,
+    "Overhang wall": 6,
+    "Floating vertical shell": 3
+   },
+   "settings": {
+    "layer_height": "0.2",
+    "initial_layer_print_height": "0.2",
+    "wall_loops": "3",
+    "sparse_infill_density": "100%",
+    "sparse_infill_pattern": "zig-zag",
+    "top_shell_layers": "5",
+    "bottom_shell_layers": "3",
+    "enable_support": "0",
+    "nozzle_temperature": "220",
+    "nozzle_temperature_initial_layer": "220",
+    "textured_plate_temp": "55",
+    "curr_bed_type": "Textured PEI Plate",
+    "printer_model": "Bambu Lab X1 Carbon",
+    "filament_type": "PLA",
+    "brim_type": "auto_brim",
+    "printer_settings_id": "Bambu Lab X1 Carbon 0.4 nozzle",
+    "print_settings_id": "0.20mm Standard @BBL X1C",
+    "filament_settings_id": "\"Generic PLA\"",
+    "filament_max_volumetric_speed": "12",
+    "seam_position": "aligned"
+   },
+   "placed": [
+    {
+     "name": "12_blade_100x200",
+     "bbox": [
+      28.0,
+      40.0,
+      228.0,
+      140.0
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "15_balance_200",
+     "bbox": [
+      120.4,
+      157.9,
+      135.6,
+      192.1
+     ],
+     "dev": 0.1
+    }
+   ],
+   "extent": [
+    28.21,
+    40.21,
+    227.79,
+    192.79,
+    9.0
+   ],
+   "gap_min": 17.0,
+   "edge_min": 28.0,
+   "notices": [
+    "bed_temperature_too_high_than_filament"
+   ],
+   "printer_model_id": "BL-P001",
+   "problems": [],
+   "desc": "비교용 판 100×200 + 균형 덩어리. 채움 100%"
+  }
+ },
+ "parts": {
+  "01_base_tub_L": {
+   "sec": 10660,
+   "model_sec": 10074,
+   "g": 117.42,
+   "m": 39.37,
+   "infill": 15,
+   "layers": 150,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 1168,
+    "Outer wall": 1186,
+    "Bottom surface": 1,
+    "Internal solid infill": 46,
+    "Sparse infill": 526,
+    "Bridge": 5,
+    "Top surface": 18,
+    "Gap infill": 301,
+    "Floating vertical shell": 16,
+    "Overhang wall": 15
+   },
+   "problems": []
+  },
+  "01_base_tub_S": {
+   "sec": 7246,
+   "model_sec": 6661,
+   "g": 74.36,
+   "m": 24.93,
+   "infill": 15,
+   "layers": 150,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 1168,
+    "Outer wall": 1186,
+    "Bottom surface": 1,
+    "Internal solid infill": 47,
+    "Sparse infill": 525,
+    "Bridge": 5,
+    "Top surface": 18,
+    "Gap infill": 301,
+    "Floating vertical shell": 16,
+    "Overhang wall": 15
+   },
+   "problems": []
+  },
+  "02_base_cover_L": {
+   "sec": 8324,
+   "model_sec": 7738,
+   "g": 79.87,
+   "m": 26.78,
+   "infill": 15,
+   "layers": 100,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 402,
+    "Outer wall": 408,
+    "Bottom surface": 1,
+    "Internal solid infill": 76,
+    "Sparse infill": 210,
+    "Floating vertical shell": 41,
+    "Bridge": 19,
+    "Gap infill": 226,
+    "Top surface": 10
+   },
+   "problems": []
+  },
+  "02_base_cover_S": {
+   "sec": 5934,
+   "model_sec": 5349,
+   "g": 50.63,
+   "m": 16.97,
+   "infill": 15,
+   "layers": 100,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 402,
+    "Outer wall": 408,
+    "Bottom surface": 1,
+    "Internal solid infill": 83,
+    "Sparse infill": 215,
+    "Floating vertical shell": 41,
+    "Bridge": 16,
+    "Gap infill": 246,
+    "Top surface": 10
+   },
+   "problems": []
+  },
+  "03_clip": {
+   "sec": 632,
+   "model_sec": 46,
+   "g": 0.88,
+   "m": 0.3,
+   "infill": 15,
+   "layers": 10,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 18,
+    "Outer wall": 19,
+    "Gap infill": 28,
+    "Bottom surface": 2,
+    "Internal solid infill": 10,
+    "Sparse infill": 4,
+    "Floating vertical shell": 2,
+    "Top surface": 2
+   },
+   "problems": []
+  },
+  "04_yoke": {
+   "sec": 12574,
+   "model_sec": 11989,
+   "g": 124.45,
+   "m": 41.73,
+   "infill": 15,
+   "layers": 462,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 1894,
+    "Outer wall": 1901,
+    "Bottom surface": 1,
+    "Internal solid infill": 92,
+    "Sparse infill": 1444,
+    "Floating vertical shell": 500,
+    "Bridge": 34,
+    "Top surface": 40,
+    "Gap infill": 212,
+    "Overhang wall": 44
+   },
+   "problems": []
+  },
+  "05_pinion_fit1": {
+   "sec": 787,
+   "model_sec": 202,
+   "g": 1.09,
+   "m": 0.36,
+   "infill": 15,
+   "layers": 27,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 52,
+    "Outer wall": 53,
+    "Gap infill": 70,
+    "Internal solid infill": 50,
+    "Top surface": 1
+   },
+   "problems": []
+  },
+  "05_pinion_fit2": {
+   "sec": 787,
+   "model_sec": 202,
+   "g": 1.08,
+   "m": 0.36,
+   "infill": 15,
+   "layers": 27,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 52,
+    "Outer wall": 53,
+    "Gap infill": 74,
+    "Internal solid infill": 50,
+    "Top surface": 1
+   },
+   "problems": []
+  },
+  "05_pinion_fit3": {
+   "sec": 787,
+   "model_sec": 201,
+   "g": 1.08,
+   "m": 0.36,
+   "infill": 15,
+   "layers": 27,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 52,
+    "Outer wall": 53,
+    "Gap infill": 75,
+    "Internal solid infill": 50,
+    "Top surface": 1
+   },
+   "problems": []
+  },
+  "06_sector_gear": {
+   "sec": 2485,
+   "model_sec": 1899,
+   "g": 15.19,
+   "m": 5.09,
+   "infill": 15,
+   "layers": 22,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 252,
+    "Outer wall": 253,
+    "Gap infill": 180,
+    "Bottom surface": 1,
+    "Internal solid infill": 61,
+    "Sparse infill": 117,
+    "Floating vertical shell": 21,
+    "Bridge": 16,
+    "Top surface": 3
+   },
+   "problems": []
+  },
+  "07_head_shell": {
+   "sec": 6288,
+   "model_sec": 5703,
+   "g": 47.75,
+   "m": 16.01,
+   "infill": 15,
+   "layers": 176,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 940,
+    "Outer wall": 1003,
+    "Bottom surface": 1,
+    "Internal solid infill": 905,
+    "Sparse infill": 562,
+    "Gap infill": 1640,
+    "Top surface": 39,
+    "Floating vertical shell": 92,
+    "Bridge": 24,
+    "Overhang wall": 43
+   },
+   "problems": []
+  },
+  "08_head_lid": {
+   "sec": 3968,
+   "model_sec": 3382,
+   "g": 24.67,
+   "m": 8.27,
+   "infill": 15,
+   "layers": 146,
+   "features": {
+    "Custom": 2,
+    "Outer wall": 664,
+    "Inner wall": 599,
+    "Gap infill": 92,
+    "Bottom surface": 2,
+    "Internal solid infill": 530,
+    "Overhang wall": 10,
+    "Bridge": 5,
+    "Sparse infill": 1,
+    "Top surface": 5
+   },
+   "problems": []
+  },
+  "09_crown": {
+   "sec": 2733,
+   "model_sec": 2148,
+   "g": 20.79,
+   "m": 6.97,
+   "infill": 15,
+   "layers": 105,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 339,
+    "Outer wall": 696,
+    "Gap infill": 553,
+    "Bottom surface": 1,
+    "Internal solid infill": 57,
+    "Sparse infill": 7,
+    "Floating vertical shell": 6,
+    "Bridge": 1,
+    "Top surface": 16
+   },
+   "problems": []
+  },
+  "10_rotor_bar_fit1": {
+   "sec": 4807,
+   "model_sec": 4222,
+   "g": 49.44,
+   "m": 16.58,
+   "infill": 100,
+   "layers": 125,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 211,
+    "Outer wall": 212,
+    "Gap infill": 35,
+    "Bottom surface": 1,
+    "Internal solid infill": 34,
+    "Sparse infill": 189,
+    "Bridge": 2,
+    "Top surface": 8,
+    "Floating vertical shell": 59,
+    "Overhang wall": 3
+   },
+   "problems": []
+  },
+  "10_rotor_bar_fit2": {
+   "sec": 4807,
+   "model_sec": 4222,
+   "g": 49.43,
+   "m": 16.57,
+   "infill": 100,
+   "layers": 125,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 211,
+    "Outer wall": 212,
+    "Gap infill": 35,
+    "Bottom surface": 1,
+    "Internal solid infill": 33,
+    "Sparse infill": 188,
+    "Bridge": 2,
+    "Top surface": 8,
+    "Floating vertical shell": 60,
+    "Overhang wall": 3
+   },
+   "problems": []
+  },
+  "10_rotor_bar_fit3": {
+   "sec": 4806,
+   "model_sec": 4220,
+   "g": 49.43,
+   "m": 16.57,
+   "infill": 100,
+   "layers": 125,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 211,
+    "Outer wall": 212,
+    "Gap infill": 35,
+    "Bottom surface": 1,
+    "Internal solid infill": 34,
+    "Sparse infill": 188,
+    "Bridge": 2,
+    "Floating vertical shell": 63,
+    "Top surface": 8,
+    "Overhang wall": 3
+   },
+   "problems": []
+  },
+  "11_blade_100x150": {
+   "sec": 2775,
+   "model_sec": 2189,
+   "g": 24.28,
+   "m": 8.14,
+   "infill": 100,
+   "layers": 44,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 153,
+    "Outer wall": 154,
+    "Bottom surface": 1,
+    "Internal solid infill": 84,
+    "Gap infill": 105,
+    "Top surface": 11,
+    "Overhang wall": 6
+   },
+   "problems": []
+  },
+  "12_blade_100x200": {
+   "sec": 3371,
+   "model_sec": 2786,
+   "g": 31.34,
+   "m": 10.51,
+   "infill": 100,
+   "layers": 44,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 184,
+    "Outer wall": 185,
+    "Bottom surface": 1,
+    "Internal solid infill": 84,
+    "Gap infill": 107,
+    "Top surface": 14,
+    "Overhang wall": 6
+   },
+   "problems": []
+  },
+  "13_pin_fit1": {
+   "sec": 905,
+   "model_sec": 320,
+   "g": 1.24,
+   "m": 0.41,
+   "infill": 15,
+   "layers": 90,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 89,
+    "Outer wall": 90,
+    "Gap infill": 4,
+    "Bottom surface": 1,
+    "Internal solid infill": 11,
+    "Sparse infill": 2,
+    "Floating vertical shell": 3,
+    "Bridge": 2,
+    "Top surface": 2
+   },
+   "problems": []
+  },
+  "13_pin_fit2": {
+   "sec": 901,
+   "model_sec": 315,
+   "g": 1.23,
+   "m": 0.41,
+   "infill": 15,
+   "layers": 90,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 89,
+    "Outer wall": 90,
+    "Gap infill": 4,
+    "Bottom surface": 1,
+    "Internal solid infill": 11,
+    "Sparse infill": 2,
+    "Floating vertical shell": 3,
+    "Bridge": 2,
+    "Top surface": 2
+   },
+   "problems": []
+  },
+  "13_pin_fit3": {
+   "sec": 896,
+   "model_sec": 311,
+   "g": 1.22,
+   "m": 0.41,
+   "infill": 15,
+   "layers": 90,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 89,
+    "Outer wall": 90,
+    "Gap infill": 4,
+    "Bottom surface": 1,
+    "Internal solid infill": 11,
+    "Sparse infill": 2,
+    "Floating vertical shell": 3,
+    "Bridge": 2,
+    "Top surface": 2
+   },
+   "problems": []
+  },
+  "14_trim_plate": {
+   "sec": 742,
+   "model_sec": 157,
+   "g": 2.35,
+   "m": 0.79,
+   "infill": 100,
+   "layers": 15,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 28,
+    "Outer wall": 29,
+    "Bottom surface": 1,
+    "Internal solid infill": 7,
+    "Sparse infill": 7,
+    "Floating vertical shell": 1,
+    "Top surface": 1,
+    "Gap infill": 1
+   },
+   "problems": []
+  },
+  "15_balance_200": {
+   "sec": 1161,
+   "model_sec": 576,
+   "g": 6.76,
+   "m": 2.27,
+   "infill": 100,
+   "layers": 45,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 88,
+    "Outer wall": 89,
+    "Bottom surface": 1,
+    "Internal solid infill": 9,
+    "Sparse infill": 39,
+    "Floating vertical shell": 3,
+    "Top surface": 1,
+    "Gap infill": 1
+   },
+   "problems": []
+  },
+  "90_test_coupon": {
+   "sec": 2164,
+   "model_sec": 1578,
+   "g": 9.64,
+   "m": 3.23,
+   "infill": 15,
+   "layers": 120,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 403,
+    "Outer wall": 405,
+    "Bottom surface": 1,
+    "Internal solid infill": 115,
+    "Sparse infill": 89,
+    "Floating vertical shell": 23,
+    "Bridge": 13,
+    "Top surface": 8,
+    "Gap infill": 67
+   },
+   "problems": []
+  },
+  "91_tenon_gauge": {
+   "sec": 856,
+   "model_sec": 270,
+   "g": 1.29,
+   "m": 0.43,
+   "infill": 15,
+   "layers": 50,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 49,
+    "Outer wall": 50,
+    "Bottom surface": 1,
+    "Internal solid infill": 11,
+    "Sparse infill": 35,
+    "Floating vertical shell": 2,
+    "Bridge": 2,
+    "Top surface": 2,
+    "Gap infill": 1
+   },
+   "problems": []
+  },
+  "16_m2_ring": {
+   "sec": 696,
+   "model_sec": 111,
+   "g": 1.01,
+   "m": 0.34,
+   "infill": 15,
+   "layers": 20,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 38,
+    "Outer wall": 39,
+    "Bottom surface": 1,
+    "Internal solid infill": 9,
+    "Sparse infill": 6,
+    "Floating vertical shell": 3,
+    "Gap infill": 3,
+    "Top surface": 2
+   },
+   "problems": []
+  },
+  "17_lan_cap": {
+   "sec": 1000,
+   "model_sec": 414,
+   "g": 1.19,
+   "m": 0.4,
+   "infill": 15,
+   "layers": 62,
+   "features": {
+    "Custom": 2,
+    "Outer wall": 77,
+    "Gap infill": 110,
+    "Inner wall": 63,
+    "Overhang wall": 5,
+    "Bridge": 2,
+    "Internal solid infill": 9,
+    "Sparse infill": 37,
+    "Floating vertical shell": 7,
+    "Top surface": 2
+   },
+   "problems": []
+  }
+ }
+}

@@ -1,0 +1,38 @@
+{
+ "nod_gear": {
+  "worst_overlap_mm3": 0.0,
+  "at_pitch": 85.0,
+  "pinion_free_deg": 4.2,
+  "head_play_deg": 0.38
+ },
+ "yaw_gear": {
+  "worst_overlap_mm3": 0.0,
+  "at_yaw": 174.0,
+  "pinion_free_deg": 3.8,
+  "yoke_play_deg": 0.95
+ },
+ "nod_stops": {
+  "low": -5.3,
+  "high": 86.9
+ },
+ "yaw_stops": {
+  "pos": 175.4,
+  "neg": -175.4,
+  "rub_between": 0.0
+ },
+ "lock_holes_blocked_mm3": [
+  0.0,
+  0.0
+ ],
+ "rotor_gap_by_pitch": {
+  "0.0": 6.3,
+  "20.0": 6.3,
+  "40.0": 6.3,
+  "54.7": 6.3,
+  "60.0": 6.3,
+  "70.0": 6.2,
+  "80.0": 5.3,
+  "85.0": 4.3,
+  "87.0": 2.9
+ }
+}

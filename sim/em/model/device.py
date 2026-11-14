@@ -7,7 +7,7 @@
   yoke   요크: 모터 1, 모터 2, 그 전선, 전원선(요크 구간)
   base   받침: 배터리
   plate  도는 금속판 (크기·모양은 바꿀 수 있다)
-  cw     균형추(강철 볼트 뭉치)
+  cw     균형추 (100원 동전 더미)
 먹임 선에 1V 를 걸어 먼 곳의 전기장을 구한다. 보내는 무늬와 받는 무늬는 같으므로(상반성), 이것이 곧 '그 방향에서 온 전파를 얼마나 세게 받는가'다.
 """
 import os as _os, sys as _sys; _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))); import empaths      # noqa: E401  sim/em 의 길잡이
@@ -178,7 +178,7 @@ def add_plate(m, spin, kind="flat", R=None, w=None, z0=None, z1=None, cell=7.5, 
         raise ValueError(kind)
 
 
-def add_cw(m, spin, n_coin=9):
+def add_cw(m, spin, n_coin=D.N_COIN):
     """균형추: 판 반대편 통에 든 100원 동전 n 개 (지름 24, 두께 1.5 x n 의 금속 원기둥으로 본다. 통의 막힌 쪽 = 위쪽부터 쌓인다). parts2.coins 와 같은 자리."""
     c, s = np.cos(np.radians(spin)), np.sin(np.radians(spin))
     p = lambda x, y, z: (c * x - s * y, s * x + c * y, z)

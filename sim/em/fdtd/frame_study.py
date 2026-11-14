@@ -5,7 +5,7 @@
 
 NEC2 는 금속만 다룰 수 있어서 플라스틱 틀은 시간 영역 격자 풀이(FDTD)인 gprMax 로 본다. 플라스틱(PLA)은 유전율 2.75, 손실각 0.01 로 둔다.
 안테나(짧은 세로 막대) 둘레 반지름 0.30m 원 위 72곳에서 받는 세기를 판 없을 때와 견준다. 판을 돌리는 것과 같은 그림이다 (판은 0도 쪽에 있다).
-틀은 실제보다 조금 두껍고 넓게 넣었다 (격자 한 칸 2.5mm. 실제 앞 테두리는 2mm, 위 띠 양끝은 낮다): 나쁜 쪽으로 본 것이다."""
+틀은 실제보다 조금 두껍고 넓게 넣었다 (격자 한 칸 2.5mm. 실제 바닥은 2.0, 판 앞으로 나온 테두리·턱·누름쇠는 0.15~2.4): 나쁜 쪽으로 본 것이다."""
 import os as _os, sys as _sys; _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))); import empaths      # noqa: E401  sim/em 의 길잡이
 import os, sys, json, subprocess
 import numpy as np
@@ -14,10 +14,12 @@ D = 0.0025; X = Y = 0.72; Z = 0.52; C = (0.36, 0.36, 0.24); R = 0.30; F0 = 2.437
 EPS, TAND = 2.75, 0.01
 SIG = 2 * np.pi * F0 * 8.854e-12 * EPS * TAND
 s = lambda v: round(v / D) * D
-# 판 (머리 좌표의 mm 값을 그대로: 반지름 80, 폭 100, 아래 -58, 위 92). 틀 (p2.py 와 같은 치수, 나쁜 쪽으로 둥글림): 옆 테두리 4, 아래 1, 위 띠 8.5,
-# 판 위에 3mm 겹침, 뒤 받침(z 2~40)과 세로 살(폭 6), 두께 앞뒤 2.5mm
+# 판 (머리 좌표의 mm 값을 그대로: 반지름 80, 폭 100, 아래 -58, 위 92). 판 틀 (p2.py 와 같은 치수, 나쁜 쪽으로 둥글림, 2026-11-15 한 장짜리 틀):
+#   판 뒤: 바닥 테두리(판 둘레 3mm) + 가로대(z 8~34) + 받침(|y| 28, z 2~40), 두께 2.5
+#   판 앞: 홈 둘레 벽(옆 2, 아래 1, 위 띠 8.5), 아래 턱(|y| 46, 판 위 2.5mm), 누름쇠(|y| 30.5, z 89~100), 두께 2.5
 PL = dict(x=0.080, y0=-0.050, y1=0.050, z0=-0.058, z1=0.092)
-FR = dict(out_y=0.054, out_z0=-0.0595, out_z1=0.1005, win_y=0.047, win_z0=-0.055, win_z1=0.089, bar_z0=0.0025, bar_z1=0.040, spine_y=0.003, t=0.0025)
+FR = dict(out_y=0.0525, out_z0=-0.0600, out_z1=0.1005, win_y=0.047, win_z0=-0.055, win_z1=0.089, band_z0=0.0075, band_z1=0.0350, pad_y=0.0285, pad_z0=0.0, pad_z1=0.040,
+          lip_y=0.046, lip_z1=-0.0555, cl_y=0.0305, cl_z0=0.0875, cl_z1=0.1005, t=0.0025)
 
 
 def deck(name, plate, frame):
@@ -25,11 +27,15 @@ def deck(name, plate, frame):
          "#waveform: gaussiandot 1 %g src" % F0, "#hertzian_dipole: z %g %g %g src" % C, "#material: %g %g 1 0 pla" % (EPS, SIG)]
     cx, cy, cz = C; xp = s(cx + PL["x"])
     if frame:
-        t = FR["t"]
-        L.append("#box: %g %g %g %g %g %g pla" % (xp - t, s(cy - FR["out_y"]), s(cz + FR["out_z0"]), xp + t, s(cy + FR["out_y"]), s(cz + FR["out_z1"])))
-        L.append("#box: %g %g %g %g %g %g free_space" % (xp - t, s(cy - FR["win_y"]), s(cz + FR["win_z0"]), xp + t, s(cy + FR["win_y"]), s(cz + FR["win_z1"])))
-        L.append("#box: %g %g %g %g %g %g pla" % (xp - t, s(cy - FR["win_y"]), s(cz + FR["bar_z0"]), xp, s(cy + FR["win_y"]), s(cz + FR["bar_z1"])))
-        L.append("#box: %g %g %g %g %g %g pla" % (xp - t, s(cy - FR["spine_y"]), s(cz + FR["win_z0"]), xp, s(cy + FR["spine_y"]), s(cz + FR["win_z1"])))
+        t = FR["t"]; F = lambda x0, y0, z0, x1, y1, z1, mat: L.append("#box: %g %g %g %g %g %g %s" % (x0, s(cy + y0), s(cz + z0), x1, s(cy + y1), s(cz + z1), mat))
+        F(xp - t, -FR["out_y"], FR["out_z0"], xp, FR["out_y"], FR["out_z1"], "pla")                                    # 판 뒤 바닥
+        F(xp - t, -FR["win_y"], FR["win_z0"], xp, FR["win_y"], FR["win_z1"], "free_space")                             # 바닥 창
+        F(xp - t, -FR["win_y"], FR["band_z0"], xp, FR["win_y"], FR["band_z1"], "pla")                                  # 가로대
+        F(xp - t, -FR["pad_y"], FR["pad_z0"], xp, FR["pad_y"], FR["pad_z1"], "pla")                                    # 받침
+        F(xp, -FR["out_y"], FR["out_z0"], xp + t, FR["out_y"], FR["out_z1"], "pla")                                    # 판 앞: 홈 둘레 벽과 위 띠
+        F(xp, PL["y0"], PL["z0"], xp + t, PL["y1"], PL["z1"], "free_space")                                           # 홈 (판 앞면 위는 비어 있다)
+        F(xp, -FR["lip_y"], PL["z0"], xp + t, FR["lip_y"], FR["lip_z1"], "pla")                                        # 아래 턱
+        F(xp, -FR["cl_y"], FR["cl_z0"], xp + t, FR["cl_y"], FR["cl_z1"], "pla")                                        # 누름쇠
     if plate:
         L.append("#plate: %g %g %g %g %g %g pec" % (xp, s(cy + PL["y0"]), s(cz + PL["z0"]), xp, s(cy + PL["y1"]), s(cz + PL["z1"])))
     for k in range(72):

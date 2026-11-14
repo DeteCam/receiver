@@ -363,8 +363,8 @@
  },
  {
   "group": "6",
-  "step": "판 틀 (뒤) -> 판 받이",
-  "how": "바깥에서 대고 M3 접시머리 4개 + 너트",
+  "step": "판 틀 -> 판 받이",
+  "how": "바깥에서 대고 M3 x 6 접시머리 4개 + 너트",
   "path_overlap_mm3": 0.0,
   "at_mm": null,
   "seat_overlap_mm3": 0.0,
@@ -373,37 +373,26 @@
  },
  {
   "group": "6",
-  "step": "알루미늄 판 -> 앞 틀 주머니",
-  "how": "앞 틀을 엎어 놓고 판을 얹는다",
+  "step": "알루미늄 판 -> 판 틀 홈",
+  "how": "30도 세워 아래 변을 턱 밑으로 민 뒤 눕힌다",
+  "path_overlap_mm3": 0.0,
+  "seat_overlap_mm3": 0.0,
+  "ok": true,
+  "note": "판 아래 바깥 모서리와 턱 밑면 사이 0.25 mm"
+ },
+ {
+  "group": "6",
+  "step": "누름쇠 -> 틀 위 띠 (판을 넣은 뒤)",
+  "how": "바깥에서 대고 M3 x 8 접시머리 2개 + 너트 (틀 뒷면)",
   "path_overlap_mm3": 0.0,
   "at_mm": null,
   "seat_overlap_mm3": 0.0,
   "ok": true,
-  "note": ""
+  "note": "누름쇠가 판 위 변을 누른다 (누름쇠 자리는 판 앞면보다 0.2 낮다)"
  },
  {
   "group": "6",
-  "step": "앞 틀(판을 넣은 채) -> 뒤 틀: 걸쇠를 구멍에",
-  "how": "2mm 위에서 뒤 틀에 댄다",
-  "path_overlap_mm3": 0.0,
-  "at_mm": null,
-  "seat_overlap_mm3": 0.0,
-  "ok": true,
-  "note": ""
- },
- {
-  "group": "6",
-  "step": "앞 틀: 아래로 밀어 걸쇠를 건다",
-  "how": "2mm 아래로 민다, 위 나사 M3 접시머리 2개",
-  "path_overlap_mm3": 0.0,
-  "at_mm": null,
-  "seat_overlap_mm3": 0.0,
-  "ok": true,
-  "note": "걸쇠 4개가 뒤 틀 뒷면에 걸린다. 위 나사가 다시 올라가지 못하게 막는다"
- },
- {
-  "group": "6",
-  "step": "동전 9개 -> 균형추 통",
+  "step": "동전 12개 -> 균형추 통",
   "how": "아래에서 넣는다 (막대를 뒤집어 놓고)",
   "path_overlap_mm3": 0.0,
   "at_mm": null,
@@ -419,7 +408,7 @@
   "at_mm": null,
   "seat_overlap_mm3": 0.0,
   "ok": true,
-  "note": "동전 9개 + 채움 3개일 때 마개 턱과 통 입구 사이 틈 0.7 mm"
+  "note": "동전 12개 + 채움 0개일 때 마개 턱과 통 입구 사이 틈 0.4 mm"
  },
  {
   "group": "6",

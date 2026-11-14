@@ -41,9 +41,9 @@ def build(d, mu=0.6, wall_x=None, fixed=False):
     ax = TM.head_to_world([0, 0, 0], 0, 0) - np.array([0, 0, H_T])                         # 판 회전축이 지나는 점 (머리 덩어리 좌표)
     r = inertial([(g, TM.head_to_world(c, 0, 0, 0.0)) for _, g, c in d.rotor], TM.head_to_world([0, 0, 0], 0, 0))
     R = d.R * 1e-3; hh = COV_Z1 / 2 * 1e-3
-    fx0, fx1 = FL_X1 - FR_BACK_T, FL_X1 + FR_RIB + FR_POCKET + FR_FRONT_T; fz0, fz1 = BL_Z0 - FR_END, BL_Z0 + d.length + FR_END_TOP
+    fx0, fx1 = FL_XH, FL_X1 + AL_T + CL_T; fz0, fz1 = BL_Z0 - FR_END, BL_Z0 + d.length + FR_END_TOP                   # 판 틀 뒷면 ~ 누름쇠 바깥면
     pc = TM.head_to_world([(fx0 + fx1) / 2, 0, (fz0 + fz1) / 2], 0, 0) - TM.head_to_world([0, 0, 0], 0, 0)          # 판 틀(판을 넣은 채) 가운데 (회전부 좌표)
-    fw = float(np.sqrt(FR_ENV ** 2 - (FL_X1 + FR_RIB) ** 2))                                                         # 틀 반폭 (반지름 FR_ENV 로 깎인 옆 테두리)
+    fw = PLATE_W / 2 + FR_GAP + FR_WALL                                                                               # 틀 반폭 (옆 테두리 바깥면)
     wall = "" if wall_x is None else '<geom name="wall" type="box" pos="%.4f 0 0.5" size="0.005 1 0.5" contype="2" conaffinity="2" friction="0.4 0.005 0.0001" rgba="0.8 0.8 0.8 0.3"/>' % (wall_x + 0.005)
     return """<mujoco model="detecam">
   <option timestep="0.0005" gravity="0 0 -9.81" integrator="implicitfast" cone="elliptic" impratio="5" noslip_iterations="20"/>

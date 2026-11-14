@@ -565,23 +565,18 @@ def crown():
 
 # ----------------------------------------------------------------- 회전부 (머리 좌표, 판은 +X 쪽)
 def al_plate(length=150.0, t=AL_T):
-    """알루미늄 판 (사는 것, 100 x 150, 두께 0.3~0.5). 구멍을 뚫지 않는다: 앞뒤 판 틀이 테두리를 물어 잡는다."""
+    """알루미늄 판 (사는 것, 100 x 150 x 1T). 구멍을 뚫지 않는다: 판 틀의 홈에 들어가 아래 턱과 누름쇠가 잡는다."""
     return box(FL_X1, FL_X1 + t, -PLATE_W / 2, PLATE_W / 2, BL_Z0, BL_Z0 + length)
 
 
-def frame_front_seated(length=150.0):
-    """조립한 자리의 앞 틀: 주머니 바닥의 누름 턱(0.25)이 0.5T 판에 얹혀 앞 틀이 0.25mm 떠 있다"""
-    return frame_front(length).translate([FR_RIB, 0, 0])
-
-
 def fr_env(dx=0.0):
-    """틀 바깥 반지름 한계 (판 회전축 Z 에서 FR_ENV 안). dx: 조립한 자리에서 X 로 옮겨 앉는 부품이면 그만큼"""
+    """판 쪽 회전부의 바깥 반지름 한계 (판 회전축 Z 에서 FR_ENV 안). dx: 조립한 자리에서 X 로 옮겨 앉는 부품이면 그만큼"""
     return cz(FR_ENV, BL_Z0 - 30.0, BL_Z0 + 230.0, -dx, 0.0, 360)
 
 
-def _fr_outline(length=150.0, z0=None):
-    """판 틀의 바깥 테두리 (단면 Y-Z): 둥근 귀의 사각형에서 위 띠의 양쪽을 비스듬히 깎는다 (가운데 |Y| < FR_TOP_FLAT 만 높다)"""
-    yo = PLATE_W / 2 + FR_SIDE; z0 = BL_Z0 - FR_END if z0 is None else z0
+def _fr_outline(length=150.0):
+    """판 틀의 바깥 테두리 (단면 Y-Z): 귀를 둥글린 사각형에서 위 띠의 양쪽을 비스듬히 깎는다 (가운데 |Y| < FR_TOP_FLAT 만 높다)"""
+    yo = PLATE_W / 2 + FR_GAP + FR_WALL; z0 = BL_Z0 - FR_END
     z1 = BL_Z0 + length + FR_END_TOP; zs = BL_Z0 + length + FR_END_TOPSIDE
     k = (z1 - zs) / (yo - FR_TOP_FLAT)                                         # 비탈 (Z / Y)
     ze = zs - k * 1.0; yt = FR_TOP_FLAT - 1.0 / k
@@ -590,81 +585,68 @@ def _fr_outline(length=150.0, z0=None):
 
 
 def _fr_window(length=150.0):
-    """판 틀의 창 (판이 보이는 곳, 단면 Y-Z): 테두리가 판 둘레를 FR_LAP 만큼 덮는다"""
+    """판 틀 바닥의 창 (판 뒷면이 보이는 곳, 단면 Y-Z): 바닥 테두리가 판 둘레를 FR_LAP 만큼 받친다"""
     return rrect(-PLATE_W / 2 + FR_LAP, PLATE_W / 2 - FR_LAP, BL_Z0 + FR_LAP, BL_Z0 + length - FR_LAP, 2.0)
 
 
-def frame_top_screws(length=150.0):
-    """위 나사 2개의 자리 (Y, Z): 판 위 변 위의 띠. M3 x 8 접시머리가 앞 틀을 지나 뒤 틀 나사 받이에 스스로 나사산을 내며 들어간다"""
+def _fr_pocket(length=150.0):
+    """판이 들어가는 홈 (단면 Y-Z): 판보다 한쪽 FR_GAP 씩 크다"""
+    g = FR_GAP
+    return CS.square([PLATE_W + 2 * g, length + 2 * g]).translate([-PLATE_W / 2 - g, BL_Z0 - g])
+
+
+def clamp_screws(length=150.0):
+    """누름쇠 나사 2개의 자리 (Y, Z): 판 위 변 위의 띠. M3 x 8 접시머리가 누름쇠와 위 띠를 지나 틀 뒷면의 너트에 들어간다"""
     return [(s * FR_TOP_Y, BL_Z0 + length + FR_TOP_DZ) for s in (1, -1)]
 
 
-def frame_lugs(length=150.0):
-    """앞 틀 걸쇠 4개 (옆 부호, 몸통 아래끝 Z): 옆마다 아래·가운데. 조립한 자리에서 몸통 아래끝이 뒤 틀 걸쇠 구멍 아래 변에 얹힌다"""
-    return [(s, BL_Z0 + dz * length / 150.0) for s in (1, -1) for dz in LUG_DZ]
+def lip_xz(length=150.0):
+    """아래 턱 (단면 X-Z, 아래 벽과 합친 모양): 밑면과 바깥면이 모두 45도라 앞면을 위로 해서 받침 없이 뽑힌다.
+    판 아래 변을 턱 밑으로 밀어 넣으면 판 앞면 모서리와 턱 밑면 사이에 FR_LIP_PLAY 만큼 틈이 남는다."""
+    z0 = BL_Z0 - FR_END; zw = BL_Z0 - FR_GAP; xt = FL_X1 + FR_LIP_TOP
+    ku = FL_X1 + AL_T + FR_LIP_PLAY - BL_Z0                                 # 밑면: X - Z = ku
+    ko = ku + FR_LIP * np.sqrt(2.0)                                          # 바깥면: X - Z = ko
+    return poly([(ku + zw, zw), (xt, xt - ku), (xt, xt - ko), (ko + z0, z0), (FL_X1, z0), (FL_X1, zw)])
 
 
-def _lug_y(s, grow=0.0):
-    return (LUG_Y[0] - grow, LUG_Y[1] + grow) if s > 0 else (-LUG_Y[1] - grow, -LUG_Y[0] + grow)
-
-
-def frame_back(length=150.0):
-    """판 틀 (뒤): 판 받이와 알루미늄 판 사이의 테두리 + 가운데 받침. 받침을 판 받이에 M3 접시머리 나사 4개로 조인다 (판 받이의 너트).
-    옆 테두리의 걸쇠 구멍 4곳에 앞 틀 걸쇠가 들어가고, 위 띠의 나사 받이 2곳에 위 나사가 들어온다. 판 아래 변은 감싸지 않는다 (앞 틀이 감싼다).
-    바깥 둘레는 판 회전축에서 반지름 FR_ENV 안으로 깎는다. 출력: 판에 닿는 면(X 가 큰 쪽)을 바닥에 (평평하다)."""
-    win = _fr_window(length)
-    x1 = FL_X1; xr = FL_X1 - FR_BACK_T
-    ring = prism_xy_to_yz(_fr_outline(length, BL_Z0 + FR_BACK_Z0) - win, xr, x1)
+def plate_frame(length=150.0):
+    """판 틀 (한 장): 뒷면이 평평한 받침판에 판 크기만 한 홈(깊이 FR_DEPTH)을 낸 것. 1T 판이 홈에 쏙 들어가 판 앞면이 테두리보다 0.15 낮다.
+    바닥은 테두리(판 둘레를 FR_LAP 만큼 받친다) + 가로대 + 판 받이에 닿는 받침이고, 받침을 판 받이에 M3 x 6 접시머리 4개로 조인다 (판 받이의 너트).
+    판 아래 변은 45도 아래 턱 밑으로, 위 변은 누름쇠(plate_clamp)로 누른다. 누름쇠 나사 2개의 너트는 틀 뒷면의 육각 자리에 넣는다.
+    바깥 둘레는 판 회전축에서 반지름 FR_ENV 안으로 깎는다. 출력: 뒷면(X 가 작은 쪽, 판 받이에 닿는 면)을 바닥에. 받침이 필요 없다."""
+    outer = _fr_outline(length); win = _fr_window(length); pocket = _fr_pocket(length)
+    xb, xf = FL_XH, FL_X1; xw = FL_X1 + FR_DEPTH
     yw = PLATE_W / 2 - FR_LAP + 0.5
-    pad = box(FL_XH, x1, -FL_HW - 1.0, FL_HW + 1.0, FL_Z0, BAR_Z1)                                  # 판 받이에 닿는 받침 (판 받이보다 1mm 넓게)
-    arms = box(xr, x1, -yw, yw, FL_Z0 + 6.0, BAR_Z1 - 6.0)                                           # 받침과 옆 테두리를 잇는 가로대
-    spine = box(xr, x1, -3.0, 3.0, BL_Z0 + FR_LAP - 0.5, BL_Z0 + length - FR_LAP + 0.5)              # 세로 살: 판 가운데를 받친다
-    bosses = [cx(3.0, FR_BOSS_X0, x1, y, z) for y, z in frame_top_screws(length)]                     # 위 나사 받이 (뒤로 4mm 나온다)
-    m = union([ring, pad, arms, spine] + bosses)
-    cut = []
-    for y, z in PLATE_BOLTS:                                                                         # M3 접시머리: 판 쪽 면에서 들어간다 (머리가 면과 같은 높이)
-        cut.append(cx(1.7, FL_XH - 1, x1 + 1, y, z))
-        cut.append(M.cylinder(1.75, 1.65, 3.35).rotate([0, 90, 0]).translate([x1 - 1.75 + 0.01, y, z]))
-    for y, z in frame_top_screws(length):
-        cut.append(cx(PILOT3, FR_BOSS_X0 - 1, x1 + 1, y, z))                                        # M3 가 스스로 나사산을 낸다
-    for s_, zl in frame_lugs(length):                                                                # 걸쇠 구멍: 걸쇠를 2mm 위에서 끼우고 아래로 민다
-        y0, y1 = _lug_y(s_, 0.1)
-        cut.append(box(xr - 1, x1 + 1, y0, y1, zl, zl + LUG_STEM + LUG_SLIDE + 0.2))
+    floor_cs = (outer - win) + CS.square([2 * yw, BAR_Z1 - FL_Z0 - 12.0]).translate([-yw, FL_Z0 + 6.0]) \
+        + CS.square([2 * (FL_HW + 1.0), BAR_Z1 - FL_Z0]).translate([-FL_HW - 1.0, FL_Z0])        # 테두리 + 가로대 + 받침 (판 받이보다 1mm 넓게)
+    floor = prism_xy_to_yz(floor_cs ^ outer, xb, xf)
+    walls = prism_xy_to_yz(outer - pocket, xf - 0.01, xw)                                          # 홈 둘레 벽 (옆·아래·위 띠)
+    lip = prism_xz(lip_xz(length), -FR_LIP_HW, FR_LIP_HW)
+    m = union([floor, walls, lip])
+    zt = BL_Z0 + length + FR_GAP; z1 = BL_Z0 + length + FR_END_TOP
+    cut = [box(xw - FR_DEPTH + AL_T - CL_SEAT, xw + 1.0, -CL_HW - 0.3, CL_HW + 0.3, zt, z1 + 1.0)]   # 누름쇠 자리: 판 앞면보다 CL_SEAT 낮다
+    for y, z in PLATE_BOLTS:                                                                         # M3 접시머리: 홈 바닥에서 들어간다 (머리가 바닥보다 0.35 낮다. 판이 덮는다)
+        cut.append(cx(1.7, xb - 1, xf + 1, y, z))
+        cut.append(M.cylinder(1.75, 1.65, 3.35).rotate([0, 90, 0]).translate([xf - 1.75 + 0.01, y, z]))
+    for y, z in clamp_screws(length):
+        cut.append(cx(1.7, xb - 1, xw + 1, y, z))                                                    # 누름쇠 나사 구멍
+        cut.append(prism_xy_to_yz(hex_cs(5.8), xb - 1, xb + NUT_POCKET).translate([0, y, z]))      # 너트 자리 (뒷면에서 1.2 깊이, 너트가 1.2 나온다)
     return (m - union(cut)) ^ fr_env()
 
 
-def frame_front(length=150.0, t=FR_POCKET):
-    """판 틀 (앞): 판 앞면 테두리를 덮고, 판 둘레(옆·위·아래)를 감싸 판 모서리가 밖으로 나오지 않게 한다. 안쪽 주머니 깊이 = 0.5T.
-    주머니 바닥의 누름 턱(0.25)이 판을 뒤 틀에 누른다 (0.3~0.5T). 옆 테두리 뒤쪽에 걸쇠 4개 (뒤 틀 구멍에 2mm 위에서 끼우고 아래로 민다),
-    위 띠에 M3 x 8 접시머리 나사 2개. 바깥 둘레는 판 회전축에서 반지름 FR_ENV 안으로 깎는다 (조립한 자리 기준).
-    출력: 바깥면(X 가 큰 쪽)을 바닥에. 걸쇠 갈고리(1.5mm)와 옆 테두리 바깥 비탈이 조금 떠서 나온다."""
-    outer = _fr_outline(length); win = _fr_window(length)
-    x0, x1 = FL_X1, FL_X1 + t + FR_FRONT_T
-    m = prism_xy_to_yz(outer - win, x0, x1)
-    g = FR_GAP
-    pocket = box(x0 - 1, FL_X1 + t, -PLATE_W / 2 - g, PLATE_W / 2 + g, BL_Z0 - g, BL_Z0 + length + g)    # 판이 들어가는 자리
-    cut = [pocket]
-    for y, z in frame_top_screws(length):
-        cut.append(cx(1.7, x0 - 1, x1 + 1, y, z))                                                    # M3 지나가는 구멍
+def plate_clamp(length=150.0):
+    """판 누름쇠: 판 위 변을 CL_LAP 만큼 덮고 틀 위 띠에 M3 x 8 접시머리 2개로 조인다 (너트는 틀 뒷면). 조립한 자리 기준 (밑면 = 판 앞면).
+    누름쇠 자리가 판 앞면보다 CL_SEAT 낮아서 나사를 조이면 누름쇠가 판 위 변을 누른다. 출력: 밑면(평평한 면)을 바닥에."""
+    x0 = FL_X1 + AL_T; x1 = x0 + CL_T
+    za = BL_Z0 + length - CL_LAP; zb = BL_Z0 + length + FR_END_TOP - 0.5
+    m = prism_xy_to_yz(rrect(-CL_HW, CL_HW, za, zb, 2.0), x0, x1)
+    cut = []
+    for y, z in clamp_screws(length):
+        cut.append(cx(1.7, x0 - 1, x1 + 1, y, z))
         cut.append(M.cylinder(1.75, 1.65, 3.35).rotate([0, 90, 0]).translate([x1 - 1.75 + 0.01, y, z]))   # 접시머리 자리
-    m = m - union(cut)
-    ch = 0.8                                                                                         # 바깥 둘레 모서리를 깎아 손에 닿는 곳을 무디게
-    lip = M.batch_hull([prism_xy_to_yz(outer.offset(-ch, JoinType.Round), x1 - 0.01, x1), prism_xy_to_yz(outer, x0, x1 - ch)])
-    m = m ^ lip
-    zb = BL_Z0 - FR_END                                                                              # 아래 띠의 바깥 모서리를 45도로 2mm 깎는다: 깊이 숙였을 때 받침 덮개·요크와의 틈
-    m = m - prism_xz(poly([(x1 - 2.0 - 1.0, zb - 1.0), (x1 + 2.0, zb - 1.0), (x1 + 2.0, zb + 4.0)]), -PLATE_W, PLATE_W)
-    xf = FL_X1 + t; hw = PLATE_W / 2                                                                 # 누름 턱: 주머니 바닥에서 0.25 (옆 변마다 1줄, 위아래 1줄)
-    ribs = [box(xf - FR_RIB, xf + 0.01, s_ * (hw - 2.0) - 0.5, s_ * (hw - 2.0) + 0.5, BL_Z0 + 1.0, BL_Z0 + length - 1.0) for s_ in (1, -1)]
-    ribs += [box(xf - FR_RIB, xf + 0.01, -hw + 6.0, hw - 6.0, z_ - 0.5, z_ + 0.5) for z_ in (BL_Z0 + 1.5, BL_Z0 + length - 1.5)]
-    lugs = []
-    for s_, zl in frame_lugs(length):                                                                # 걸쇠: 몸통이 뒤 틀 구멍을 지나 갈고리가 뒤 틀 뒷면에 걸린다
-        y0, y1 = _lug_y(s_)
-        xa, xb = LUG_X[0] - FR_RIB, LUG_X[1] - FR_RIB
-        lugs.append(box(xa, x0 + 0.01, y0, y1, zl, zl + LUG_STEM))
-        lugs.append(box(xa, xb, y0, y1, zl - LUG_HOOK, zl + 0.01))
-    k = FR_BEVEL + x1                                                                                # 긴 변 바깥 모서리 45도: |Y| + X <= k (바깥면에서 |Y| = FR_BEVEL)
-    bevel = extrude_z(poly([(x1 - 30.0, -(k - x1 + 30.0)), (x1 + 1.0, -(k - x1 - 1.0)), (x1 + 1.0, k - x1 - 1.0), (x1 - 30.0, k - x1 + 30.0)]), BL_Z0 - 30.0, BL_Z0 + length + 30.0)
-    return union([m] + ribs + lugs) ^ fr_env(FR_RIB) ^ bevel
+    ch = 0.6                                                                                         # 바깥 둘레 모서리를 깎아 손에 닿는 곳을 무디게
+    lip = M.batch_hull([prism_xy_to_yz(rrect(-CL_HW + ch, CL_HW - ch, za + ch, zb - ch, 1.4), x1 - 0.01, x1), prism_xy_to_yz(rrect(-CL_HW, CL_HW, za, zb, 2.0), x0, x1 - ch)])
+    return ((m ^ lip) - union(cut)) ^ fr_env()
 
 
 def hex_cs(af):
@@ -678,7 +660,7 @@ def rotor_bar(d=D_BORE_D, flat=D_BORE_FLAT):
     축에는 M3 나사 1개로 조인다 (축의 납작한 면을 누른다). 속을 꽉 채워(100%) 출력한다. 출력: 뒤집어서 (윗면을 바닥에)."""
     hub = cz(9.5, M1_ZT + 2.0, BAR_Z1)
     mid = chbox(-9.5, 9.5, -8.0, 8.0, BAR_Z0, BAR_Z1, 1.2)
-    xf = FL_XH - FL_T                                                                  # 판 받이 안쪽 면 (판 틀 뒤판 두께만큼 안으로 들어왔다)
+    xf = FL_XH - FL_T                                                                  # 판 받이 안쪽 면 (판 틀 바닥 두께만큼 안으로 들어왔다)
     arm1 = M.batch_hull([mid, chbox(58.0, 62.0, -6.0, 6.0, BAR_Z0, BAR_Z1, 1.2)])
     flare = M.batch_hull([chbox(58.0, 62.0, -6.0, 6.0, BAR_Z0, BAR_Z1, 1.2), box(xf - 1.5, xf + 0.1, -FL_HW, FL_HW, BAR_Z0, BAR_Z1)])       # 막대가 판 받이 쪽으로 부채꼴로 넓어진다
     flange = box(xf, FL_XH, -FL_HW, FL_HW, FL_Z0, BAR_Z1)
@@ -726,16 +708,19 @@ def coin_spacer():
 
 
 def rotor_hw(length=150.0, n_coin=8, t=AL_T):
-    """회전부에 붙는 쇠붙이 (모양만): 판 틀 나사 4개(M3 접시머리)와 너트, 위 나사 2개(M3 접시머리), 마개 나사 머리, 축 고정 나사 머리. 돌 때 어디에 닿는지 볼 때 같이 넣는다."""
+    """회전부에 붙는 쇠붙이 (모양만): 판 틀 나사 4개(M3 x 6 접시머리)와 판 받이의 너트, 누름쇠 나사 2개(M3 x 8 접시머리)와 틀 뒷면의 너트,
+    마개 나사 머리, 축 고정 나사 머리. 돌 때 어디에 닿는지 볼 때 같이 넣는다."""
     out = []
     xf = FL_XH - FL_T
     for y, z in PLATE_BOLTS:
-        out.append(cx(1.5, FL_X1 - 8.0, FL_X1 - 1.7, y, z))                                         # 몸통 (접시머리 머리는 뒤 틀 안에 묻힌다)
-        out.append(prism_xy_to_yz(hex_cs(5.5), xf - 0.2, xf + 2.2).translate([0, y, z]))
-    x1 = FL_X1 + FR_RIB + FR_POCKET + FR_FRONT_T                                                     # 앞 틀 바깥면 (조립한 자리)
-    for y, z in frame_top_screws(length):
-        out.append(M.cylinder(1.7, 1.5, 3.0).rotate([0, 90, 0]).translate([x1 - 1.75, y, z]))        # M3 접시머리 (접시 자리에 묻힌다)
-        out.append(cx(PILOT3 - 0.01, x1 - 8.0, x1 - 1.7, y, z))                                    # 몸통: 스스로 나사산을 내므로 겹침 검사에는 속 지름(구멍 지름)으로 넣는다
+        out.append(M.cylinder(1.39, 1.55, 2.9).rotate([0, 90, 0]).translate([FL_X1 - 1.75 + 0.01, y, z]))   # 접시머리 (바닥보다 0.35 낮게 묻힌다. 구멍 비탈과 0.1 띄워 둔다)
+        out.append(cx(1.45, FL_X1 - 0.36 - 6.0, FL_X1 - 1.7, y, z))                               # 몸통 (6mm)
+        out.append(prism_xy_to_yz(hex_cs(5.5), xf - 0.2, xf + 2.2).translate([0, y, z]))          # 너트 (판 받이 안쪽 면에서 0.2 나온다)
+    x1 = FL_X1 + AL_T + CL_T                                                                         # 누름쇠 바깥면
+    for y, z in clamp_screws(length):
+        out.append(M.cylinder(1.39, 1.55, 2.9).rotate([0, 90, 0]).translate([x1 - 1.75 + 0.01, y, z]))
+        out.append(cx(1.45, x1 - 0.36 - 8.0, x1 - 1.7, y, z))
+        out.append(prism_xy_to_yz(hex_cs(5.5), FL_XH + NUT_POCKET - 2.4, FL_XH + NUT_POCKET).translate([0, y, z]))     # 너트 (틀 뒷면에서 1.2 나온다)
     zt = POD_Z0 - coin_gap(n_coin) - CAP_T
     for s in (1, -1):
         out.append(cz(2.8, zt - 2.4, zt, POD_XC, s * CAP_EAR_Y))
@@ -748,13 +733,13 @@ def coins(n_coin=8):
     return cz(COIN_D / 2, POD_Z1 - COIN_T * n_coin, POD_Z1, POD_XC, 0)
 
 
-COINS = {(150.0, 0.5): 9, (150.0, 0.3): 7}      # 판(길이, 두께)마다 넣는 100원 동전 수. mass.py 가 다시 계산해 이 표와 같은지 본다
+COINS = {(150.0, AL_T): N_COIN}      # 판(길이, 두께)마다 넣는 100원 동전 수. mass.py 가 다시 계산해 이 표와 같은지 본다
 
 
 def rotor_set(length=150.0, n_coin=None, t=AL_T, low_cap=False):
-    """돌아가는 것 전부를 한 덩어리로: 회전 막대, 알루미늄 판, 판 틀 앞뒤, 나사·너트 머리, 마개. low_cap=True 면 마개가 가장 아래로 내려온 경우(동전 3개)로 둔다 (걸리는 데가 없는지 볼 때)."""
+    """돌아가는 것 전부를 한 덩어리로: 회전 막대, 알루미늄 판, 판 틀, 누름쇠, 나사·너트, 마개. low_cap=True 면 마개가 가장 아래로 내려온 경우(동전 3개)로 둔다 (걸리는 데가 없는지 볼 때)."""
     n = COINS[(float(length), float(t))] if n_coin is None else n_coin; nc = 3 if low_cap else n
-    return union([rotor_bar(), al_plate(length, t), frame_back(length), frame_front_seated(length), rotor_hw(length, nc, t), coin_cap(nc)])
+    return union([rotor_bar(), al_plate(length, t), plate_frame(length), plate_clamp(length), rotor_hw(length, nc, t), coin_cap(nc)])
 
 
 def head_hw():
@@ -927,17 +912,18 @@ def assembly(yaw=0.0, pitch=0.0, spin=0.0, size="S", length=150.0, dummies=True,
     A["head_lid"] = (H(head_lid()), "H", c["body"], True)
     A["crown"] = (H(crown()), "H", c["accent"], True)
     A["sector"] = (H(sector_head()), "H", c["accent"], True)
+    nco = COINS[(float(length), float(AL_T))]
     A["rotor_bar"] = (R(rotor_bar()), "R", c["accent"], True)
-    A["coin_cap"] = (R(coin_cap()), "R", c["accent"], True)
-    A["frame_back"] = (R(frame_back(length)), "R", c["accent"], True)
-    A["frame_front"] = (R(frame_front_seated(length)), "R", c["accent"], True)
+    A["coin_cap"] = (R(coin_cap(nco)), "R", c["accent"], True)
+    A["plate_frame"] = (R(plate_frame(length)), "R", c["accent"], True)
+    A["plate_clamp"] = (R(plate_clamp(length)), "R", c["accent"], True)
     A["marker_frame"] = (H(marker_frame()), "H", c["accent"], True)
     A["keeper_r"] = (Y(pin_keeper(1)), "Y", c["accent"], True)
     A["keeper_l"] = (Y(pin_keeper(-1)), "Y", c["accent"], True)
     if dummies:
         A["plate"] = (R(al_plate(length)), "R", c["foil"], False)
-        A["rotor_hw"] = (R(rotor_hw(length)), "R", c["screw"], False)
-        A["coins"] = (R(coins()), "R", c["metal"], False)
+        A["rotor_hw"] = (R(rotor_hw(length, nco)), "R", c["screw"], False)
+        A["coins"] = (R(coins(nco)), "R", c["metal"], False)
         mb, mc = v1.motor_body_dummy()
         A["motor3"] = (H(v1._m1(mb)), "H", c["metal"], False)
         A["motor3_cap"] = (H(v1._m1(mc)), "H", c["cap"], False)

@@ -72,31 +72,24 @@
     "10_rotor_bar_fit2",
     "11_coin_cap",
     "12_coin_spacer",
-    "12_coin_spacer",
-    "12_coin_spacer",
-    "12_coin_spacer",
-    "12_coin_spacer",
-    "12_coin_spacer",
-    "12_coin_spacer",
-    "12_coin_spacer",
     "12_coin_spacer"
    ],
-   "sec": 5589,
-   "g": 43.14
+   "sec": 4927,
+   "g": 37.72
   },
   {
    "key": "5판_판틀",
    "title": "5판 · 판 틀",
    "files": [
-    "18_frame_back",
-    "19_frame_front"
+    "18_plate_frame",
+    "19_plate_clamp"
    ],
-   "sec": 3224,
-   "g": 21.34
+   "sec": 2519,
+   "g": 16.65
   }
  ],
- "total_sec": 53996,
- "total_g": 462.7,
+ "total_sec": 52629,
+ "total_g": 452.6,
  "optional": [
   {
    "key": "선택_받침통_L",

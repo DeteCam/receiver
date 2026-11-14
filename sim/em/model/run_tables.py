@@ -59,7 +59,7 @@ SHAPES = {
 JOBS["shape"] = [("geo_%s_%s" % (a, pn), parts, dict(plate=pk, **kw)) for pn, pk in SHAPES.items() for a, (parts, kw) in ANTS.items()]
 JOBS["shape_a"] = JOBS["shape"][0::2]; JOBS["shape_b"] = JOBS["shape"][1::2]           # 두 줄로 나눠 돌릴 때
 
-# 지금 설계 그대로 (판 틀로 감싼 알루미늄 판, 동전 9개 균형추, 요크·받침·배터리(두께 22)·전선): 받침 각 3개. 배포하는 무늬 표로 쓴다
+# 지금 설계 그대로 (판 틀에 넣은 1T 알루미늄 판, 동전 N_COIN(12)개 균형추, 요크·받침·배터리(두께 22)·전선): 받침 각 3개. 배포하는 무늬 표로 쓴다
 JOBS["dev"] = [("dev_y%+04d" % y, FULL, dict(yaw=float(y))) for y in (0, 120, -120)]
 JOBS["dev6"] = [("dev6_y%+04d" % y, FULL, dict(yaw=float(y))) for y in (-150, -90, -30, 30, 90, 150)]          # 여섯 자세로 잴 때 (plan_eval.py)
 

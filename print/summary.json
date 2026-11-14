@@ -816,67 +816,25 @@
      100.0,
      62.0,
      0
-    ],
-    [
-     "12_coin_spacer",
-     130.0,
-     62.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     160.0,
-     62.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     190.0,
-     62.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     85.0,
-     92.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     115.0,
-     92.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     145.0,
-     92.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     175.0,
-     92.0,
-     0
     ]
    ],
-   "sec": 5586,
-   "model_sec": 5000,
-   "g": 43.15,
-   "m": 14.47,
+   "sec": 4918,
+   "model_sec": 4333,
+   "g": 37.72,
+   "m": 12.65,
    "layers": 190,
    "max_z": 38.0,
    "features": {
     "Custom": 2,
-    "Inner wall": 784,
-    "Outer wall": 799,
+    "Inner wall": 686,
+    "Outer wall": 694,
     "Gap infill": 412,
-    "Bottom surface": 11,
-    "Internal solid infill": 435,
-    "Sparse infill": 266,
+    "Bottom surface": 4,
+    "Internal solid infill": 394,
+    "Sparse infill": 265,
     "Bridge": 6,
-    "Floating vertical shell": 44,
-    "Top surface": 32,
+    "Floating vertical shell": 43,
+    "Top surface": 25,
     "Overhang wall": 32
    },
    "settings": {
@@ -905,9 +863,9 @@
     {
      "name": "10_rotor_bar_fit1",
      "bbox": [
-      43.05,
+      42.8,
       133.0,
-      212.95,
+      213.2,
       187.0
      ],
      "dev": 0.0
@@ -941,80 +899,10 @@
       73.8
      ],
      "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      118.2,
-      50.2,
-      141.8,
-      73.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      148.2,
-      50.2,
-      171.8,
-      73.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      178.2,
-      50.2,
-      201.8,
-      73.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      73.2,
-      80.2,
-      96.8,
-      103.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      103.2,
-      80.2,
-      126.8,
-      103.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      133.2,
-      80.2,
-      156.8,
-      103.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      163.2,
-      80.2,
-      186.8,
-      103.8
-     ],
-     "dev": 0.0
     }
    ],
    "extent": [
-    43.47,
+    43.22,
     50.41,
     238.48,
     186.79,
@@ -1027,7 +915,7 @@
    ],
    "printer_model_id": "BL-P001",
    "problems": [],
-   "desc": "회전 막대(맞춤 1) + 균형추 통 마개 + 동전 채움 조각 9개. 채움 100%"
+   "desc": "회전 막대(맞춤 1) + 균형추 통 마개 + 동전 채움 조각 2개. 채움 100%"
   },
   "4판_회전부_맞춤2": {
    "name": "4판_회전부_맞춤2",
@@ -1057,67 +945,25 @@
      100.0,
      62.0,
      0
-    ],
-    [
-     "12_coin_spacer",
-     130.0,
-     62.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     160.0,
-     62.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     190.0,
-     62.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     85.0,
-     92.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     115.0,
-     92.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     145.0,
-     92.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     175.0,
-     92.0,
-     0
     ]
    ],
-   "sec": 5589,
-   "model_sec": 5004,
-   "g": 43.14,
-   "m": 14.47,
+   "sec": 4927,
+   "model_sec": 4342,
+   "g": 37.72,
+   "m": 12.65,
    "layers": 190,
    "max_z": 38.0,
    "features": {
     "Custom": 2,
-    "Inner wall": 784,
-    "Outer wall": 799,
-    "Gap infill": 413,
-    "Bottom surface": 11,
-    "Internal solid infill": 435,
-    "Sparse infill": 264,
+    "Inner wall": 686,
+    "Outer wall": 694,
+    "Gap infill": 420,
+    "Bottom surface": 4,
+    "Internal solid infill": 393,
+    "Sparse infill": 267,
     "Bridge": 6,
-    "Floating vertical shell": 45,
-    "Top surface": 32,
+    "Floating vertical shell": 43,
+    "Top surface": 25,
     "Overhang wall": 32
    },
    "settings": {
@@ -1146,9 +992,9 @@
     {
      "name": "10_rotor_bar_fit2",
      "bbox": [
-      43.05,
+      42.8,
       133.0,
-      212.95,
+      213.2,
       187.0
      ],
      "dev": 0.0
@@ -1182,80 +1028,10 @@
       73.8
      ],
      "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      118.2,
-      50.2,
-      141.8,
-      73.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      148.2,
-      50.2,
-      171.8,
-      73.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      178.2,
-      50.2,
-      201.8,
-      73.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      73.2,
-      80.2,
-      96.8,
-      103.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      103.2,
-      80.2,
-      126.8,
-      103.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      133.2,
-      80.2,
-      156.8,
-      103.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      163.2,
-      80.2,
-      186.8,
-      103.8
-     ],
-     "dev": 0.0
     }
    ],
    "extent": [
-    43.47,
+    43.22,
     50.41,
     238.48,
     186.79,
@@ -1268,7 +1044,7 @@
    ],
    "printer_model_id": "BL-P001",
    "problems": [],
-   "desc": "회전 막대(맞춤 2) + 균형추 통 마개 + 동전 채움 조각 9개. 채움 100%"
+   "desc": "회전 막대(맞춤 2) + 균형추 통 마개 + 동전 채움 조각 2개. 채움 100%"
   },
   "4판_회전부_맞춤3": {
    "name": "4판_회전부_맞춤3",
@@ -1298,67 +1074,25 @@
      100.0,
      62.0,
      0
-    ],
-    [
-     "12_coin_spacer",
-     130.0,
-     62.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     160.0,
-     62.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     190.0,
-     62.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     85.0,
-     92.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     115.0,
-     92.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     145.0,
-     92.0,
-     0
-    ],
-    [
-     "12_coin_spacer",
-     175.0,
-     92.0,
-     0
     ]
    ],
-   "sec": 5587,
-   "model_sec": 5002,
-   "g": 43.14,
-   "m": 14.46,
+   "sec": 4917,
+   "model_sec": 4332,
+   "g": 37.72,
+   "m": 12.65,
    "layers": 190,
    "max_z": 38.0,
    "features": {
     "Custom": 2,
-    "Inner wall": 784,
-    "Outer wall": 799,
-    "Gap infill": 416,
-    "Bottom surface": 11,
-    "Internal solid infill": 435,
-    "Sparse infill": 264,
+    "Inner wall": 686,
+    "Outer wall": 694,
+    "Gap infill": 420,
+    "Bottom surface": 4,
+    "Internal solid infill": 393,
+    "Sparse infill": 255,
     "Bridge": 6,
-    "Floating vertical shell": 45,
-    "Top surface": 32,
+    "Floating vertical shell": 43,
+    "Top surface": 25,
     "Overhang wall": 32
    },
    "settings": {
@@ -1387,9 +1121,9 @@
     {
      "name": "10_rotor_bar_fit3",
      "bbox": [
-      43.05,
+      42.8,
       133.0,
-      212.95,
+      213.2,
       187.0
      ],
      "dev": 0.0
@@ -1423,80 +1157,10 @@
       73.8
      ],
      "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      118.2,
-      50.2,
-      141.8,
-      73.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      148.2,
-      50.2,
-      171.8,
-      73.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      178.2,
-      50.2,
-      201.8,
-      73.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      73.2,
-      80.2,
-      96.8,
-      103.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      103.2,
-      80.2,
-      126.8,
-      103.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      133.2,
-      80.2,
-      156.8,
-      103.8
-     ],
-     "dev": 0.0
-    },
-    {
-     "name": "12_coin_spacer",
-     "bbox": [
-      163.2,
-      80.2,
-      186.8,
-      103.8
-     ],
-     "dev": 0.0
     }
    ],
    "extent": [
-    43.47,
+    43.22,
     50.41,
     238.48,
     186.79,
@@ -1509,7 +1173,7 @@
    ],
    "printer_model_id": "BL-P001",
    "problems": [],
-   "desc": "회전 막대(맞춤 3) + 균형추 통 마개 + 동전 채움 조각 9개. 채움 100%"
+   "desc": "회전 막대(맞춤 3) + 균형추 통 마개 + 동전 채움 조각 2개. 채움 100%"
   },
   "5판_판틀": {
    "name": "5판_판틀",
@@ -1517,36 +1181,36 @@
    "infill": 15,
    "items": [
     [
-     "18_frame_back",
+     "18_plate_frame",
      128.0,
-     74.0,
+     142.0,
      0
     ],
     [
-     "19_frame_front",
+     "19_plate_clamp",
      128.0,
-     190.0,
-     0
+     48.0,
+     90
     ]
    ],
-   "sec": 3224,
-   "model_sec": 2638,
-   "g": 21.34,
-   "m": 7.16,
-   "layers": 27,
-   "max_z": 5.4,
+   "sec": 2519,
+   "model_sec": 1934,
+   "g": 16.65,
+   "m": 5.58,
+   "layers": 23,
+   "max_z": 4.6,
    "features": {
     "Custom": 2,
-    "Inner wall": 238,
-    "Outer wall": 307,
-    "Gap infill": 177,
-    "Bottom surface": 4,
-    "Internal solid infill": 90,
+    "Outer wall": 136,
+    "Inner wall": 129,
+    "Gap infill": 65,
+    "Bottom surface": 2,
+    "Internal solid infill": 45,
     "Sparse infill": 35,
-    "Floating vertical shell": 10,
-    "Bridge": 8,
-    "Top surface": 10,
-    "Overhang wall": 4
+    "Floating vertical shell": 23,
+    "Bridge": 21,
+    "Overhang wall": 13,
+    "Top surface": 5
    },
    "settings": {
     "layer_height": "0.2",
@@ -1572,41 +1236,41 @@
    },
    "placed": [
     {
-     "name": "18_frame_back",
+     "name": "18_plate_frame",
      "bbox": [
-      49.25,
-      20.04,
-      206.75,
-      127.96
+      48.25,
+      90.0,
+      207.75,
+      194.0
      ],
-     "dev": 0.14
+     "dev": 0.0
     },
     {
-     "name": "19_frame_front",
+     "name": "19_plate_clamp",
      "bbox": [
-      50.15,
-      140.4,
-      207.05,
-      239.6
+      97.5,
+      42.5,
+      158.5,
+      53.5
      ],
-     "dev": 0.1
+     "dev": 0.0
     }
    ],
    "extent": [
     48.46,
-    20.21,
+    42.71,
     207.54,
-    241.79,
-    5.4
+    193.79,
+    4.6
    ],
-   "gap_min": 10.0,
-   "edge_min": 14.0,
+   "gap_min": 36.5,
+   "edge_min": 42.5,
    "notices": [
     "bed_temperature_too_high_than_filament"
    ],
    "printer_model_id": "BL-P001",
    "problems": [],
-   "desc": "판 틀 앞뒤: 알루미늄 판을 구멍 없이 감싼다. 뒤 틀은 판 쪽 면, 앞 틀은 바깥면을 바닥에"
+   "desc": "판 틀(한 장)과 판 누름쇠: 1T 알루미늄 판을 구멍 없이 홈에 넣어 잡는다. 둘 다 평평한 면(판 틀은 뒷면, 누름쇠는 밑면)을 바닥에 두고 받침 없이 뽑는다"
   },
   "선택_받침통_L": {
    "name": "선택_받침통_L",
@@ -2052,66 +1716,66 @@
    "problems": []
   },
   "10_rotor_bar_fit1": {
-   "sec": 4414,
-   "model_sec": 3829,
-   "g": 33.36,
-   "m": 11.19,
+   "sec": 4431,
+   "model_sec": 3846,
+   "g": 33.53,
+   "m": 11.24,
    "infill": 100,
    "layers": 190,
    "features": {
     "Custom": 2,
     "Inner wall": 599,
     "Outer wall": 603,
-    "Gap infill": 368,
+    "Gap infill": 375,
     "Bottom surface": 1,
-    "Internal solid infill": 373,
+    "Internal solid infill": 374,
     "Sparse infill": 256,
     "Bridge": 6,
-    "Floating vertical shell": 43,
+    "Floating vertical shell": 42,
     "Top surface": 21,
     "Overhang wall": 32
    },
    "problems": []
   },
   "10_rotor_bar_fit2": {
-   "sec": 4413,
-   "model_sec": 3827,
-   "g": 33.36,
-   "m": 11.19,
+   "sec": 4433,
+   "model_sec": 3847,
+   "g": 33.52,
+   "m": 11.24,
    "infill": 100,
    "layers": 190,
    "features": {
     "Custom": 2,
     "Inner wall": 599,
     "Outer wall": 603,
-    "Gap infill": 370,
+    "Gap infill": 390,
     "Bottom surface": 1,
     "Internal solid infill": 373,
-    "Sparse infill": 254,
+    "Sparse infill": 256,
     "Bridge": 6,
-    "Floating vertical shell": 43,
+    "Floating vertical shell": 41,
     "Top surface": 21,
     "Overhang wall": 32
    },
    "problems": []
   },
   "10_rotor_bar_fit3": {
-   "sec": 4413,
-   "model_sec": 3827,
-   "g": 33.36,
-   "m": 11.18,
+   "sec": 4429,
+   "model_sec": 3844,
+   "g": 33.52,
+   "m": 11.24,
    "infill": 100,
    "layers": 190,
    "features": {
     "Custom": 2,
     "Inner wall": 599,
     "Outer wall": 603,
-    "Gap infill": 372,
+    "Gap infill": 383,
     "Bottom surface": 1,
     "Internal solid infill": 373,
-    "Sparse infill": 255,
+    "Sparse infill": 246,
     "Bridge": 6,
-    "Floating vertical shell": 44,
+    "Floating vertical shell": 42,
     "Top surface": 21,
     "Overhang wall": 32
    },
@@ -2321,49 +1985,6 @@
    },
    "problems": []
   },
-  "18_frame_back": {
-   "sec": 2353,
-   "model_sec": 1768,
-   "g": 15.0,
-   "m": 5.03,
-   "infill": 15,
-   "layers": 27,
-   "features": {
-    "Custom": 2,
-    "Outer wall": 203,
-    "Inner wall": 198,
-    "Bottom surface": 3,
-    "Gap infill": 79,
-    "Internal solid infill": 62,
-    "Sparse infill": 22,
-    "Floating vertical shell": 7,
-    "Top surface": 4,
-    "Bridge": 1
-   },
-   "problems": []
-  },
-  "19_frame_front": {
-   "sec": 1441,
-   "model_sec": 856,
-   "g": 6.67,
-   "m": 2.24,
-   "infill": 15,
-   "layers": 26,
-   "features": {
-    "Custom": 2,
-    "Inner wall": 40,
-    "Outer wall": 105,
-    "Gap infill": 98,
-    "Bottom surface": 1,
-    "Internal solid infill": 28,
-    "Sparse infill": 13,
-    "Floating vertical shell": 4,
-    "Bridge": 7,
-    "Top surface": 6,
-    "Overhang wall": 4
-   },
-   "problems": []
-  },
   "20_batt_fill": {
    "sec": 756,
    "model_sec": 170,
@@ -2420,6 +2041,49 @@
     "Gap infill": 79,
     "Top surface": 9,
     "Internal solid infill": 9
+   },
+   "problems": []
+  },
+  "18_plate_frame": {
+   "sec": 2309,
+   "model_sec": 1723,
+   "g": 15.12,
+   "m": 5.07,
+   "infill": 15,
+   "layers": 23,
+   "features": {
+    "Custom": 2,
+    "Outer wall": 106,
+    "Inner wall": 104,
+    "Gap infill": 42,
+    "Bottom surface": 1,
+    "Internal solid infill": 29,
+    "Sparse infill": 28,
+    "Floating vertical shell": 18,
+    "Bridge": 19,
+    "Overhang wall": 13,
+    "Top surface": 4
+   },
+   "problems": []
+  },
+  "19_plate_clamp": {
+   "sec": 726,
+   "model_sec": 140,
+   "g": 1.86,
+   "m": 0.62,
+   "infill": 15,
+   "layers": 12,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 25,
+    "Outer wall": 30,
+    "Bottom surface": 1,
+    "Gap infill": 22,
+    "Internal solid infill": 17,
+    "Sparse infill": 8,
+    "Floating vertical shell": 7,
+    "Bridge": 2,
+    "Top surface": 1
    },
    "problems": []
   }

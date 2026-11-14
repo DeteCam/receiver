@@ -146,7 +146,7 @@ if "1" in WANT:
     px, pz = P.pin2_xz()
     a_sec = np.radians(166.0)
     pts = {
-        "plate": HP((FL_X1 + 1.0, -15, 62), yaw, pitch, spin), "pod": HP((POD_XC, -13.5, 30), yaw, pitch, spin), "bolt": HP((FL_X1 + FR_RIB + FR_POCKET + FR_FRONT_T, P.frame_top_screws()[0][0], P.frame_top_screws()[0][1]), yaw, pitch, spin),
+        "plate": HP((FL_X1 + 1.0, -15, 62), yaw, pitch, spin), "pod": HP((POD_XC, -13.5, 30), yaw, pitch, spin), "bolt": HP((FL_X1 + AL_T + CL_T, P.clamp_screws()[0][0], P.clamp_screws()[0][1]), yaw, pitch, spin),
         "crown": HP((33.1, -15.4, 21), yaw, pitch), "head": HP((HX, -14, -22), yaw, pitch),
         "sector": YP((66 * np.cos(a_sec), SEC_Y1, H_T + 66 * np.sin(a_sec)), yaw), "m2": YP((px, ARM_Y1 + 19.5, pz + M_OFFSET), yaw),
         "arm": YP((-40, ARM_Y1, 50), yaw), "box": YP((WING_X1, -22.0, 72.0), yaw), "base": np.array([68.0, 16.0, 14.0]),
@@ -163,7 +163,7 @@ if "1" in WANT:
         ("head", "머리\n라즈베리파이 + 드라이버 3장", 'L', 660),
         ("box", "전선 상자\n모터 1(받침 회전, 4 : 1)과 전선이 이 안에 있다", 'L', 900),
         ("base", "받침 (지름 14cm)\n배터리가 들어가고 움직이지 않는다", 'L', 1110),
-        ("plate", "알루미늄 판 100×150 (%gT) + 판 틀\n구멍 없이 앞뒤 틀이 테두리를 문다" % AL_T, 'R', 190),
+        ("plate", "알루미늄 판 100×150 (%gT) + 판 틀\n판 틀 홈에 넣고 아래 턱과 누름쇠로 잡는다 (구멍 없음)" % AL_T, 'R', 190),
         ("sector", "부채꼴 기어\n머리에 붙어 같이 끄덕인다", 'R', 440),
         ("pin", "끄덕임 축 핀\n각도 바늘이 달려 있다", 'R', 660),
         ("m2", "모터 2 (끄덕임)\n작은 기어 10T, 11.2 : 1", 'R', 880),
@@ -248,7 +248,7 @@ if "3" in WANT:
            "pi": hp((-25, -1, -45)), "drv": hp((DRV_X0 + 17.5, 2, DRV_ZC[1])), "usb": np.array([3.0, 0.0, TUBE_Z1 + 3]), "w_m2": slot, "plugA": np.array([0.0, -R + BATT_IN - 5.0, 12.0]),
            "cap": np.array([-R - 1.0, 0.0, 24.0]), "dongle": hp((BX0 + DONGLE["x"], -PI_T / 2 - DONGLE["up"], BZ0 - 14)), "w_m1": m1c + [0, 0, 14]}
     del pts["drv"]
-    ghost = ("tub", "cover", "yoke", "head_shell", "head_lid", "crown", "sector", "rotor_bar", "plate", "frame_back", "frame_front", "coin_cap", "coins", "rotor_hw", "marker_frame", "keeper_r", "keeper_l", "clip", "pin_r", "pin_l", "m2_ring")
+    ghost = ("tub", "cover", "yoke", "head_shell", "head_lid", "crown", "sector", "rotor_bar", "plate", "plate_frame", "plate_clamp", "coin_cap", "coins", "rotor_hw", "marker_frame", "keeper_r", "keeper_l", "clip", "pin_r", "pin_l", "m2_ring")
     pix = render.render(A, TMP + 'raw3b.png', cam_az=138, cam_el=17, size=(S, S), dist=860, focus=(0, 0, 135), label_pts=pts, ground=False, ghost=ghost, ghost_opacity=0.16)
     Image.open(TMP + 'raw3b.png').crop((0, 0, S, S - 110)).save(TMP + 'raw3bc.png')
     texts = {
@@ -283,10 +283,10 @@ if "4" in WANT:
     SL = slice_summary()["parts"]
     tw = 400
     names = ["01_base_tub_S", "02_base_cover_S", "03_clip", "04_yoke", "05_pinion_fit2", "16_m2_ring", "06_sector_gear", "07_head_shell", "08_head_lid", "09_crown", "15_marker_frame",
-             "10_rotor_bar_fit2", "11_coin_cap", "12_coin_spacer", "13_pin_fit2", "14_pin_keeper", "17_lan_cap", "18_frame_back", "19_frame_front", "20_batt_fill", "90_test_coupon", "91_driver_check", "01_base_tub_L", "02_base_cover_L", "17_lan_cap_L"]
+             "10_rotor_bar_fit2", "11_coin_cap", "12_coin_spacer", "13_pin_fit2", "14_pin_keeper", "17_lan_cap", "18_plate_frame", "19_plate_clamp", "20_batt_fill", "90_test_coupon", "91_driver_check", "01_base_tub_L", "02_base_cover_L", "17_lan_cap_L"]
     short = {"01_base_tub_S": "받침 통 S", "02_base_cover_S": "받침 덮개 S", "05_pinion_fit2": "작은 기어 10T", "10_rotor_bar_fit2": "회전 막대", "13_pin_fit2": "끄덕임 축 핀",
              "01_base_tub_L": "받침 통 L (선택)", "02_base_cover_L": "받침 덮개 L (선택)", "11_coin_cap": "균형추 통 마개", "12_coin_spacer": "동전 채움 조각", "20_batt_fill": "배터리 채움 조각", "14_pin_keeper": "핀 막이",
-             "15_marker_frame": "마커 틀", "18_frame_back": "판 틀 (뒤)", "19_frame_front": "판 틀 (앞)", "91_driver_check": "보드 구멍 맞춤 판", "04_yoke": "요크", "17_lan_cap": "랜선 홈 마개 S", "17_lan_cap_L": "랜선 홈 마개 L (선택)"}
+             "15_marker_frame": "마커 틀", "18_plate_frame": "판 틀", "19_plate_clamp": "판 누름쇠", "91_driver_check": "보드 구멍 맞춤 판", "04_yoke": "요크", "17_lan_cap": "랜선 홈 마개 S", "17_lan_cap_L": "랜선 홈 마개 L (선택)"}
     spec = {s[0]: s for s in E.SPEC}
     cols = 8; nrow = int(np.ceil(len(names) / cols)); ch = tw + 122
     sheet = Image.new('RGB', (tw * cols, ch * nrow + 190), BG); d = ImageDraw.Draw(sheet)
@@ -320,7 +320,7 @@ if "5" in WANT:
     heado = {"crown": P.crown(), "motor3": v1._m1(mb) + v1._m1(mc), "sector": P.sector_head(), "marker_frame": P.marker_frame()}
     lid = {"lid": P.head_lid()}                                  # 뚜껑은 머리를 요크에 올리고 전선을 다 꽂은 뒤 마지막에 닫는다
     join = {"pin_r": Yk(P.pin(1)), "pin_l": Yk(P.pin(-1)), "keeper_r": Yk(P.pin_keeper(1)), "keeper_l": Yk(P.pin_keeper(-1)), "motor2": Yk((mb + mc).transform(P.motor2_T())), "pinion2": Yk(P.pinion2()), "m2_ring": Yk(P.m2_ring())}
-    rot = {"rotor_bar": Rt(P.rotor_bar()), "plate": Rt(P.al_plate(150.0)), "frame_back": Rt(P.frame_back()), "frame_front": Rt(P.frame_front_seated()), "coin_cap": Rt(P.coin_cap(P.COINS[(150.0, AL_T)])), "rotor_hw": Rt(P.rotor_hw(150.0, P.COINS[(150.0, AL_T)]))}
+    rot = {"rotor_bar": Rt(P.rotor_bar()), "plate": Rt(P.al_plate(150.0)), "plate_frame": Rt(P.plate_frame()), "plate_clamp": Rt(P.plate_clamp()), "coin_cap": Rt(P.coin_cap(P.COINS[(150.0, AL_T)])), "rotor_hw": Rt(P.rotor_hw(150.0, P.COINS[(150.0, AL_T)]))}
     gray = {"battery": C["batt"], "motor1": C["metal"], "motor2": C["metal"], "motor3": C["metal"], "pi": C["pcb"], "d0": "#3B8F5E", "d1": "#3B8F5E", "d2": "#3B8F5E", "plug": C["dark"], "plate": C["foil"], "rotor_hw": C["screw"], "btn": "#B03A2E", "dongle": "#5E6B85", "cap": AC}
 
     def scene(old, new, hi_names=None):
@@ -340,7 +340,7 @@ if "5" in WANT:
         ("③ 머리 속", "몸통 기둥에 파이(M2.5 나사 4)와 드라이버 3장(M2\n나사 12)을 조인다. 점퍼선, ㄱ자 젠더, 전원 버튼 모듈\n(왼쪽 받침 살)을 달고, 동글 두 개를 아래 USB 에 꽂는다.", scene({"shell": headi["shell"]}, {k: v for k, v in headi.items() if k != "shell"}), dict(cam_az=-72, cam_el=18, dist=430, focus=(0, 0, -46))),
         ("④ 머리 겉", "모터 3을 넣은 모터 자리(나사 4)를 얹고 전선을 드라이버\n3에 꽂는다. 부채꼴 기어(나사 2)를 붙이고, 등판에 마커\n종이를 대고 마커 틀(나사 4)로 덮는다. 뚜껑은 아직.", scene(headi, heado), dict(cam_az=-40, cam_el=20, dist=520, focus=(10, 0, -40))),
         ("⑤ 머리 올리기", "모터 2에 맞춤 링과 작은 기어를 끼워 오른쪽 팔 바깥에서\n넣는다. 머리를 내리며 이를 맞물리고 핀 2개를 민 뒤 핀 막이\n(나사 1개씩)를 단다. 전선을 꽂고 뚜껑(나사 4)을 닫는다.", scene({**base, **yoke, **posed_head}, {**join, **posed_lid}), dict(cam_az=62, cam_el=16, dist=820, focus=(0, 0, 120))),
-        ("⑥ 판", "동전을 넣어 마개로 막고, 뒤 틀을 판 받이에 접시머리 4개로.\n판을 넣은 앞 틀의 걸쇠를 끼워 2mm 내린 뒤 위 나사 2개.\n회전 막대를 모터 3 축에 꽂아 축 고정 나사를 조인다.", scene({**base, **yoke, **posed_head, **posed_lid, **join}, rot, ("rotor_bar", "frame_back", "plate", "frame_front", "coin_cap")), dict(cam_az=-58, cam_el=14, dist=900, focus=(0, 0, 150))),
+        ("⑥ 판", "동전 %d개를 넣어 마개로 막고, 판 틀을 판 받이에 접시머리\n4개로 단다. 판 아래 변을 아래 턱 밑에 비스듬히 밀어 넣고\n눕힌 뒤 누름쇠(나사 2개)로 누른다. 회전 막대를 모터 3 축에\n꽂아 축 고정 나사를 조인다." % P.COINS[(150.0, AL_T)], scene({**base, **yoke, **posed_head, **posed_lid, **join}, rot, ("rotor_bar", "plate_frame", "plate", "plate_clamp", "coin_cap")), dict(cam_az=-58, cam_el=14, dist=900, focus=(0, 0, 150))),
     ]
     band = 186
     sheet = Image.new('RGB', (h * 3, (h + band) * 2 + 150), BG); d = ImageDraw.Draw(sheet)
@@ -425,7 +425,7 @@ if "6" in WANT:
 # ---------------------------------------------------------------- 7 출력판 나누기
 PLATE_KO = {"90_test_coupon": "시험 조각", "91_driver_check": "보드 맞춤 판", "16_m2_ring": "맞춤 링", "02_base_cover_S": "받침 덮개", "01_base_tub_S": "받침 통", "03_clip": "고리", "04_yoke": "요크", "17_lan_cap": "홈 마개",
             "07_head_shell": "머리 몸통", "08_head_lid": "머리 뚜껑", "09_crown": "모터 자리", "06_sector_gear": "부채꼴 기어", "11_coin_cap": "마개", "12_coin_spacer": "동전 채움 조각", "20_batt_fill": "배터리 채움 조각", "14_pin_keeper": "핀 막이",
-            "15_marker_frame": "마커 틀", "18_frame_back": "판 틀 뒤", "19_frame_front": "판 틀 앞", "01_base_tub_L": "받침 통 L", "02_base_cover_L": "받침 덮개 L", "17_lan_cap_L": "홈 마개 L"}
+            "15_marker_frame": "마커 틀", "18_plate_frame": "판 틀", "19_plate_clamp": "누름쇠", "01_base_tub_L": "받침 통 L", "02_base_cover_L": "받침 덮개 L", "17_lan_cap_L": "홈 마개 L"}
 
 
 def plate_panel(row, px):
@@ -502,8 +502,9 @@ if "7" in WANT:
             ("1판_받침_S", "1판 · 받침 (작은 것)", "받침 통, 받침 덮개, 랜선 홈 마개,\n배터리 채움 조각 6개"),
             ("2판_요크", "2판 · 요크", "요크 (회전판 + 팔 + 전선 상자)"),
             ("3판_머리", "3판 · 머리", "머리 몸통, 머리 뚜껑, 모터 자리,\n부채꼴 기어"),
-            ("4판_회전부_맞춤2", "4판 · 회전부 (채움 100%)", "회전 막대, 균형추 통 마개, 동전 채움 조각 9개.\n막대는 맞춤 1·2·3 파일이 따로 있다"),
-            ("5판_판틀", "5판 · 판 틀", "판 틀 뒤, 판 틀 앞.\n알루미늄 판을 구멍 없이 감싼다")]
+            ("4판_회전부_맞춤2", "4판 · 회전부 (채움 100%)", "회전 막대, 균형추 통 마개, 동전 채움 조각 %d개(여분).\n막대는 맞춤 1·2·3 파일이 따로 있다"
+             % sum(1 for it in SUMM["4판_회전부_맞춤2"]["items"] if it[0] == "12_coin_spacer")),
+            ("5판_판틀", "5판 · 판 틀", "판 틀(한 장)과 판 누름쇠.\n%gT 알루미늄 판을 구멍 없이 홈에 넣어 잡는다" % AL_T)]
     h = 640; sheet = Image.new('RGB', (h * len(main), h + 440), BG); d = ImageDraw.Draw(sheet)
     d.text((40, 30), "출력판 나누기 (Bambu X1 Carbon, 256×256mm 판 %d번)" % len(main), font=font(44, True), fill=INK)
     d.text((40, 96), "Bambu Studio 프로젝트 파일(print/project)에 넣어 둔 자리 그대로다. 붉은 칸은 앞 왼쪽 금지 구역. 시간과 무게는 Bambu Studio 2.5.1 로 슬라이싱한 값.", font=font(26), fill=SUB)

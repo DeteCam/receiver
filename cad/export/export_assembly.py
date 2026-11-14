@@ -12,7 +12,7 @@ import paths
 from p2 import *
 
 SHOW = ("tub", "cover", "clip", "lan_cap", "yoke", "pinion1", "pinion2", "m2_ring", "pin_r", "pin_l", "head_shell", "head_lid", "crown", "sector", "rotor_bar", "coin_cap",
-        "frame_back", "frame_front", "marker_frame", "keeper_r", "keeper_l", "plate", "motor3", "motor3_cap", "motor2", "motor2_cap", "motor1", "motor1_cap", "dongle", "dongle2")
+        "plate_frame", "plate_clamp", "marker_frame", "keeper_r", "keeper_l", "plate", "motor3", "motor3_cap", "motor2", "motor2_cap", "motor1", "motor1_cap", "dongle", "dongle2")
 
 
 def write_stl(path, tris):

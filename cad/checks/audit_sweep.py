@@ -2,7 +2,7 @@
     python3 audit_sweep.py        ->  결과 폴더의 audit_sweep.json
 
 check2.py 는 끄덕임 5도, 판 15도 간격으로 본다. 틈이 가장 좁은 곳은 그 사이에 있을 수 있어서 여기서는
-  1) 받침 S·L 모두 (판 100 x 150, 판 틀 앞뒤와 나사 머리까지),
+  1) 받침 S·L 모두 (판 100 x 150, 판 틀(한 장)과 누름쇠, 나사 머리와 너트까지),
   2) 끄덕임을 멈춤턱(-5.3도, 86.9도)까지 1도 간격, 판을 3도 간격으로,
   3) 모터 축의 흔들림까지 넣어서 (판 모터 축이 1도 기울었다고 보고 네 방향으로) 본다.
 머리 속 부품(동글 2개, 랜선 플러그 포함)도 머리에 넣는다.
@@ -19,7 +19,7 @@ from p2 import *
 STOP_LO, STOP_HI = -5.3, 86.9
 mb, mc = v1.motor_body_dummy(); b, cc = v1.pi_dummy(); db, dc = v1.driver_dummy()
 YOKE = union([P.yoke(), P.pin(1), P.pin(-1), P.pin_keeper(1), P.pin_keeper(-1), mb.transform(P.motor1_T()), mc.transform(P.motor1_T()), mb.transform(P.motor2_T()), mc.transform(P.motor2_T()), P.pinion1(), P.pinion2(), P.m2_ring()])
-ROTS = {150.0: P.rotor_set(150.0, low_cap=True)}      # 알루미늄 판, 판 틀 앞뒤, 나사·너트 머리, 마개(가장 내려온 경우)까지
+ROTS = {150.0: P.rotor_set(150.0, low_cap=True)}      # 알루미늄 판, 판 틀, 누름쇠, 나사·너트, 마개(가장 내려온 경우)까지
 HEADP = union([P.head_shell(), P.head_lid(), P.crown(), P.marker_frame(), P.head_hw(), v1._m1(mb), v1._m1(mc), P.sector_head()])
 HUB = np.array([0.0, 0.0, M1_ZT + 5.0])                       # 축이 흔들릴 때의 중심 (모터 앞 베어링 근처)
 

@@ -4,7 +4,7 @@ import os, sys, json, time
 import numpy as np
 import study as S, tmatch as T
 YAWS = (-120.0, 0.0, 120.0)
-full = {y: S.Resp("dev_y%+04d" % y) for y in YAWS}                  # 지금 설계 그대로 (판 틀, 동전 9개, 배터리 두께 22, 전선): run_tables.py dev
+full = {y: S.Resp("dev_y%+04d" % y) for y in YAWS}                  # 지금 설계 그대로 (판 틀, 동전 12개, 배터리 두께 22, 전선): run_tables.py dev
 tm_full = {y: T.Templates(full[y]) for y in YAWS}
 cases = [("요크·받침까지 넣은 무늬 (받침 각마다)", tm_full)]
 for nm, lab in (("head_cw", "머리만 넣은 무늬 (요크·받침 없음)"), ("head", "머리만, 균형추도 없음"), ("ant_conn", "기판과 단자만")):

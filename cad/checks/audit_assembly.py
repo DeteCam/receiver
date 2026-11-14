@@ -154,13 +154,28 @@ sweep("5", "뚜껑 -> 몸통 (머리가 요크에 앉은 채)", lid, union([shel
 
 # ---- 6 판
 bar = P.rotor_bar(); n8 = P.COINS[(150.0, AL_T)]
-fb = P.frame_back(); ff = P.frame_front_seated(); pl = P.al_plate(150.0)
-sweep("6", "판 틀 (뒤) -> 판 받이", fb, bar, (1, 0, 0), 14, "바깥에서 대고 M3 접시머리 4개 + 너트", allow_seat=0.5)
-sweep("6", "알루미늄 판 -> 앞 틀 주머니", pl, ff, (-1, 0, 0), 10, "앞 틀을 엎어 놓고 판을 얹는다", allow_seat=0.5)
-up = [0.0, 0.0, LUG_SLIDE]
-sweep("6", "앞 틀(판을 넣은 채) -> 뒤 틀: 걸쇠를 구멍에", union([ff, pl]).translate(up), union([fb, bar]), (1, 0, 0), 14, "%.0fmm 위에서 뒤 틀에 댄다" % LUG_SLIDE, allow_seat=0.5)
-sweep("6", "앞 틀: 아래로 밀어 걸쇠를 건다", union([ff, pl]), union([fb, bar]), (0, 0, 1), LUG_SLIDE, "%.0fmm 아래로 민다, 위 나사 M3 접시머리 2개" % LUG_SLIDE, step=0.25, allow_seat=0.5,
-      note="걸쇠 4개가 뒤 틀 뒷면에 걸린다. 위 나사가 다시 올라가지 못하게 막는다")
+fr = P.plate_frame(); cl = P.plate_clamp(); pl = P.al_plate(150.0)
+sweep("6", "판 틀 -> 판 받이", fr, bar, (1, 0, 0), 14, "바깥에서 대고 M3 x 6 접시머리 4개 + 너트", allow_seat=0.5)
+TILT_IN = 30.0                                                                 # 판을 세워 드는 각 (아래 변을 턱 밑으로 넣을 때)
+
+
+def plate_pose(theta, s=0.0):
+    """판을 theta 도 세운 자세: 판 아래 안쪽 모서리가 홈 바닥에 닿은 채 위끝이 바깥(+X)으로 들린다. 아래 바깥 모서리가 아래 벽에 걸리지 않게 아래 변을 조금 띄운다.
+    s: 판 길이 방향으로 그만큼 뒤로 뺀 자리 (턱 밑으로 밀어 넣기 전)"""
+    th = np.radians(theta); zp = max(BL_Z0, BL_Z0 - FR_GAP + np.sin(th) + 0.05)
+    return pl.translate([-FL_X1, 0, -BL_Z0]).rotate([0, theta, 0]).translate([FL_X1 + s * np.sin(th), 0, zp + s * np.cos(th)])
+
+
+FIX6 = union([fr, bar, P.rotor_hw(150.0, n8)])
+path = [("밀어 넣기", plate_pose(TILT_IN, s_)) for s_ in np.arange(20.0, 0.0, -0.5)] + [("눕히기", plate_pose(th)) for th in np.arange(TILT_IN, 0.0, -1.0)]
+worst = max(((m ^ FIX6).volume(), nm) for nm, m in path)
+seat = (pl ^ FIX6).volume()
+ok = worst[0] < 0.5 and seat <= 0.5
+rows.append(dict(group="6", step="알루미늄 판 -> 판 틀 홈", how="%.0f도 세워 아래 변을 턱 밑으로 민 뒤 눕힌다" % TILT_IN, path_overlap_mm3=round(worst[0], 2), seat_overlap_mm3=round(max(seat, 0.0), 2), ok=bool(ok),
+                 note="판 아래 바깥 모서리와 턱 밑면 사이 %.2f mm" % FR_LIP_PLAY))
+print("6 %-30s %-22s 가는 길 겹침 %7.2f mm3 (%s) | 제자리 겹침 %5.2f %s" % ("알루미늄 판 -> 판 틀 홈", "세워 넣고 눕힌다", worst[0], worst[1], max(seat, 0.0), "" if ok else "  <== 확인"))
+sweep("6", "누름쇠 -> 틀 위 띠 (판을 넣은 뒤)", cl, union([fr, bar, pl]), (1, 0, 0), 14, "바깥에서 대고 M3 x 8 접시머리 2개 + 너트 (틀 뒷면)", allow_seat=0.5,
+      note="누름쇠가 판 위 변을 누른다 (누름쇠 자리는 판 앞면보다 %.1f 낮다)" % CL_SEAT)
 sweep("6", "동전 %d개 -> 균형추 통" % n8, P.coins(n8), bar, (0, 0, -1), 30, "아래에서 넣는다 (막대를 뒤집어 놓고)", allow_seat=0.5)
 sweep("6", "마개 -> 균형추 통", P.coin_cap(n8), union([bar, P.coins(n8)]), (0, 0, -1), 20, "아래에서 밀어 넣고 M3 나사 2개", allow_seat=0.5,
       note="동전 %d개 + 채움 %d개일 때 마개 턱과 통 입구 사이 틈 %.1f mm" % (n8, COIN_SLOTS - n8, P.coin_gap(n8)))

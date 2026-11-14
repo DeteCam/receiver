@@ -253,15 +253,15 @@
   "pick": "시험 조각 1번 구멍이 맞을 때. 채움 100%",
   "infill": 100,
   "size": [
-   169.9,
+   170.4,
    54.0,
    38.0
   ],
-  "volume_cm3": 27.2,
+  "volume_cm3": 27.3,
   "watertight": true,
   "faces": 3116,
   "bodies": 1,
-  "overhang_mm2": 76,
+  "overhang_mm2": 77,
   "flat_overhang_mm2": 58,
   "ok": true
  },
@@ -272,11 +272,11 @@
   "pick": "시험 조각 2번 구멍이 맞을 때. 채움 100%",
   "infill": 100,
   "size": [
-   169.9,
+   170.4,
    54.0,
    38.0
   ],
-  "volume_cm3": 27.2,
+  "volume_cm3": 27.3,
   "watertight": true,
   "faces": 3116,
   "bodies": 1,
@@ -291,11 +291,11 @@
   "pick": "시험 조각 3번 구멍이 맞을 때. 채움 100%",
   "infill": 100,
   "size": [
-   169.9,
+   170.4,
    54.0,
    38.0
   ],
-  "volume_cm3": 27.2,
+  "volume_cm3": 27.3,
   "watertight": true,
   "faces": 3116,
   "bodies": 1,
@@ -325,8 +325,8 @@
  {
   "file": "12_coin_spacer.stl",
   "ko": "채움 조각 (동전 1개 자리)",
-  "qty": 9,
-  "pick": "동전과 합쳐 12장이 되게 넣는다. 9개 뽑아 둔다",
+  "qty": 2,
+  "pick": "1T 판이면 동전 12개로 통이 꽉 차서 쓰지 않는다. 동전을 빼서 균형을 맞출 때 그 자리에 넣는다. 2개 뽑아 둔다",
   "infill": 100,
   "size": [
    23.6,
@@ -494,41 +494,41 @@
   "ok": true
  },
  {
-  "file": "18_frame_back.stl",
-  "ko": "판 틀 (뒤)",
+  "file": "18_plate_frame.stl",
+  "ko": "판 틀",
   "qty": 1,
-  "pick": "판 받이에 M3 접시머리 4개로 조인다. 판 쪽 면(평평한 면)을 바닥에",
-  "infill": 15,
-  "size": [
-   157.5,
-   108.0,
-   5.5
-  ],
-  "volume_cm3": 12.6,
-  "watertight": true,
-  "faces": 2126,
-  "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
-  "ok": true
- },
- {
-  "file": "19_frame_front.stl",
-  "ko": "판 틀 (앞)",
-  "qty": 1,
-  "pick": "알루미늄 판을 넣고 걸쇠 4개를 건 뒤 위 나사 2개. 바깥면을 바닥에",
+  "pick": "알루미늄 판(1T)이 들어가는 홈이 있는 한 장짜리 받침판. 판 받이에 M3 x 6 접시머리 4개로 조인다. 뒷면(평평한 면)을 바닥에",
   "infill": 15,
   "size": [
    159.5,
    104.0,
-   5.2
+   4.6
   ],
-  "volume_cm3": 5.5,
+  "volume_cm3": 13.3,
   "watertight": true,
-  "faces": 988,
+  "faces": 1722,
   "bodies": 1,
-  "overhang_mm2": 8,
-  "flat_overhang_mm2": 8,
+  "overhang_mm2": 40,
+  "flat_overhang_mm2": 40,
+  "ok": true
+ },
+ {
+  "file": "19_plate_clamp.stl",
+  "ko": "판 누름쇠",
+  "qty": 1,
+  "pick": "판 위 변을 눌러 잡는다. M3 x 8 접시머리 2개 + 너트(틀 뒷면). 밑면(평평한 면)을 바닥에",
+  "infill": 15,
+  "size": [
+   11.0,
+   61.0,
+   2.4
+  ],
+  "volume_cm3": 1.5,
+  "watertight": true,
+  "faces": 720,
+  "bodies": 1,
+  "overhang_mm2": 0,
+  "flat_overhang_mm2": 0,
   "ok": true
  },
  {

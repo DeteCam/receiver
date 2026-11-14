@@ -66,46 +66,50 @@ def section(m, axis, at):
 res = {}
 zc = (BAR_Z0 + BAR_Z1) / 2
 
-# ================================================================ 1. 회전부: 판 틀(앞뒤) + 알루미늄 판 + 판 받이(플랜지) + 판 틀 나사 4개 + 축 고정 나사
+# ================================================================ 1. 회전부: 판 틀(한 장) + 알루미늄 판 1T + 누름쇠 + 판 받이(플랜지) + 판 틀 나사 4개 + 축 고정 나사
 AL_YIELD = {"1050-H14 (무른 것)": 95.0, "5052-H32 (단단한 것)": 190.0}                # 알루미늄 판이 휘어서 안 돌아오기 시작하는 응력 (MPa)
 E_AL = 69000.0
 zb_lo = min(z for y, z in PLATE_BOLTS); zb_hi = max(z for y, z in PLATE_BOLTS); yb = max(y for y, z in PLATE_BOLTS)
-FB, FF = P.frame_back(), P.frame_front()
-# 판과 앞뒤 틀은 서로 붙어 있지 않다: 판을 밀면 셋이 같이 휘며 굽힘 강성(EI)의 비로 힘을 나눠 받는다. 뿌리 = 판 받침(받이) 아래끝·위끝
+FR = P.plate_frame(); CL = P.plate_clamp()
+# 판은 틀 홈에 들어가 아래 턱과 누름쇠에 잡힌다: 판 끝을 밀면 판과 틀이 같이 휘며 굽힘 강성(EI)의 비로 힘을 나눠 받는다. 뿌리 = 판 받침(받이) 아래끝·위끝
 zcut_lo, zcut_hi = FL_Z0 - 4.0, BAR_Z1 + 4.0
 z_bot, z_top = BL_Z0 - FR_END, BL_Z0 + 150.0 + FR_END_TOP
-for t in (0.5, 0.3):
-    Ip = PLATE_W * t ** 3 / 12; Zp = PLATE_W * t ** 2 / 6
-    for tag, zcut, arm in (("아래", zcut_lo, FL_Z0 - z_bot), ("위", zcut_hi, z_top - BAR_Z1)):
-        Ab, cb, Ib, (lb, hb) = section(FB, 2, zcut); Af, cf, If, (lf, hf) = section(FF, 2, zcut)
-        EI = {"판": E_AL * Ip, "뒤": E_MOD * Ib[1], "앞": E_MOD * If[1]}; tot = sum(EI.values())
-        Mb = F_BUMP * arm
-        sig_p = Mb * EI["판"] / tot / Zp
-        sig_b = Mb * EI["뒤"] / tot * max(hb[0] - cb[0], cb[0] - lb[0]) / Ib[1]
-        sig_f = Mb * EI["앞"] / tot * max(hf[0] - cf[0], cf[0] - lf[0]) / If[1]
-        defl = arm ** 3 / (3 * tot)
-        add("알루미늄 판 %gT" % t, "판 %s 끝(틀)을 5N 으로 밂" % tag, "판 꺾임 (판 받침 %s끝)" % tag, sig_p, AL_YIELD["1050-H14 (무른 것)"],
-            "판이 힘의 %.0f%% 를 받는다 (틀이 나머지). 1N 에 끝이 %.1fmm 휜다. 무른 판(1050) 기준" % (EI["판"] / tot * 100, defl))
-        if t == 0.5:
-            add("판 틀 (뒤)", "판 %s 끝(틀)을 5N 으로 밂" % tag, "틀 꺾임 (판 받침 %s끝, 층 안쪽)" % tag, sig_b, S_XY, "틀 단면 %.0f mm2" % Ab)
-            add("판 틀 (앞)", "판 %s 끝(틀)을 5N 으로 밂" % tag, "틀 꺾임 (판 받침 %s끝, 층 안쪽)" % tag, sig_f, S_XY, "틀 단면 %.0f mm2" % Af)
-        res["plate_150_%g_%s" % (t, tag)] = dict(arm=round(arm, 1), stress=round(sig_p, 1), share=round(EI["판"] / tot, 2), defl_per_N=round(defl, 2), frame_back=round(sig_b, 1), frame_front=round(sig_f, 1))
-    # 누운 자세(끄덕임 85도)에서 판과 틀이 제 무게로 처지는 양: 판 받침 아래끝에서 아래끝까지를 한쪽 고정 보로
-    Ab, cb, Ib, _ = section(FB, 2, zcut_lo - 20.0); Af, cf, If, _ = section(FF, 2, zcut_lo - 20.0)
-    L = FL_Z0 - z_bot; w = (PLATE_W * t * AL_RHO + (Ab + Af) * 1.24e-3) * G9
-    res["plate_%g_self_sag" % t] = round(w * L ** 4 / (8 * (E_AL * Ip + E_MOD * (Ib[1] + If[1]))), 3)
-# 걸쇠: 앞 틀 아래끝을 바깥으로 5N 당김 -> 아래 걸쇠 2개의 갈고리(1.5 x 0.9 x 1.6)가 뒤 틀 뒷면에 걸려 받는다. 갈고리는 층 안쪽 방향으로 휜다
-F_lug = F_BUMP / 2
-add("판 틀 (앞)", "앞 틀 아래끝을 바깥으로 5N 당김", "걸쇠 갈고리 꺾임", F_lug * (LUG_HOOK / 2) / ((LUG_Y[1] - LUG_Y[0]) * (LUG_X[1] - LUG_X[0]) ** 2 / 6), S_XY, "걸쇠 하나에 %.1fN" % F_lug)
-add("판 틀 (앞)", "앞 틀 아래끝을 바깥으로 5N 당김", "걸쇠 몸통 당겨짐 (층 사이)", F_lug / ((LUG_Y[1] - LUG_Y[0]) * LUG_STEM), S_Z)
-add("판 틀 (뒤)", "앞 틀 아래끝을 바깥으로 5N 당김", "걸쇠 구멍 아래 테두리 눌림", F_lug / ((LUG_Y[1] - LUG_Y[0]) * 0.6), S_BEAR, "갈고리가 닿는 넓이 1.6 x 0.6")
-add("판 틀 (뒤)", "앞 틀 위끝을 바깥으로 5N 당김", "위 나사산 뽑힘 (M3, 5mm 물림)", (F_BUMP / 2) / (np.pi * 3.0 * 5.0 * 0.5), T_XY, "나사 2개, 스스로 낸 나사산")
+t = AL_T
+Ip = PLATE_W * t ** 3 / 12; Zp = PLATE_W * t ** 2 / 6
+for tag, zcut, arm in (("아래", zcut_lo, FL_Z0 - z_bot), ("위", zcut_hi, z_top - BAR_Z1)):
+    Ab, cb, Ib, (lb, hb) = section(FR, 2, zcut)
+    EI = {"판": E_AL * Ip, "틀": E_MOD * Ib[1]}; tot = sum(EI.values())
+    Mb = F_BUMP * arm
+    sig_p = Mb * EI["판"] / tot / Zp
+    sig_b = Mb * EI["틀"] / tot * max(hb[0] - cb[0], cb[0] - lb[0]) / Ib[1]
+    defl = arm ** 3 / (3 * tot)
+    add("알루미늄 판 %gT" % t, "판 %s 끝(틀)을 5N 으로 밂" % tag, "판 꺾임 (판 받침 %s끝)" % tag, sig_p, AL_YIELD["1050-H14 (무른 것)"],
+        "판이 힘의 %.0f%% 를 받는다 (틀이 나머지). 1N 에 끝이 %.1fmm 휜다. 무른 판(1050) 기준" % (EI["판"] / tot * 100, defl))
+    add("판 틀", "판 %s 끝(틀)을 5N 으로 밂" % tag, "틀 꺾임 (판 받침 %s끝, 층 안쪽)" % tag, sig_b, S_XY, "틀 단면 %.0f mm2" % Ab)
+    res["plate_150_%g_%s" % (t, tag)] = dict(arm=round(arm, 1), stress=round(sig_p, 1), share=round(EI["판"] / tot, 2), defl_per_N=round(defl, 2), frame=round(sig_b, 1))
+    if tag == "아래":                                                     # 판을 넣기 전, 빈 틀만 손에 들고 아래끝을 밀 때 (판이 없으면 틀이 혼자 받는다)
+        add("판 틀", "판을 넣기 전, 빈 틀 아래끝을 2N 으로 밂", "틀 꺾임 (판 받침 아래끝)", 2.0 * arm * max(hb[0] - cb[0], cb[0] - lb[0]) / Ib[1], S_XY, "빈 틀은 판보다 훨씬 무르다. 판을 넣기 전에는 받침(판 받이 자리)을 잡고 다룬다")
+# 누운 자세(끄덕임 85도)에서 판과 틀이 제 무게로 처지는 양: 판 받침 아래끝에서 아래끝까지를 한쪽 고정 보로
+Ab, cb, Ib, _ = section(FR, 2, zcut_lo - 20.0)
+L = FL_Z0 - z_bot; w = (PLATE_W * t * AL_RHO + Ab * 1.24e-3) * G9
+res["plate_%g_self_sag" % t] = round(w * L ** 4 / (8 * (E_AL * Ip + E_MOD * Ib[1])), 3)
+# 판이 홈에서 들리는 쪽 (판 끝을 바깥으로 5N 당김): 아래는 45도 턱, 위는 누름쇠가 받는다
+lip_w = 2 * FR_LIP_HW
+add("판 틀", "판 아래끝을 바깥으로 5N 당김", "아래 턱 뿌리 꺾임 (층 사이)", 6 * F_BUMP * 0.5 / (lip_w * FR_LIP ** 2), S_Z, "턱 길이 %.0fmm, 두께 %.1f. 판 모서리가 턱 뿌리에서 0.5mm 안쪽을 민다" % (lip_w, FR_LIP))
+e_cl = (BL_Z0 + 150.0 + FR_TOP_DZ) - (BL_Z0 + 150.0 - CL_LAP / 2)
+add("누름쇠", "판 위끝을 바깥으로 5N 당김", "누름쇠 꺾임 (나사 줄과 판 사이)", 6 * F_BUMP * e_cl / (2 * CL_HW * CL_T ** 2), S_XY, "나사 줄에서 판을 누르는 곳까지 %.1fmm" % e_cl)
+ceil = FL_X1 + AL_T - CL_SEAT - (FL_XH + NUT_POCKET)                     # 너트 자리 위에 남은 살 두께
+per = 6 * 5.5 / np.sqrt(3.0)                                              # 너트 둘레 (맞변 5.5 육각)
+add("판 틀", "판 위끝을 바깥으로 5N 당김", "너트 자리 위 살 뚫림 (층 사이로 잘림)", (F_BUMP / 2) / (per * ceil), T_Z, "나사 2개, 너트 위 살 %.1fmm" % ceil)
+F_cl = 0.1e3 / (0.2 * 3.0)                                               # 0.1 N·m 로 조였을 때 나사가 당기는 힘 (N): T = 0.2 x d x F
+add("판 틀", "누름쇠 나사를 조임 (0.1 N·m)", "너트 자리 위 살 뚫림 (층 사이로 잘림)", F_cl / (per * ceil), T_Z, "나사가 당기는 힘 약 %.0fN. 누름쇠가 판에 닿아 멈출 때까지만 조인다" % F_cl)
+add("누름쇠", "누름쇠 나사를 조임 (0.1 N·m)", "접시머리 밑 눌림", F_cl / (np.pi * (3.35 ** 2 - 1.7 ** 2) * 0.7), S_BEAR, "누름쇠 두께 %.1f" % CL_T)
 # 판 틀 나사 4개: 판 아래끝(틀)을 머리 쪽으로 5N -> 나사 줄 사이(18mm)가 지렛대. 위 줄 나사 2개가 당겨진다
 arm_lo = zb_lo - z_bot
 F_bolt = F_BUMP * arm_lo / (zb_hi - zb_lo) / 2
 add("판 받이", "판 아래끝(틀)을 머리 쪽으로 5N", "너트 밑 플라스틱 눌림", F_bolt / (np.pi * (2.75 ** 2 - 1.7 ** 2)), S_BEAR, "나사 하나에 %.1fN (너트 자리 밑 두께 %.1f)" % (F_bolt, FL_T - 2.2))
 add("판 받이", "판 아래끝(틀)을 머리 쪽으로 5N", "너트가 뽑혀 나오는 쪽 (너트 밑 살 잘림)", F_bolt / (2 * np.pi * 3.0 * (FL_T - 2.2)), T_Z)
-add("판 틀 (뒤)", "판 아래끝(틀)을 머리 쪽으로 5N", "접시머리 밑 받침 눌림", F_bolt / (np.pi * (3.35 ** 2 - 1.7 ** 2) * 0.7), S_BEAR, "받침 두께 %.1f, 접시 자리 경사면" % PAD_T)
+add("판 틀", "판 아래끝(틀)을 머리 쪽으로 5N", "접시머리 밑 받침 눌림", F_bolt / (np.pi * (3.35 ** 2 - 1.7 ** 2) * 0.7), S_BEAR, "바닥 두께 %.1f, 접시 자리 경사면" % PAD_T)
 # 판 받이가 막대에 붙은 뿌리: 막대 윗면 아래 34mm 높이의 벽(두께 3.6, 폭 54)이 세워진 채 출력된다 = 층 사이로 당겨진다. 세모 살 2개가 같이 받는다
 Mroot = F_BUMP * (BAR_Z0 - (BL_Z0 - FR_END))
 rb = P.rotor_bar()
@@ -211,7 +215,7 @@ add("모터 자리", "판 모터가 가장 세게 돌 때", "모터 귀 기둥 �
 
 bad = [r_ for r_ in rows if not r_["ok"]]
 print("\n검사 %d개 가운데 여유 2배 아래 %d개" % (len(rows), len(bad)))
-print("   누운 자세에서 판과 틀이 제 무게로 처지는 양: 0.5T = %.3fmm, 0.3T = %.3fmm.  고리가 벌어져 빠지는 힘 약 %dN.  %s" % (res["plate_0.5_self_sag"], res["plate_0.3_self_sag"], res["clip_release_N"], res["note_motor3"]))
+print("   누운 자세에서 판과 틀이 제 무게로 처지는 양: %gT = %.3fmm.  고리가 벌어져 빠지는 힘 약 %dN.  %s" % (AL_T, res["plate_%g_self_sag" % AL_T], res["clip_release_N"], res["note_motor3"]))
 res["rows"] = rows; res["n"] = len(rows); res["n_low"] = len(bad)
 res["material"] = dict(S_XY=S_XY, S_Z=S_Z, T_XY=T_XY, T_Z=T_Z, S_BEAR=S_BEAR, E=E_MOD)
 res["loads"] = dict(T_MOTOR=T_MOTOR, T_BACK=T_BACK, F_BUMP=F_BUMP, F_HAND=F_HAND, W_HEAD=round(W_HEAD, 2), W_DEV=round(W_DEV, 2))

@@ -15,7 +15,7 @@ def props(m):
     return vol, ((a + b + c) / 4 * v6[:, None]).sum(0) / 6 / vol
 
 BOLT_G, NUT_G = 0.70, 0.35          # M3 x 8 둥근머리 볼트, M3 너트 (강철)
-CSK_G = 0.55                        # M3 x 8 접시머리
+CSK_G = 0.40                        # M3 x 6 접시머리
 
 
 def rotor_items(length=150.0, t=AL_T, n_coin=8):
@@ -23,12 +23,12 @@ def rotor_items(length=150.0, t=AL_T, n_coin=8):
     it = []
     v, c = props(P.rotor_bar()); it.append(("회전 막대 (속을 꽉 채워 출력)", v * RHO, c))
     v, c = props(P.al_plate(length, t)); it.append(("알루미늄 판 100×%d×%gT" % (length, t), v * AL_RHO, c))
-    v, c = props(P.frame_back(length)); it.append(("판 틀 (뒤)", v * RHO, c))
-    v, c = props(P.frame_front(length)); it.append(("판 틀 (앞)", v * RHO, c))
+    v, c = props(P.plate_frame(length)); it.append(("판 틀", v * RHO, c))
+    v, c = props(P.plate_clamp(length)); it.append(("판 누름쇠", v * RHO, c))
     for y, z in PLATE_BOLTS:
-        it.append(("판 틀 나사 M3 접시머리·너트", CSK_G + NUT_G, np.array([FL_XH - 2.0, y, z])))
-    for y, z in P.frame_top_screws(length):
-        it.append(("틀 위 나사 M3 접시머리", CSK_G, np.array([FL_X1 - 1.0, y, z])))
+        it.append(("판 틀 나사 M3 x 6 접시머리·너트", CSK_G + NUT_G, np.array([FL_XH - 2.0, y, z])))
+    for y, z in P.clamp_screws(length):
+        it.append(("누름쇠 나사 M3 x 6 접시머리·너트", CSK_G + NUT_G, np.array([FL_X1, y, z])))
     it.append(("축 고정 나사·너트", BOLT_G + NUT_G, np.array([0.0, 6.0, M1_ZT + 7.0])))
     v, c = props(P.coin_cap(n_coin)); it.append(("균형추 마개", v * RHO, c))
     for s_ in (1, -1):
@@ -60,7 +60,7 @@ def spin_inertia(length=150.0, t=AL_T, n_coin=8):
         # 사면체(원점, a, b, c)의 x2 + y2 적분: 부피/10 x (꼭짓점 제곱합 + 꼭짓점 쌍의 곱 합)
         s2 = sum(a[:, k] ** 2 + b[:, k] ** 2 + c[:, k] ** 2 + a[:, k] * b[:, k] + a[:, k] * c[:, k] + b[:, k] * c[:, k] for k in (0, 1))
         return float((v6 / 6 * s2 / 10).sum()) * rho
-    I = Iz(P.rotor_bar(), RHO) + Iz(P.al_plate(length, t), AL_RHO) + Iz(P.coin_cap(n_coin), RHO) + Iz(P.frame_back(length), RHO) + Iz(P.frame_front(length), RHO)
+    I = Iz(P.rotor_bar(), RHO) + Iz(P.al_plate(length, t), AL_RHO) + Iz(P.coin_cap(n_coin), RHO) + Iz(P.plate_frame(length), RHO) + Iz(P.plate_clamp(length), RHO)
     I += COIN_G * n_coin * (POD_XC ** 2 + COIN_D ** 2 / 8)
     for name, g, c in rotor_items(length, t, n_coin):
         if "볼트" in name or "나사" in name or "채움" in name:
@@ -72,17 +72,19 @@ def report(fill=None, quiet=False):
     fill = fill or {}
     # ---- 회전부 균형 (머리 좌표, 회전축 = Z). 막대는 속을 꽉 채운다. 판 두께·길이마다 동전 수를 고른다.
     out = {}
-    for length, t in ((150.0, 0.5), (150.0, 0.3), (150.0, 1.0)):
+    for length, t in ((150.0, AL_T),):
         n = best_coins(length, t); items = rotor_items(length, t, n); mass, mx, my, zc, _ = rotor_sum(items)
         m1 = rotor_sum(rotor_items(length, t, min(n + 1, COIN_SLOTS)))[1]; m0 = rotor_sum(rotor_items(length, t, max(n - 1, 0)))[1]
         key = "%d_%g" % (length, t)
         out[key] = dict(length=length, t=t, coins=n, spacers=COIN_SLOTS - n, mass=mass, imbalance_gmm=mx, side_gmm=my, com_z=zc, coin_step_gmm=COIN_G * abs(POD_XC),
                         plus1_gmm=m1, minus1_gmm=m0, inertia_gmm2=spin_inertia(length, t, n), gap=P.coin_gap(n),
                         items=[dict(name=nm, g=round(g, 2), x=round(float(c[0]), 1), z=round(float(c[2]), 1)) for nm, g, c in items])
+        if (length, t) in P.COINS and P.COINS[(length, t)] != n and not quiet:
+            print("!! parts2.COINS 의 동전 수(%d)가 가장 잘 맞는 수(%d)와 다르다: p2.N_COIN 을 고친다" % (P.COINS[(length, t)], n))
         if not quiet:
             print("판 100x%d x %gT: 동전 %d개 + 채움 %d개 -> 회전부 %.1f g, 남는 불균형 %+.0f g·mm (판 쪽이 +) = %.2f mN·m. 동전 하나 = %.0f g·mm. 관성 %.2e g·mm2" % (
                 length, t, n, COIN_SLOTS - n, mass, mx, abs(mx) * 9.81e-3, COIN_G * abs(POD_XC), out[key]["inertia_gmm2"]))
-    out["150.0"] = out["150_0.5"]                                     # 기본: 100 x 150 x 0.5T
+    out["150.0"] = out["150_%g" % AL_T]                               # 기본: 100 x 150 x 1T
     # ---- 끄덕임 관절: 머리 좌표의 점 (y, z) 를 끄덕임 축에서의 거리로
     H = []; H3 = []
     def add(name, g, c):
@@ -133,7 +135,4 @@ def report(fill=None, quiet=False):
 
 if __name__ == "__main__":
     r = report()
-    r["thin"] = {k: v for k, v in report(fill=dict(plate_t=0.3), quiet=True).items() if k in ("head_g", "com_up", "com_back", "moment", "moment_max", "turn_g", "lan")}
-    print("(0.3T 판이면 머리 %.0f g, 기울임 %.0f, 깊이 숙임 %.0f mN·m = 모터 힘의 %.0f%%, %.0f%%)" % (r["thin"]["head_g"], r["thin"]["moment"][TILT3], r["thin"]["moment"][85.0],
-          abs(r["thin"]["moment"][TILT3]) / r["cap"] * 100, abs(r["thin"]["moment"][85.0]) / r["cap"] * 100))
     json.dump(r, open(OUT + "mass.json", "w"), ensure_ascii=False, indent=1, default=float)

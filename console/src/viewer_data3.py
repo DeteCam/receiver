@@ -67,8 +67,8 @@ def build_meshes():
         ("motor3", v1._m1(mb), "H", C["metal"], "모터 3", 0), ("motor3_cap", v1._m1(mc), "H", C["cap"], "모터 3", 0),
         ("pi_board", pb, "H", C["pcb"], "라즈베리파이", 0), ("pi_parts", pc, "H", C["metal"], "라즈베리파이", 0), ("usb_plug", P.usb_plug_dummy(), "H", C["dark"], "전원선", 0),
         ("rotor_bar", P.rotor_bar(), "R", C["accent"], "회전 막대", 0), ("plate", P.al_plate(150.0), "R", C["foil"], "알루미늄 판 (100 × 150 × %gT)" % P.AL_T, 0),
-        ("frame_back", P.frame_back(), "R", C["accent"], "판 틀 (뒤)", 0), ("frame_front", P.frame_front_seated(), "R", C["accent"], "판 틀 (앞)", 0),
-        ("rotor_hw", P.rotor_hw(150.0, P.COINS[(150.0, P.AL_T)]), "R", C["screw"], "판 틀 나사와 너트, 축 고정 나사", 0), ("coins", P.coins(P.COINS[(150.0, P.AL_T)]), "R", C["metal"], "균형추 (100원 동전 %d개)" % P.COINS[(150.0, P.AL_T)], 0),
+        ("plate_frame", P.plate_frame(), "R", C["accent"], "판 틀 (판이 들어가는 홈)", 0), ("plate_clamp", P.plate_clamp(), "R", C["accent"], "판 누름쇠", 0),
+        ("rotor_hw", P.rotor_hw(150.0, P.COINS[(150.0, P.AL_T)]), "R", C["screw"], "판 틀·누름쇠 나사와 너트, 축 고정 나사", 0), ("coins", P.coins(P.COINS[(150.0, P.AL_T)]), "R", C["metal"], "균형추 (100원 동전 %d개)" % P.COINS[(150.0, P.AL_T)], 0),
         ("coin_cap", P.coin_cap(P.COINS[(150.0, P.AL_T)]), "R", C["accent"], "균형추 마개", 0),
         ("marker_frame", P.marker_frame(), "H", C["accent"], "AR 마커 틀", 0), ("keeper_r", P.pin_keeper(1), "Y", C["accent"], "핀 막이", 0), ("keeper_l", P.pin_keeper(-1), "Y", C["accent"], "핀 막이", 0),
     ]

@@ -42,22 +42,29 @@ for i, key in enumerate(SHOW):
     ax.set_xlim(-t - 0.05, W + t + 0.05); ax.set_ylim(-t - 0.05, H + t + 0.05); ax.set_aspect("equal"); ax.axis("off")
     S = J[key]["summary"]
     ax.set_title("%s (수신기 %s)\n가운데값 %.0f° · 골이 보인 곳 %.0f° · 30° 넘게 %.0f%%" % (name, key[-1], S["med"], S.get("med_seen", S["med"]), S["over30"]), fontsize=11, color=INK, loc="left")
-# 아래: 오차 분포 (누적)
-ax = fig.add_axes([0.06, 0.07, 0.55, 0.17]); ax.set_facecolor(BG)
+# 아래: 오차 분포 (누적). 실선 = 수신기의 지금 방법(골 찾기), 점선 = 같은 결과를 곡선 전체 맞추기로 읽은 것 (room2d_exp.py)
+import room2d_exp as X
+TM = X.template(X.c_now); MF = X.t_match(TM) if TM is not None else None
+ax = fig.add_axes([0.06, 0.07, 0.43, 0.17]); ax.set_facecolor(BG)
 for key, c in zip(["빈 공간 · 수신기 1"] + SHOW, ["#8E949C", "#2a78d6", "#5aa0e8", "#eb6834", "#f2a07a"]):
     if key not in J:
         continue
     e = np.sort([r["err"] for r in J[key]["rows"]]); ax.plot(e, np.arange(1, len(e) + 1) / len(e) * 100, color=c, lw=2, label=key)
+    name, ri = key.split(" · ")[0], int(key[-1]) - 1; S_ = X.cached(name, ri)
+    if MF is not None and S_ is not None and name != "빈 공간":
+        e2 = np.sort(X.errors(name, ri, S_, X.c_now, MF)); ax.plot(e2, np.arange(1, len(e2) + 1) / len(e2) * 100, color=c, lw=1.6, ls=(0, (4, 2)))
 for sp in ("top", "right"):
     ax.spines[sp].set_visible(False)
 ax.tick_params(colors=SUB, labelsize=9); ax.grid(True, color=GRID, lw=0.6); ax.set_xlim(0, 60); ax.set_ylim(0, 100)
 ax.set_xlabel("방향 오차 (도)", color=INK, fontsize=10); ax.set_ylabel("카메라 자리 (%)", color=INK, fontsize=10)
-ax.legend(frameon=False, fontsize=8.5, loc="lower right")
+h, lab_ = ax.get_legend_handles_labels()
+h += [plt.Line2D([], [], color=SUB, lw=2), plt.Line2D([], [], color=SUB, lw=1.6, ls=(0, (4, 2)))]; lab_ += ["실선: 골 찾기 (지금 장치)", "점선: 곡선 전체 맞추기"]
+ax.legend(h, lab_, frameon=False, fontsize=8.5, loc="upper left", bbox_to_anchor=(1.01, 1.08))
 fig.text(0.66, 0.205, "점의 색: 카메라를 그 자리에 두었을 때 수신기가 찾은 방향의 오차", fontsize=10, color=INK)
 for j, (c, lab) in enumerate(((OK, "10° 안"), (MID, "10~30°"), (BAD, "30° 넘게"), (UNSEEN, "골이 안 보임 (재지 못함으로 표시)"))):
     fig.text(0.665 + (j % 2) * 0.14, 0.165 - (j // 2) * 0.035, "●", color=c, fontsize=13); fig.text(0.68 + (j % 2) * 0.14, 0.168 - (j // 2) * 0.035, lab, fontsize=9.5, color=SUB)
 fig.text(0.665, 0.085, "★ 수신기 (판이 반지름 80mm 로 돈다)   벽 색: 벽돌 / 타일   짙은 회색: 금속(거울, 철제 서랍장)", fontsize=9, color=SUB)
 fig.text(0.035, 0.955, "방 전체를 전파 계산으로 풀어 수신기의 실제 코드로 방향을 찾은 결과 (gprMax 4.0.1, 시간 영역 2차원, 2.427~2.447GHz 16개 주파수)", fontsize=14, weight="bold", color=INK)
-fig.text(0.035, 0.912, "판 각 5°마다 한 번씩 72번 풀고, 상반성으로 방 안의 카메라 후보 자리 전부를 한 번에 얻는다. 곡선은 firmware/core 의 fusion.trough 로 읽는다. 2차원이라 판이 위아래로 끝없이 길어 골이 실제보다 깊다.", fontsize=10, color=SUB)
+fig.text(0.035, 0.912, "판 각 5°마다 한 번씩 72번 풀고, 상반성으로 방 안의 카메라 후보 자리 전부를 한 번에 얻는다. 곡선은 firmware/core 의 fusion.trough 로 읽는다 (아래 그래프의 점선은 곡선 전체를 벽 없는 곳의 곡선과 맞춘 것). 2차원이라 판이 위아래로 끝없이 길어 골이 실제보다 깊다.", fontsize=10, color=SUB)
 out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(empaths.IMG, "33_방_전파계산.png")
 fig.savefig(out, facecolor=BG); print("saved", out)

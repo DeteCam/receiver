@@ -41,7 +41,7 @@ TEAL = "#1F9E8F"
 A["dongle2"] = (A["dongle2"][0], "H", TEAL, False)
 hp = lambda p: HP(p, yaw, pitch)
 pts = {"dongle": hp((BX0 + DONGLE["x"], -PI_T / 2 - DONGLE["up"], BZ0 - 14)), "dongle2": hp((BX0 + DONGLE2["x"], -PI_T / 2 - DONGLE2["up"], BZ0 - 14)), "ant": hp((0, -2.5, 0)), "pi": hp((-20, -3, -45))}
-ghost = ("head_shell", "head_lid", "crown", "sector", "plate", "frame_back", "frame_front", "rotor_bar", "rotor_hw", "coins", "coin_cap", "marker_frame", "yoke", "pin_r", "pin_l", "keeper_r", "keeper_l")
+ghost = ("head_shell", "head_lid", "crown", "sector", "plate", "plate_frame", "plate_clamp", "rotor_bar", "rotor_hw", "coins", "coin_cap", "marker_frame", "yoke", "pin_r", "pin_l", "keeper_r", "keeper_l")
 pix = render.render(A, TMP + 'alone_a.png', cam_az=152, cam_el=14, dist=520, focus=(-5, 0, 118), size=(900, 760), label_pts=pts, ground=False, ghost=ghost, ghost_opacity=0.2)
 pa = tags(Image.open(TMP + 'alone_a.png').convert("RGB"), pix, [("dongle", "무선 동글 (주황)\n폰과 통신", 150, 120), ("dongle2", "탐지 동글 (청록)\n둘레 기기를 엿듣는다. 없어도 된다", 60, 230), ("ant", "내장 Wi-Fi 안테나\nCSI 를 받는 데만 쓴다", -90, -130), ("pi", "라즈베리파이\n캡처 · 계산 · 모터", -230, 60)], fs=22)
 

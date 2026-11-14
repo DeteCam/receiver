@@ -54,9 +54,8 @@ YOKE_SCREWS = union([cy(3.0, ARM_Y1 + 0.8, ARM_Y1 + 3.4, ex, ez) for ex, ez in P
                     + [cy(3.0, -ARM_Y1 - 2.6, -ARM_Y1, x, z) for x, z in P.stop_screws_xz()])
 YOKE = union([P.yoke(), P.pin(1), P.pin(-1), P.pin_keeper(1), P.pin_keeper(-1), mb.transform(P.motor1_T()), mc.transform(P.motor1_T()), mb.transform(P.motor2_T()), mc.transform(P.motor2_T()), P.pinion1(), P.pinion2(), P.m2_ring(), YOKE_SCREWS])
 SETS = {
-    "판 150 (0.5T, 동전 %d개)" % P.COINS[(150.0, 0.5)]: P.rotor_set(150.0),
+    "판 150 (%gT, 동전 %d개)" % (AL_T, P.COINS[(150.0, AL_T)]): P.rotor_set(150.0),
     "판 150 (마개가 가장 내려온 경우)": P.rotor_set(150.0, low_cap=True),
-    "판 150 (0.3T, 동전 %d개)" % P.COINS[(150.0, 0.3)]: P.rotor_set(150.0, t=0.3),
 }
 res = {}
 for name, ROT in SETS.items():

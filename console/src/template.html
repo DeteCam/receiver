@@ -65,7 +65,8 @@ output, .num { font-family: var(--font-data); font-variant-numeric: tabular-nums
 .key i.pk { width: 5px; height: 5px; border: 0; border-radius: 50%; background: var(--scan); opacity: 0.55; }
 .key i.dot { width: 9px; height: 9px; border: 0; border-radius: 50%; background: var(--est); }
 .key i.ring { width: 11px; height: 11px; border: 2px dashed var(--ink); border-radius: 50%; }
-.nogl { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px; text-align: center; color: var(--ink); font-size: 14px; }
+.nogl { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 12px; align-items: center; justify-content: center; padding: 24px; text-align: center; color: var(--ink); font-size: 14px; }
+.nogl img { max-width: 100%; max-height: 72%; object-fit: contain; border-radius: 8px; }
 
 .side { display: flex; flex-direction: column; gap: 14px; padding: 16px; border-left: 1px solid var(--line); min-width: 0; }
 .joints { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 6px 8px; }
@@ -171,7 +172,7 @@ td.wrapok { white-space: normal; }
   <div class="deck">
     <div class="stage" id="stage">
       <canvas id="view" tabindex="0" aria-label="수신기 3D 모델. 끌어서 돌려 볼 수 있다."></canvas>
-      <div class="nogl" id="nogl" hidden>이 프로그램에서는 3D 그림을 그릴 수 없다. 버튼과 그래프는 그대로 쓸 수 있다.</div>
+      <div class="nogl" id="nogl" hidden><img alt="수신기 전체 모습" src="../images/01_%EC%A0%84%EC%B2%B4_%EB%AA%A8%EC%8A%B5.png" onerror="this.remove()"><span>이 브라우저는 3D 그림(WebGL)을 그리지 못해서 그림으로 대신 보여 준다. 버튼과 그래프는 그대로 쓸 수 있다.</span></div>
       <div class="chip" id="chip" data-mode="done"><span class="dot"></span><span id="chipText">끝</span></div>
       <div class="clock num" id="clock">0.0초</div>
       <span class="tag" id="tagFront" hidden>앞 (0°)</span>

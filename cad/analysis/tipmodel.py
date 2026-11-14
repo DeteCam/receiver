@@ -62,12 +62,13 @@ def head_items(plate_t=AL_T, length=150.0, n_coin=None):
 
 
 def frame_corners(length=150.0):
-    """판 틀 바깥의 귀 (머리 좌표): 앞면 귀와 옆 테두리 귀, 아래·위 끝. 틀은 판 회전축에서 반지름 FR_ENV 안이다"""
-    xo = FL_X1 + FR_RIB + FR_POCKET + FR_FRONT_T; xs = FL_X1 + FR_RIB
-    yo = float(np.sqrt(FR_ENV ** 2 - xo ** 2)); ys = min(PLATE_W / 2 + FR_SIDE, float(np.sqrt(FR_ENV ** 2 - xs ** 2)))
-    pts = [[x, s * y, BL_Z0 - FR_END] for x, y in ((xo, yo), (xs, ys)) for s in (1, -1)]                       # 아래 귀
-    pts += [[x, s * y, BL_Z0 + length + FR_END_TOPSIDE] for x, y in ((xo, yo), (xs, ys)) for s in (1, -1)]       # 위 띠 양끝 (낮다)
-    pts += [[x, s * FR_TOP_FLAT, BL_Z0 + length + FR_END_TOP] for x in (xo, xs) for s in (1, -1)]                # 위 띠 가운데 (높다)
+    """판 틀·누름쇠 바깥의 귀 (머리 좌표): 옆 테두리 귀, 아래 턱 끝, 위 띠, 누름쇠 귀. 모두 판 회전축에서 반지름 FR_ENV 안이다"""
+    xw = FL_X1 + FR_DEPTH; yw = PLATE_W / 2 + FR_GAP + FR_WALL; xl = FL_X1 + FR_LIP_TOP; xc = FL_X1 + AL_T + CL_T
+    pts = [[xw, s * yw, BL_Z0 - FR_END] for s in (1, -1)]                                                          # 아래 귀
+    pts += [[xl, s * FR_LIP_HW, BL_Z0 - FR_GAP] for s in (1, -1)]                                                 # 아래 턱 끝
+    pts += [[xw, s * yw, BL_Z0 + length + FR_END_TOPSIDE] for s in (1, -1)]                                      # 위 띠 양끝 (낮다)
+    pts += [[xw, s * FR_TOP_FLAT, BL_Z0 + length + FR_END_TOP] for s in (1, -1)]                                 # 위 띠 가운데 (높다)
+    pts += [[xc, s * CL_HW, z] for s in (1, -1) for z in (BL_Z0 + length - CL_LAP, BL_Z0 + length + FR_END_TOP - 0.5)]   # 누름쇠 귀
     return pts
 
 

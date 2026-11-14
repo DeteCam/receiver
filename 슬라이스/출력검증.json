@@ -10,9 +10,9 @@
    "nozzle": "0.4",
    "support_used": "false",
    "filament_type": "PLA",
-   "used_g": 21.41,
-   "used_m": 7.18,
-   "prediction_s": 4100,
+   "used_g": 40.35,
+   "used_m": 13.53,
+   "prediction_s": 6556,
    "printer": "Bambu Lab X1 Carbon",
    "bed_type": "Textured PEI Plate",
    "nozzle_temp": "220",
@@ -21,22 +21,22 @@
    "enable_support": "0",
    "brim": "auto_brim",
    "max_flow_setting": "12",
-   "gcode_bytes": 5661414,
+   "gcode_bytes": 7477912,
    "warnings": [
     "bed_temperature_too_high_than_filament"
    ]
   },
   "range": {
    "x": [
-    65.3,
-    193.8
+    36.6,
+    228.4
    ],
    "y": [
-    78.7,
-    172.8
+    21.5,
+    250.8
    ],
    "z_max": 24.0,
-   "edge_min": 62.2,
+   "edge_min": 5.2,
    "in_exclude": false,
    "layers": 120
   },
@@ -46,83 +46,89 @@
     "Inner wall": {
      "flow_p99": 11.8,
      "speed_max": 147.0,
-     "len_m": 79.2
+     "len_m": 123.5
     },
     "Outer wall": {
      "flow_p99": 11.8,
      "speed_max": 159.0,
-     "len_m": 46.4
+     "len_m": 72.2
     },
     "Bottom surface": {
-     "flow_p99": 9.6,
+     "flow_p99": 10.3,
      "speed_max": 105.0,
-     "len_m": 5.0
+     "len_m": 14.8
     },
     "Gap infill": {
      "flow_p99": 11.8,
      "speed_max": 250.0,
-     "len_m": 1.9
+     "len_m": 4.8
     },
     "Internal solid infill": {
      "flow_p99": 11.8,
      "speed_max": 193.0,
-     "len_m": 39.9
-    },
-    "Sparse infill": {
-     "flow_p99": 11.8,
-     "speed_max": 147.0,
-     "len_m": 17.1
-    },
-    "Floating vertical shell": {
-     "flow_p99": 11.8,
-     "speed_max": 176.0,
-     "len_m": 2.8
-    },
-    "Bridge": {
-     "flow_p99": 7.1,
-     "speed_max": 50.0,
-     "len_m": 6.3
+     "len_m": 107.9
     },
     "Top surface": {
      "flow_p99": 11.8,
      "speed_max": 159.0,
-     "len_m": 10.0
+     "len_m": 28.0
+    },
+    "Sparse infill": {
+     "flow_p99": 11.8,
+     "speed_max": 147.0,
+     "len_m": 27.9
+    },
+    "Floating vertical shell": {
+     "flow_p99": 11.8,
+     "speed_max": 176.0,
+     "len_m": 4.9
+    },
+    "Bridge": {
+     "flow_p99": 6.9,
+     "speed_max": 50.0,
+     "len_m": 16.0
+    },
+    "Overhang wall": {
+     "flow_p99": 0.8,
+     "speed_max": 10.0,
+     "len_m": 0.1
     }
    }
   },
   "features_m": {
-   "Inner wall": 79.2,
-   "Outer wall": 46.4,
-   "Bottom surface": 5.0,
-   "Gap infill": 1.9,
-   "Internal solid infill": 39.9,
-   "Sparse infill": 17.1,
-   "Floating vertical shell": 2.8,
-   "Bridge": 6.3,
-   "Top surface": 10.0
+   "Inner wall": 123.5,
+   "Outer wall": 72.2,
+   "Bottom surface": 14.8,
+   "Gap infill": 4.8,
+   "Internal solid infill": 107.9,
+   "Top surface": 28.0,
+   "Sparse infill": 27.9,
+   "Floating vertical shell": 4.9,
+   "Bridge": 16.0,
+   "Overhang wall": 0.1
   },
   "bed": [
    {
     "part": "90_test_coupon",
-    "contact_mm2": 1954.0,
+    "contact_mm2": 2015.0,
     "islands": 1,
-    "smallest_island_mm2": 2011.0,
+    "smallest_island_mm2": 2067.0,
     "height": 24.0,
-    "slender": 0.54
+    "slender": 0.53
    },
    {
-    "part": "91_tenon_gauge",
-    "contact_mm2": 210.0,
+    "part": "91_driver_check",
+    "contact_mm2": 817.0,
     "islands": 1,
-    "smallest_island_mm2": 222.0,
-    "height": 10.0,
-    "slender": 0.69
+    "smallest_island_mm2": 861.0,
+    "height": 5.0,
+    "slender": 0.17
    },
    {
     "part": "16_m2_ring",
     "contact_mm2": 159.0,
     "islands": 1,
-    "smallest_island_mm2": 172.0,
+    "smallest_island_mm2": 171.0,
     "height": 3.9,
     "slender": 0.31
    },
@@ -130,7 +136,7 @@
     "part": "13_pin_fit1",
     "contact_mm2": 165.0,
     "islands": 1,
-    "smallest_island_mm2": 176.0,
+    "smallest_island_mm2": 175.0,
     "height": 18.0,
     "slender": 1.4
    },
@@ -138,7 +144,7 @@
     "part": "13_pin_fit1",
     "contact_mm2": 165.0,
     "islands": 1,
-    "smallest_island_mm2": 176.0,
+    "smallest_island_mm2": 175.0,
     "height": 18.0,
     "slender": 1.4
    },
@@ -146,7 +152,7 @@
     "part": "13_pin_fit2",
     "contact_mm2": 165.0,
     "islands": 1,
-    "smallest_island_mm2": 176.0,
+    "smallest_island_mm2": 175.0,
     "height": 18.0,
     "slender": 1.4
    },
@@ -208,19 +214,59 @@
    },
    {
     "part": "05_pinion_fit3",
-    "contact_mm2": 115.0,
+    "contact_mm2": 114.0,
     "islands": 1,
-    "smallest_island_mm2": 132.0,
+    "smallest_island_mm2": 131.0,
     "height": 5.5,
-    "slender": 0.51
+    "slender": 0.52
    },
    {
     "part": "05_pinion_fit3",
-    "contact_mm2": 115.0,
+    "contact_mm2": 114.0,
     "islands": 1,
-    "smallest_island_mm2": 132.0,
+    "smallest_island_mm2": 131.0,
     "height": 5.5,
-    "slender": 0.51
+    "slender": 0.52
+   },
+   {
+    "part": "18_drill_jig",
+    "contact_mm2": 4488.0,
+    "islands": 1,
+    "smallest_island_mm2": 4647.0,
+    "height": 3.8,
+    "slender": 0.06
+   },
+   {
+    "part": "15_marker_frame",
+    "contact_mm2": 1558.0,
+    "islands": 1,
+    "smallest_island_mm2": 1695.0,
+    "height": 2.0,
+    "slender": 0.05
+   },
+   {
+    "part": "14_pin_keeper",
+    "contact_mm2": 111.0,
+    "islands": 1,
+    "smallest_island_mm2": 124.0,
+    "height": 3.9,
+    "slender": 0.37
+   },
+   {
+    "part": "14_pin_keeper",
+    "contact_mm2": 111.0,
+    "islands": 1,
+    "smallest_island_mm2": 124.0,
+    "height": 3.9,
+    "slender": 0.37
+   },
+   {
+    "part": "03_clip",
+    "contact_mm2": 245.0,
+    "islands": 1,
+    "smallest_island_mm2": 272.0,
+    "height": 2.0,
+    "slender": 0.13
    }
   ],
   "missing": {
@@ -229,7 +275,7 @@
      "mm2": 0.0,
      "share_pct": 0.0
     },
-    "91_tenon_gauge": {
+    "91_driver_check": {
      "mm2": 0.0,
      "share_pct": 0.0
     },
@@ -260,24 +306,65 @@
     "05_pinion_fit3": {
      "mm2": 0.0,
      "share_pct": 0.0
+    },
+    "18_drill_jig": {
+     "mm2": 0.0,
+     "share_pct": 0.0
+    },
+    "15_marker_frame": {
+     "mm2": 0.0,
+     "share_pct": 0.0
+    },
+    "14_pin_keeper": {
+     "mm2": 0.0,
+     "share_pct": 0.0
+    },
+    "03_clip": {
+     "mm2": 0.0,
+     "share_pct": 0.0
     }
    },
    "spots": [],
    "n_spots": 0
   },
   "unsupported": {
-   "n": 0,
+   "n": 2,
    "islands": [],
    "cantilever": [],
-   "bridge": [],
-   "max_bridge_span": 0.0,
+   "bridge": [
+    {
+     "z": 2.8,
+     "kind": "다리",
+     "reach": 1.1,
+     "area": 14.0,
+     "w": 5.6,
+     "h": 5.6,
+     "x": 44.9,
+     "y": 46.0,
+     "part": "14_pin_keeper",
+     "bridge_share": 0.06
+    },
+    {
+     "z": 2.8,
+     "kind": "다리",
+     "reach": 1.1,
+     "area": 14.0,
+     "w": 5.6,
+     "h": 5.6,
+     "x": 44.9,
+     "y": 64.0,
+     "part": "14_pin_keeper",
+     "bridge_share": 0.06
+    }
+   ],
+   "max_bridge_span": 2.2,
    "max_cantilever": 0.0,
    "n_island": 0,
    "n_cantilever": 0,
-   "n_bridge": 0,
-   "non_bridge_in_air_mm2": 0.0
+   "n_bridge": 2,
+   "non_bridge_in_air_mm2": 22.9
   },
-  "sec": 5.0
+  "sec": 11.0
  },
  "1판_받침_S": {
   "file": "1판_받침_S.gcode.3mf",
@@ -290,9 +377,9 @@
    "nozzle": "0.4",
    "support_used": "false",
    "filament_type": "PLA",
-   "used_g": 126.08,
-   "used_m": 42.27,
-   "prediction_s": 12741,
+   "used_g": 125.82,
+   "used_m": 42.19,
+   "prediction_s": 12702,
    "printer": "Bambu Lab X1 Carbon",
    "bed_type": "Textured PEI Plate",
    "nozzle_temp": "220",
@@ -301,7 +388,7 @@
    "enable_support": "0",
    "brim": "auto_brim",
    "max_flow_setting": "12",
-   "gcode_bytes": 9465468,
+   "gcode_bytes": 9468091,
    "warnings": [
     "bed_temperature_too_high_than_filament"
    ]
@@ -326,17 +413,17 @@
     "Inner wall": {
      "flow_p99": 11.8,
      "speed_max": 147.0,
-     "len_m": 332.5
+     "len_m": 331.8
     },
     "Outer wall": {
      "flow_p99": 11.8,
      "speed_max": 159.0,
-     "len_m": 198.0
+     "len_m": 197.4
     },
     "Bottom surface": {
-     "flow_p99": 9.6,
+     "flow_p99": 9.4,
      "speed_max": 105.0,
-     "len_m": 60.1
+     "len_m": 60.0
     },
     "Gap infill": {
      "flow_p99": 11.8,
@@ -346,17 +433,17 @@
     "Internal solid infill": {
      "flow_p99": 11.8,
      "speed_max": 176.0,
-     "len_m": 380.9
+     "len_m": 379.9
     },
     "Sparse infill": {
      "flow_p99": 11.8,
      "speed_max": 147.0,
-     "len_m": 74.5
+     "len_m": 74.6
     },
     "Floating vertical shell": {
      "flow_p99": 11.8,
      "speed_max": 200.0,
-     "len_m": 6.1
+     "len_m": 6.4
     },
     "Bridge": {
      "flow_p99": 7.0,
@@ -366,7 +453,7 @@
     "Top surface": {
      "flow_p99": 11.8,
      "speed_max": 159.0,
-     "len_m": 79.2
+     "len_m": 78.6
     },
     "Overhang wall": {
      "flow_p99": 4.0,
@@ -376,15 +463,15 @@
    }
   },
   "features_m": {
-   "Inner wall": 332.5,
-   "Outer wall": 198.0,
-   "Bottom surface": 60.1,
+   "Inner wall": 331.8,
+   "Outer wall": 197.4,
+   "Bottom surface": 60.0,
    "Gap infill": 70.4,
-   "Internal solid infill": 380.9,
-   "Sparse infill": 74.5,
-   "Floating vertical shell": 6.1,
+   "Internal solid infill": 379.9,
+   "Sparse infill": 74.6,
+   "Floating vertical shell": 6.4,
    "Bridge": 66.8,
-   "Top surface": 79.2,
+   "Top surface": 78.6,
    "Overhang wall": 0.1
   },
   "bed": [
@@ -405,14 +492,6 @@
     "slender": 0.24
    },
    {
-    "part": "03_clip",
-    "contact_mm2": 245.0,
-    "islands": 1,
-    "smallest_island_mm2": 273.0,
-    "height": 2.0,
-    "slender": 0.13
-   },
-   {
     "part": "17_lan_cap",
     "contact_mm2": 44.0,
     "islands": 2,
@@ -428,10 +507,6 @@
      "share_pct": 0.0
     },
     "01_base_tub_S": {
-     "mm2": 0.0,
-     "share_pct": 0.0
-    },
-    "03_clip": {
      "mm2": 0.0,
      "share_pct": 0.0
     },
@@ -468,7 +543,7 @@
    "n_bridge": 1,
    "non_bridge_in_air_mm2": 12.3
   },
-  "sec": 17.0
+  "sec": 15.0
  },
  "2판_요크": {
   "file": "2판_요크.gcode.3mf",
@@ -481,9 +556,9 @@
    "nozzle": "0.4",
    "support_used": "false",
    "filament_type": "PLA",
-   "used_g": 124.48,
-   "used_m": 41.74,
-   "prediction_s": 12586,
+   "used_g": 125.09,
+   "used_m": 41.94,
+   "prediction_s": 12689,
    "printer": "Bambu Lab X1 Carbon",
    "bed_type": "Textured PEI Plate",
    "nozzle_temp": "220",
@@ -492,7 +567,7 @@
    "enable_support": "0",
    "brim": "auto_brim",
    "max_flow_setting": "12",
-   "gcode_bytes": 4314842,
+   "gcode_bytes": 4447158,
    "warnings": [
     "bed_temperature_too_high_than_filament"
    ]
@@ -506,10 +581,10 @@
     61.2,
     194.8
    ],
-   "z_max": 92.4,
+   "z_max": 95.6,
    "edge_min": 60.2,
    "in_exclude": false,
-   "layers": 462
+   "layers": 478
   },
   "flow": {
    "max_p999": 11.8,
@@ -517,12 +592,12 @@
     "Inner wall": {
      "flow_p99": 11.8,
      "speed_max": 147.0,
-     "len_m": 467.2
+     "len_m": 469.9
     },
     "Outer wall": {
      "flow_p99": 11.8,
      "speed_max": 159.0,
-     "len_m": 339.8
+     "len_m": 341.5
     },
     "Bottom surface": {
      "flow_p99": 9.4,
@@ -532,22 +607,22 @@
     "Internal solid infill": {
      "flow_p99": 11.8,
      "speed_max": 192.0,
-     "len_m": 190.7
+     "len_m": 191.5
     },
     "Sparse infill": {
      "flow_p99": 11.8,
      "speed_max": 147.0,
-     "len_m": 145.9
+     "len_m": 146.5
     },
     "Floating vertical shell": {
      "flow_p99": 11.8,
      "speed_max": 200.0,
-     "len_m": 8.4
+     "len_m": 8.5
     },
     "Bridge": {
      "flow_p99": 6.8,
      "speed_max": 50.0,
-     "len_m": 34.4
+     "len_m": 34.6
     },
     "Top surface": {
      "flow_p99": 11.8,
@@ -567,13 +642,13 @@
    }
   },
   "features_m": {
-   "Inner wall": 467.2,
-   "Outer wall": 339.8,
+   "Inner wall": 469.9,
+   "Outer wall": 341.5,
    "Bottom surface": 31.1,
-   "Internal solid infill": 190.7,
-   "Sparse infill": 145.9,
-   "Floating vertical shell": 8.4,
-   "Bridge": 34.4,
+   "Internal solid infill": 191.5,
+   "Sparse infill": 146.5,
+   "Floating vertical shell": 8.5,
+   "Bridge": 34.6,
    "Top surface": 40.0,
    "Gap infill": 16.9,
    "Overhang wall": 0.2
@@ -584,8 +659,8 @@
     "contact_mm2": 15179.0,
     "islands": 1,
     "smallest_island_mm2": 15301.0,
-    "height": 92.3,
-    "slender": 0.75
+    "height": 95.6,
+    "slender": 0.78
    }
   ],
   "missing": {
@@ -635,7 +710,7 @@
    "n_bridge": 2,
    "non_bridge_in_air_mm2": 48.4
   },
-  "sec": 12.0
+  "sec": 11.0
  },
  "3판_머리": {
   "file": "3판_머리.gcode.3mf",
@@ -648,9 +723,9 @@
    "nozzle": "0.4",
    "support_used": "false",
    "filament_type": "PLA",
-   "used_g": 107.43,
-   "used_m": 36.02,
-   "prediction_s": 13326,
+   "used_g": 105.61,
+   "used_m": 35.41,
+   "prediction_s": 13131,
    "printer": "Bambu Lab X1 Carbon",
    "bed_type": "Textured PEI Plate",
    "nozzle_temp": "220",
@@ -659,7 +734,7 @@
    "enable_support": "0",
    "brim": "auto_brim",
    "max_flow_setting": "12",
-   "gcode_bytes": 9628494,
+   "gcode_bytes": 9222711,
    "warnings": [
     "bed_temperature_too_high_than_filament"
    ]
@@ -679,32 +754,37 @@
    "layers": 176
   },
   "flow": {
-   "max_p999": 11.9,
+   "max_p999": 11.8,
    "by_feature": {
     "Outer wall": {
      "flow_p99": 11.8,
-     "speed_max": 159.0,
-     "len_m": 186.2
+     "speed_max": 179.0,
+     "len_m": 185.0
     },
     "Inner wall": {
      "flow_p99": 11.8,
      "speed_max": 147.0,
-     "len_m": 214.7
+     "len_m": 212.4
     },
     "Gap infill": {
      "flow_p99": 11.8,
      "speed_max": 250.0,
-     "len_m": 49.4
+     "len_m": 50.0
     },
     "Bottom surface": {
      "flow_p99": 9.5,
      "speed_max": 105.0,
-     "len_m": 56.9
+     "len_m": 56.7
     },
     "Internal solid infill": {
-     "flow_p99": 11.9,
-     "speed_max": 196.0,
-     "len_m": 448.5
+     "flow_p99": 11.8,
+     "speed_max": 202.0,
+     "len_m": 433.5
+    },
+    "Top surface": {
+     "flow_p99": 11.8,
+     "speed_max": 159.0,
+     "len_m": 86.9
     },
     "Overhang wall": {
      "flow_p99": 4.0,
@@ -714,7 +794,7 @@
     "Bridge": {
      "flow_p99": 6.9,
      "speed_max": 50.0,
-     "len_m": 24.3
+     "len_m": 24.2
     },
     "Sparse infill": {
      "flow_p99": 11.8,
@@ -725,42 +805,37 @@
      "flow_p99": 11.8,
      "speed_max": 192.0,
      "len_m": 5.0
-    },
-    "Top surface": {
-     "flow_p99": 11.8,
-     "speed_max": 159.0,
-     "len_m": 86.4
     }
    }
   },
   "features_m": {
-   "Outer wall": 186.2,
-   "Inner wall": 214.7,
-   "Gap infill": 49.4,
-   "Bottom surface": 56.9,
-   "Internal solid infill": 448.5,
+   "Outer wall": 185.0,
+   "Inner wall": 212.4,
+   "Gap infill": 50.0,
+   "Bottom surface": 56.7,
+   "Internal solid infill": 433.5,
+   "Top surface": 86.9,
    "Overhang wall": 0.2,
-   "Bridge": 24.3,
+   "Bridge": 24.2,
    "Sparse infill": 33.3,
-   "Floating vertical shell": 5.0,
-   "Top surface": 86.4
+   "Floating vertical shell": 5.0
   },
   "bed": [
    {
     "part": "07_head_shell",
-    "contact_mm2": 11164.0,
+    "contact_mm2": 11142.0,
     "islands": 1,
-    "smallest_island_mm2": 11340.0,
+    "smallest_island_mm2": 11324.0,
     "height": 35.2,
     "slender": 0.33
    },
    {
     "part": "08_head_lid",
-    "contact_mm2": 10250.0,
+    "contact_mm2": 10249.0,
     "islands": 2,
     "smallest_island_mm2": 2788.0,
-    "height": 29.3,
-    "slender": 0.29
+    "height": 6.8,
+    "slender": 0.07
    },
    {
     "part": "09_crown",
@@ -786,8 +861,8 @@
      "share_pct": 0.0
     },
     "08_head_lid": {
-     "mm2": 0.0,
-     "share_pct": 0.0
+     "mm2": 1.2,
+     "share_pct": 0.03
     },
     "09_crown": {
      "mm2": 0.0,
@@ -804,20 +879,7 @@
   "unsupported": {
    "n": 5,
    "islands": [],
-   "cantilever": [
-    {
-     "z": 2.8,
-     "kind": "외팔",
-     "reach": 1.6,
-     "area": 5.9,
-     "w": 2.2,
-     "h": 5.0,
-     "x": 150.6,
-     "y": 94.8,
-     "part": "08_head_lid",
-     "bridge_share": 0.13
-    }
-   ],
+   "cantilever": [],
    "bridge": [
     {
      "z": 17.2,
@@ -859,23 +921,35 @@
      "z": 0.8,
      "kind": "다리",
      "reach": 1.3,
-     "area": 33.0,
+     "area": 32.9,
      "w": 10.4,
      "h": 10.4,
      "x": 140.7,
      "y": 65.9,
      "part": "08_head_lid",
      "bridge_share": 0.21
+    },
+    {
+     "z": 2.8,
+     "kind": "다리",
+     "reach": 1.3,
+     "area": 4.4,
+     "w": 1.4,
+     "h": 4.8,
+     "x": 148.9,
+     "y": 75.0,
+     "part": "08_head_lid",
+     "bridge_share": 0.0
     }
    ],
    "max_bridge_span": 17.6,
-   "max_cantilever": 1.6,
+   "max_cantilever": 0.0,
    "n_island": 0,
-   "n_cantilever": 1,
-   "n_bridge": 4,
-   "non_bridge_in_air_mm2": 79.2
+   "n_cantilever": 0,
+   "n_bridge": 5,
+   "non_bridge_in_air_mm2": 78.8
   },
-  "sec": 17.0
+  "sec": 15.0
  },
  "4판_회전부_맞춤1": {
   "file": "4판_회전부_맞춤1.gcode.3mf",
@@ -888,9 +962,9 @@
    "nozzle": "0.4",
    "support_used": "false",
    "filament_type": "PLA",
-   "used_g": 77.44,
-   "used_m": 25.96,
-   "prediction_s": 7467,
+   "used_g": 43.95,
+   "used_m": 14.74,
+   "prediction_s": 5646,
    "printer": "Bambu Lab X1 Carbon",
    "bed_type": "Textured PEI Plate",
    "nozzle_temp": "220",
@@ -899,24 +973,24 @@
    "enable_support": "0",
    "brim": "auto_brim",
    "max_flow_setting": "12",
-   "gcode_bytes": 2821775,
+   "gcode_bytes": 3927740,
    "warnings": [
     "bed_temperature_too_high_than_filament"
    ]
   },
   "range": {
    "x": [
-    22.2,
-    233.8
+    42.0,
+    238.7
    ],
    "y": [
-    28.2,
-    182.8
+    48.4,
+    184.8
    ],
-   "z_max": 25.0,
-   "edge_min": 22.2,
+   "z_max": 38.0,
+   "edge_min": 17.3,
    "in_exclude": false,
-   "layers": 125
+   "layers": 190
   },
   "flow": {
    "max_p999": 11.8,
@@ -924,112 +998,168 @@
     "Inner wall": {
      "flow_p99": 11.8,
      "speed_max": 147.0,
-     "len_m": 115.6
+     "len_m": 106.8
     },
     "Outer wall": {
      "flow_p99": 11.8,
      "speed_max": 159.0,
-     "len_m": 64.3
-    },
-    "Bottom surface": {
-     "flow_p99": 9.4,
-     "speed_max": 105.0,
-     "len_m": 37.0
+     "len_m": 65.2
     },
     "Gap infill": {
      "flow_p99": 11.8,
      "speed_max": 250.0,
-     "len_m": 5.7
+     "len_m": 1.6
+    },
+    "Bottom surface": {
+     "flow_p99": 9.5,
+     "speed_max": 105.0,
+     "len_m": 11.4
     },
     "Internal solid infill": {
      "flow_p99": 11.8,
-     "speed_max": 179.0,
-     "len_m": 128.7
+     "speed_max": 192.0,
+     "len_m": 94.1
     },
     "Sparse infill": {
      "flow_p99": 11.8,
      "speed_max": 147.0,
-     "len_m": 382.6
+     "len_m": 146.4
     },
     "Bridge": {
-     "flow_p99": 4.0,
+     "flow_p99": 4.2,
      "speed_max": 50.0,
-     "len_m": 0.1
+     "len_m": 0.2
+    },
+    "Floating vertical shell": {
+     "flow_p99": 11.8,
+     "speed_max": 198.0,
+     "len_m": 3.8
     },
     "Top surface": {
      "flow_p99": 11.8,
      "speed_max": 159.0,
-     "len_m": 50.5
-    },
-    "Floating vertical shell": {
-     "flow_p99": 11.8,
-     "speed_max": 195.0,
-     "len_m": 7.1
+     "len_m": 19.1
     },
     "Overhang wall": {
      "flow_p99": 4.0,
      "speed_max": 50.0,
-     "len_m": 0.0
+     "len_m": 0.1
     }
    }
   },
   "features_m": {
-   "Inner wall": 115.6,
-   "Outer wall": 64.3,
-   "Bottom surface": 37.0,
-   "Gap infill": 5.7,
-   "Internal solid infill": 128.7,
-   "Sparse infill": 382.6,
-   "Bridge": 0.1,
-   "Top surface": 50.5,
-   "Floating vertical shell": 7.1,
-   "Overhang wall": 0.0
+   "Inner wall": 106.8,
+   "Outer wall": 65.2,
+   "Gap infill": 1.6,
+   "Bottom surface": 11.4,
+   "Internal solid infill": 94.1,
+   "Sparse infill": 146.4,
+   "Bridge": 0.2,
+   "Floating vertical shell": 3.8,
+   "Top surface": 19.1,
+   "Overhang wall": 0.1
   },
   "bed": [
    {
-    "part": "11_blade_100x150",
-    "contact_mm2": 14950.0,
-    "islands": 1,
-    "smallest_island_mm2": 15050.0,
-    "height": 8.8,
-    "slender": 0.07
-   },
-   {
     "part": "10_rotor_bar_fit1",
-    "contact_mm2": 2477.0,
+    "contact_mm2": 2959.0,
     "islands": 1,
-    "smallest_island_mm2": 2579.0,
-    "height": 25.0,
-    "slender": 0.5
+    "smallest_island_mm2": 3058.0,
+    "height": 38.0,
+    "slender": 0.7
    },
    {
-    "part": "14_trim_plate",
-    "contact_mm2": 506.0,
+    "part": "11_coin_cap",
+    "contact_mm2": 691.0,
     "islands": 1,
-    "smallest_island_mm2": 528.0,
-    "height": 3.0,
-    "slender": 0.13
+    "smallest_island_mm2": 711.0,
+    "height": 5.4,
+    "slender": 0.21
    },
    {
-    "part": "14_trim_plate",
-    "contact_mm2": 506.0,
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
     "islands": 1,
-    "smallest_island_mm2": 528.0,
-    "height": 3.0,
-    "slender": 0.13
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
    }
   ],
   "missing": {
    "by_part": {
-    "11_blade_100x150": {
-     "mm2": 0.0,
-     "share_pct": 0.0
-    },
     "10_rotor_bar_fit1": {
      "mm2": 0.0,
      "share_pct": 0.0
     },
-    "14_trim_plate": {
+    "11_coin_cap": {
+     "mm2": 0.0,
+     "share_pct": 0.0
+    },
+    "12_coin_spacer": {
      "mm2": 0.0,
      "share_pct": 0.0
     }
@@ -1038,18 +1168,79 @@
    "n_spots": 0
   },
   "unsupported": {
-   "n": 0,
+   "n": 5,
    "islands": [],
    "cantilever": [],
-   "bridge": [],
-   "max_bridge_span": 0.0,
+   "bridge": [
+    {
+     "z": 17.2,
+     "kind": "다리",
+     "reach": 1.2,
+     "area": 4.3,
+     "w": 1.8,
+     "h": 2.4,
+     "x": 211.2,
+     "y": 138.9,
+     "part": "10_rotor_bar_fit1",
+     "bridge_share": 0.38
+    },
+    {
+     "z": 17.2,
+     "kind": "다리",
+     "reach": 1.2,
+     "area": 4.3,
+     "w": 1.8,
+     "h": 2.4,
+     "x": 211.2,
+     "y": 176.9,
+     "part": "10_rotor_bar_fit1",
+     "bridge_share": 0.38
+    },
+    {
+     "z": 35.2,
+     "kind": "다리",
+     "reach": 1.2,
+     "area": 4.3,
+     "w": 1.8,
+     "h": 2.4,
+     "x": 211.2,
+     "y": 138.9,
+     "part": "10_rotor_bar_fit1",
+     "bridge_share": 0.38
+    },
+    {
+     "z": 35.2,
+     "kind": "다리",
+     "reach": 1.2,
+     "area": 4.3,
+     "w": 1.8,
+     "h": 2.4,
+     "x": 211.2,
+     "y": 176.9,
+     "part": "10_rotor_bar_fit1",
+     "bridge_share": 0.38
+    },
+    {
+     "z": 7.4,
+     "kind": "다리",
+     "reach": 1.0,
+     "area": 10.4,
+     "w": 5.2,
+     "h": 2.0,
+     "x": 134.5,
+     "y": 152.5,
+     "part": "10_rotor_bar_fit1",
+     "bridge_share": 1.0
+    }
+   ],
+   "max_bridge_span": 2.4,
    "max_cantilever": 0.0,
    "n_island": 0,
    "n_cantilever": 0,
-   "n_bridge": 0,
-   "non_bridge_in_air_mm2": 2.4
+   "n_bridge": 5,
+   "non_bridge_in_air_mm2": 15.9
   },
-  "sec": 6.0
+  "sec": 9.0
  },
  "4판_회전부_맞춤2": {
   "file": "4판_회전부_맞춤2.gcode.3mf",
@@ -1062,9 +1253,9 @@
    "nozzle": "0.4",
    "support_used": "false",
    "filament_type": "PLA",
-   "used_g": 77.43,
-   "used_m": 25.96,
-   "prediction_s": 7463,
+   "used_g": 43.95,
+   "used_m": 14.73,
+   "prediction_s": 5641,
    "printer": "Bambu Lab X1 Carbon",
    "bed_type": "Textured PEI Plate",
    "nozzle_temp": "220",
@@ -1073,24 +1264,24 @@
    "enable_support": "0",
    "brim": "auto_brim",
    "max_flow_setting": "12",
-   "gcode_bytes": 2815358,
+   "gcode_bytes": 3918546,
    "warnings": [
     "bed_temperature_too_high_than_filament"
    ]
   },
   "range": {
    "x": [
-    22.2,
-    233.8
+    42.0,
+    238.7
    ],
    "y": [
-    28.2,
-    182.8
+    48.4,
+    184.8
    ],
-   "z_max": 25.0,
-   "edge_min": 22.2,
+   "z_max": 38.0,
+   "edge_min": 17.3,
    "in_exclude": false,
-   "layers": 125
+   "layers": 190
   },
   "flow": {
    "max_p999": 11.8,
@@ -1098,112 +1289,168 @@
     "Inner wall": {
      "flow_p99": 11.8,
      "speed_max": 147.0,
-     "len_m": 115.6
+     "len_m": 106.8
     },
     "Outer wall": {
      "flow_p99": 11.8,
      "speed_max": 159.0,
-     "len_m": 64.3
-    },
-    "Bottom surface": {
-     "flow_p99": 9.4,
-     "speed_max": 105.0,
-     "len_m": 37.0
+     "len_m": 65.3
     },
     "Gap infill": {
      "flow_p99": 11.8,
      "speed_max": 250.0,
-     "len_m": 5.7
+     "len_m": 1.6
+    },
+    "Bottom surface": {
+     "flow_p99": 9.5,
+     "speed_max": 105.0,
+     "len_m": 11.4
     },
     "Internal solid infill": {
      "flow_p99": 11.8,
-     "speed_max": 179.0,
-     "len_m": 128.7
+     "speed_max": 192.0,
+     "len_m": 94.1
     },
     "Sparse infill": {
      "flow_p99": 11.8,
      "speed_max": 147.0,
-     "len_m": 382.5
+     "len_m": 146.3
     },
     "Bridge": {
-     "flow_p99": 4.0,
+     "flow_p99": 4.2,
      "speed_max": 50.0,
-     "len_m": 0.1
+     "len_m": 0.2
+    },
+    "Floating vertical shell": {
+     "flow_p99": 11.8,
+     "speed_max": 198.0,
+     "len_m": 3.8
     },
     "Top surface": {
      "flow_p99": 11.8,
      "speed_max": 159.0,
-     "len_m": 50.5
-    },
-    "Floating vertical shell": {
-     "flow_p99": 11.8,
-     "speed_max": 195.0,
-     "len_m": 7.1
+     "len_m": 19.1
     },
     "Overhang wall": {
      "flow_p99": 4.0,
      "speed_max": 50.0,
-     "len_m": 0.0
+     "len_m": 0.1
     }
    }
   },
   "features_m": {
-   "Inner wall": 115.6,
-   "Outer wall": 64.3,
-   "Bottom surface": 37.0,
-   "Gap infill": 5.7,
-   "Internal solid infill": 128.7,
-   "Sparse infill": 382.5,
-   "Bridge": 0.1,
-   "Top surface": 50.5,
-   "Floating vertical shell": 7.1,
-   "Overhang wall": 0.0
+   "Inner wall": 106.8,
+   "Outer wall": 65.3,
+   "Gap infill": 1.6,
+   "Bottom surface": 11.4,
+   "Internal solid infill": 94.1,
+   "Sparse infill": 146.3,
+   "Bridge": 0.2,
+   "Floating vertical shell": 3.8,
+   "Top surface": 19.1,
+   "Overhang wall": 0.1
   },
   "bed": [
    {
-    "part": "11_blade_100x150",
-    "contact_mm2": 14950.0,
-    "islands": 1,
-    "smallest_island_mm2": 15050.0,
-    "height": 8.8,
-    "slender": 0.07
-   },
-   {
     "part": "10_rotor_bar_fit2",
-    "contact_mm2": 2477.0,
+    "contact_mm2": 2959.0,
     "islands": 1,
-    "smallest_island_mm2": 2579.0,
-    "height": 25.0,
-    "slender": 0.5
+    "smallest_island_mm2": 3058.0,
+    "height": 38.0,
+    "slender": 0.7
    },
    {
-    "part": "14_trim_plate",
-    "contact_mm2": 506.0,
+    "part": "11_coin_cap",
+    "contact_mm2": 691.0,
     "islands": 1,
-    "smallest_island_mm2": 528.0,
-    "height": 3.0,
-    "slender": 0.13
+    "smallest_island_mm2": 711.0,
+    "height": 5.4,
+    "slender": 0.21
    },
    {
-    "part": "14_trim_plate",
-    "contact_mm2": 506.0,
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
     "islands": 1,
-    "smallest_island_mm2": 528.0,
-    "height": 3.0,
-    "slender": 0.13
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
    }
   ],
   "missing": {
    "by_part": {
-    "11_blade_100x150": {
-     "mm2": 0.0,
-     "share_pct": 0.0
-    },
     "10_rotor_bar_fit2": {
      "mm2": 0.0,
      "share_pct": 0.0
     },
-    "14_trim_plate": {
+    "11_coin_cap": {
+     "mm2": 0.0,
+     "share_pct": 0.0
+    },
+    "12_coin_spacer": {
      "mm2": 0.0,
      "share_pct": 0.0
     }
@@ -1212,18 +1459,79 @@
    "n_spots": 0
   },
   "unsupported": {
-   "n": 0,
+   "n": 5,
    "islands": [],
    "cantilever": [],
-   "bridge": [],
-   "max_bridge_span": 0.0,
+   "bridge": [
+    {
+     "z": 17.2,
+     "kind": "다리",
+     "reach": 1.2,
+     "area": 4.3,
+     "w": 1.8,
+     "h": 2.4,
+     "x": 211.2,
+     "y": 138.9,
+     "part": "10_rotor_bar_fit2",
+     "bridge_share": 0.38
+    },
+    {
+     "z": 17.2,
+     "kind": "다리",
+     "reach": 1.2,
+     "area": 4.3,
+     "w": 1.8,
+     "h": 2.4,
+     "x": 211.2,
+     "y": 176.9,
+     "part": "10_rotor_bar_fit2",
+     "bridge_share": 0.38
+    },
+    {
+     "z": 35.2,
+     "kind": "다리",
+     "reach": 1.2,
+     "area": 4.3,
+     "w": 1.8,
+     "h": 2.4,
+     "x": 211.2,
+     "y": 138.9,
+     "part": "10_rotor_bar_fit2",
+     "bridge_share": 0.38
+    },
+    {
+     "z": 35.2,
+     "kind": "다리",
+     "reach": 1.2,
+     "area": 4.3,
+     "w": 1.8,
+     "h": 2.4,
+     "x": 211.2,
+     "y": 176.9,
+     "part": "10_rotor_bar_fit2",
+     "bridge_share": 0.38
+    },
+    {
+     "z": 7.4,
+     "kind": "다리",
+     "reach": 1.0,
+     "area": 10.4,
+     "w": 5.2,
+     "h": 2.0,
+     "x": 134.5,
+     "y": 152.5,
+     "part": "10_rotor_bar_fit2",
+     "bridge_share": 1.0
+    }
+   ],
+   "max_bridge_span": 2.4,
    "max_cantilever": 0.0,
    "n_island": 0,
    "n_cantilever": 0,
-   "n_bridge": 0,
-   "non_bridge_in_air_mm2": 2.4
+   "n_bridge": 5,
+   "non_bridge_in_air_mm2": 15.8
   },
-  "sec": 6.0
+  "sec": 9.0
  },
  "4판_회전부_맞춤3": {
   "file": "4판_회전부_맞춤3.gcode.3mf",
@@ -1236,9 +1544,9 @@
    "nozzle": "0.4",
    "support_used": "false",
    "filament_type": "PLA",
-   "used_g": 77.43,
-   "used_m": 25.96,
-   "prediction_s": 7455,
+   "used_g": 43.94,
+   "used_m": 14.73,
+   "prediction_s": 5641,
    "printer": "Bambu Lab X1 Carbon",
    "bed_type": "Textured PEI Plate",
    "nozzle_temp": "220",
@@ -1247,24 +1555,24 @@
    "enable_support": "0",
    "brim": "auto_brim",
    "max_flow_setting": "12",
-   "gcode_bytes": 2812284,
+   "gcode_bytes": 3919227,
    "warnings": [
     "bed_temperature_too_high_than_filament"
    ]
   },
   "range": {
    "x": [
-    22.2,
-    233.8
+    42.0,
+    238.7
    ],
    "y": [
-    28.2,
-    182.8
+    48.4,
+    184.8
    ],
-   "z_max": 25.0,
-   "edge_min": 22.2,
+   "z_max": 38.0,
+   "edge_min": 17.3,
    "in_exclude": false,
-   "layers": 125
+   "layers": 190
   },
   "flow": {
    "max_p999": 11.8,
@@ -1272,112 +1580,168 @@
     "Inner wall": {
      "flow_p99": 11.8,
      "speed_max": 147.0,
-     "len_m": 115.6
+     "len_m": 106.9
     },
     "Outer wall": {
      "flow_p99": 11.8,
      "speed_max": 159.0,
-     "len_m": 64.3
-    },
-    "Bottom surface": {
-     "flow_p99": 9.4,
-     "speed_max": 105.0,
-     "len_m": 37.0
+     "len_m": 65.3
     },
     "Gap infill": {
      "flow_p99": 11.8,
      "speed_max": 250.0,
-     "len_m": 5.7
+     "len_m": 1.6
+    },
+    "Bottom surface": {
+     "flow_p99": 9.5,
+     "speed_max": 105.0,
+     "len_m": 11.4
     },
     "Internal solid infill": {
      "flow_p99": 11.8,
-     "speed_max": 179.0,
-     "len_m": 128.7
+     "speed_max": 192.0,
+     "len_m": 94.1
     },
     "Sparse infill": {
      "flow_p99": 11.8,
      "speed_max": 147.0,
-     "len_m": 382.5
+     "len_m": 146.2
     },
     "Bridge": {
-     "flow_p99": 4.0,
+     "flow_p99": 4.2,
      "speed_max": 50.0,
-     "len_m": 0.1
+     "len_m": 0.2
+    },
+    "Floating vertical shell": {
+     "flow_p99": 11.8,
+     "speed_max": 198.0,
+     "len_m": 3.8
     },
     "Top surface": {
      "flow_p99": 11.8,
      "speed_max": 159.0,
-     "len_m": 50.5
-    },
-    "Floating vertical shell": {
-     "flow_p99": 11.8,
-     "speed_max": 195.0,
-     "len_m": 7.1
+     "len_m": 19.1
     },
     "Overhang wall": {
      "flow_p99": 4.0,
      "speed_max": 50.0,
-     "len_m": 0.0
+     "len_m": 0.1
     }
    }
   },
   "features_m": {
-   "Inner wall": 115.6,
-   "Outer wall": 64.3,
-   "Bottom surface": 37.0,
-   "Gap infill": 5.7,
-   "Internal solid infill": 128.7,
-   "Sparse infill": 382.5,
-   "Bridge": 0.1,
-   "Top surface": 50.5,
-   "Floating vertical shell": 7.1,
-   "Overhang wall": 0.0
+   "Inner wall": 106.9,
+   "Outer wall": 65.3,
+   "Gap infill": 1.6,
+   "Bottom surface": 11.4,
+   "Internal solid infill": 94.1,
+   "Sparse infill": 146.2,
+   "Bridge": 0.2,
+   "Floating vertical shell": 3.8,
+   "Top surface": 19.1,
+   "Overhang wall": 0.1
   },
   "bed": [
    {
-    "part": "11_blade_100x150",
-    "contact_mm2": 14950.0,
-    "islands": 1,
-    "smallest_island_mm2": 15050.0,
-    "height": 8.8,
-    "slender": 0.07
-   },
-   {
     "part": "10_rotor_bar_fit3",
-    "contact_mm2": 2477.0,
+    "contact_mm2": 2959.0,
     "islands": 1,
-    "smallest_island_mm2": 2579.0,
-    "height": 25.0,
-    "slender": 0.5
+    "smallest_island_mm2": 3058.0,
+    "height": 38.0,
+    "slender": 0.7
    },
    {
-    "part": "14_trim_plate",
-    "contact_mm2": 506.0,
+    "part": "11_coin_cap",
+    "contact_mm2": 691.0,
     "islands": 1,
-    "smallest_island_mm2": 528.0,
-    "height": 3.0,
-    "slender": 0.13
+    "smallest_island_mm2": 711.0,
+    "height": 5.4,
+    "slender": 0.21
    },
    {
-    "part": "14_trim_plate",
-    "contact_mm2": 506.0,
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
     "islands": 1,
-    "smallest_island_mm2": 528.0,
-    "height": 3.0,
-    "slender": 0.13
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
+   },
+   {
+    "part": "12_coin_spacer",
+    "contact_mm2": 408.0,
+    "islands": 1,
+    "smallest_island_mm2": 425.0,
+    "height": 1.6,
+    "slender": 0.08
    }
   ],
   "missing": {
    "by_part": {
-    "11_blade_100x150": {
-     "mm2": 0.0,
-     "share_pct": 0.0
-    },
     "10_rotor_bar_fit3": {
      "mm2": 0.0,
      "share_pct": 0.0
     },
-    "14_trim_plate": {
+    "11_coin_cap": {
+     "mm2": 0.0,
+     "share_pct": 0.0
+    },
+    "12_coin_spacer": {
      "mm2": 0.0,
      "share_pct": 0.0
     }
@@ -1386,18 +1750,79 @@
    "n_spots": 0
   },
   "unsupported": {
-   "n": 0,
+   "n": 5,
    "islands": [],
    "cantilever": [],
-   "bridge": [],
-   "max_bridge_span": 0.0,
+   "bridge": [
+    {
+     "z": 17.2,
+     "kind": "다리",
+     "reach": 1.2,
+     "area": 4.3,
+     "w": 1.8,
+     "h": 2.4,
+     "x": 211.2,
+     "y": 138.9,
+     "part": "10_rotor_bar_fit3",
+     "bridge_share": 0.38
+    },
+    {
+     "z": 17.2,
+     "kind": "다리",
+     "reach": 1.2,
+     "area": 4.3,
+     "w": 1.8,
+     "h": 2.4,
+     "x": 211.2,
+     "y": 176.9,
+     "part": "10_rotor_bar_fit3",
+     "bridge_share": 0.38
+    },
+    {
+     "z": 35.2,
+     "kind": "다리",
+     "reach": 1.2,
+     "area": 4.3,
+     "w": 1.8,
+     "h": 2.4,
+     "x": 211.2,
+     "y": 138.9,
+     "part": "10_rotor_bar_fit3",
+     "bridge_share": 0.38
+    },
+    {
+     "z": 35.2,
+     "kind": "다리",
+     "reach": 1.2,
+     "area": 4.3,
+     "w": 1.8,
+     "h": 2.4,
+     "x": 211.2,
+     "y": 176.9,
+     "part": "10_rotor_bar_fit3",
+     "bridge_share": 0.38
+    },
+    {
+     "z": 7.4,
+     "kind": "다리",
+     "reach": 1.0,
+     "area": 10.4,
+     "w": 5.2,
+     "h": 2.0,
+     "x": 134.5,
+     "y": 152.5,
+     "part": "10_rotor_bar_fit3",
+     "bridge_share": 1.0
+    }
+   ],
+   "max_bridge_span": 2.4,
    "max_cantilever": 0.0,
    "n_island": 0,
    "n_cantilever": 0,
-   "n_bridge": 0,
-   "non_bridge_in_air_mm2": 2.4
+   "n_bridge": 5,
+   "non_bridge_in_air_mm2": 15.8
   },
-  "sec": 7.0
+  "sec": 9.0
  },
  "선택_받침통_L": {
   "file": "선택_받침통_L.gcode.3mf",
@@ -1410,9 +1835,9 @@
    "nozzle": "0.4",
    "support_used": "false",
    "filament_type": "PLA",
-   "used_g": 117.42,
-   "used_m": 39.37,
-   "prediction_s": 10659,
+   "used_g": 117.73,
+   "used_m": 39.47,
+   "prediction_s": 10721,
    "printer": "Bambu Lab X1 Carbon",
    "bed_type": "Textured PEI Plate",
    "nozzle_temp": "220",
@@ -1421,7 +1846,7 @@
    "enable_support": "0",
    "brim": "auto_brim",
    "max_flow_setting": "12",
-   "gcode_bytes": 5512038,
+   "gcode_bytes": 5575667,
    "warnings": [
     "bed_temperature_too_high_than_filament"
    ]
@@ -1446,12 +1871,12 @@
     "Inner wall": {
      "flow_p99": 11.8,
      "speed_max": 147.0,
-     "len_m": 326.0
+     "len_m": 327.5
     },
     "Outer wall": {
      "flow_p99": 11.8,
      "speed_max": 159.0,
-     "len_m": 176.1
+     "len_m": 176.9
     },
     "Bottom surface": {
      "flow_p99": 9.4,
@@ -1466,7 +1891,7 @@
     "Sparse infill": {
      "flow_p99": 11.8,
      "speed_max": 147.0,
-     "len_m": 27.6
+     "len_m": 27.9
     },
     "Bridge": {
      "flow_p99": 7.0,
@@ -1476,17 +1901,17 @@
     "Top surface": {
      "flow_p99": 11.8,
      "speed_max": 159.0,
-     "len_m": 74.0
+     "len_m": 73.9
     },
     "Gap infill": {
      "flow_p99": 11.8,
      "speed_max": 250.0,
-     "len_m": 73.0
+     "len_m": 73.1
     },
     "Floating vertical shell": {
      "flow_p99": 11.8,
      "speed_max": 176.0,
-     "len_m": 0.5
+     "len_m": 1.1
     },
     "Overhang wall": {
      "flow_p99": 4.0,
@@ -1496,15 +1921,15 @@
    }
   },
   "features_m": {
-   "Inner wall": 326.0,
-   "Outer wall": 176.1,
+   "Inner wall": 327.5,
+   "Outer wall": 176.9,
    "Bottom surface": 58.3,
    "Internal solid infill": 364.6,
-   "Sparse infill": 27.6,
+   "Sparse infill": 27.9,
    "Bridge": 61.1,
-   "Top surface": 74.0,
-   "Gap infill": 73.0,
-   "Floating vertical shell": 0.5,
+   "Top surface": 73.9,
+   "Gap infill": 73.1,
+   "Floating vertical shell": 1.1,
    "Overhang wall": 0.0
   },
   "bed": [
@@ -1552,9 +1977,9 @@
    "nozzle": "0.4",
    "support_used": "false",
    "filament_type": "PLA",
-   "used_g": 79.87,
-   "used_m": 26.78,
-   "prediction_s": 8323,
+   "used_g": 80.73,
+   "used_m": 27.07,
+   "prediction_s": 8456,
    "printer": "Bambu Lab X1 Carbon",
    "bed_type": "Textured PEI Plate",
    "nozzle_temp": "220",
@@ -1563,7 +1988,7 @@
    "enable_support": "0",
    "brim": "auto_brim",
    "max_flow_setting": "12",
-   "gcode_bytes": 4159391,
+   "gcode_bytes": 4331886,
    "warnings": [
     "bed_temperature_too_high_than_filament"
    ]
@@ -1571,29 +1996,34 @@
   "range": {
    "x": [
     35.2,
-    220.8
+    234.9
    ],
    "y": [
     37.2,
-    222.8
+    238.8
    ],
    "z_max": 20.0,
-   "edge_min": 33.2,
+   "edge_min": 17.2,
    "in_exclude": false,
    "layers": 100
   },
   "flow": {
    "max_p999": 11.8,
    "by_feature": {
-    "Inner wall": {
-     "flow_p99": 11.8,
-     "speed_max": 147.0,
-     "len_m": 94.5
-    },
     "Outer wall": {
      "flow_p99": 11.8,
      "speed_max": 159.0,
-     "len_m": 66.6
+     "len_m": 70.2
+    },
+    "Gap infill": {
+     "flow_p99": 11.8,
+     "speed_max": 250.0,
+     "len_m": 20.0
+    },
+    "Inner wall": {
+     "flow_p99": 11.8,
+     "speed_max": 147.0,
+     "len_m": 98.2
     },
     "Bottom surface": {
      "flow_p99": 9.4,
@@ -1603,45 +2033,46 @@
     "Internal solid infill": {
      "flow_p99": 11.8,
      "speed_max": 176.0,
-     "len_m": 347.7
+     "len_m": 348.1
     },
     "Sparse infill": {
      "flow_p99": 11.8,
      "speed_max": 147.0,
-     "len_m": 87.7
+     "len_m": 88.2
     },
     "Floating vertical shell": {
      "flow_p99": 11.8,
      "speed_max": 193.0,
-     "len_m": 6.0
+     "len_m": 6.2
     },
     "Bridge": {
-     "flow_p99": 6.4,
+     "flow_p99": 6.6,
      "speed_max": 50.0,
-     "len_m": 61.1
-    },
-    "Gap infill": {
-     "flow_p99": 11.8,
-     "speed_max": 250.0,
-     "len_m": 19.5
+     "len_m": 61.3
     },
     "Top surface": {
      "flow_p99": 11.8,
      "speed_max": 159.0,
-     "len_m": 71.2
+     "len_m": 71.3
+    },
+    "Overhang wall": {
+     "flow_p99": 4.0,
+     "speed_max": 50.0,
+     "len_m": 0.0
     }
    }
   },
   "features_m": {
-   "Inner wall": 94.5,
-   "Outer wall": 66.6,
+   "Outer wall": 70.2,
+   "Gap infill": 20.0,
+   "Inner wall": 98.2,
    "Bottom surface": 56.2,
-   "Internal solid infill": 347.7,
-   "Sparse infill": 87.7,
-   "Floating vertical shell": 6.0,
-   "Bridge": 61.1,
-   "Gap infill": 19.5,
-   "Top surface": 71.2
+   "Internal solid infill": 348.1,
+   "Sparse infill": 88.2,
+   "Floating vertical shell": 6.2,
+   "Bridge": 61.3,
+   "Top surface": 71.3,
+   "Overhang wall": 0.0
   },
   "bed": [
    {
@@ -1651,6 +2082,14 @@
     "smallest_island_mm2": 26860.0,
     "height": 20.0,
     "slender": 0.12
+   },
+   {
+    "part": "17_lan_cap_L",
+    "contact_mm2": 44.0,
+    "islands": 2,
+    "smallest_island_mm2": 24.0,
+    "height": 12.3,
+    "slender": 1.86
    }
   ],
   "missing": {
@@ -1658,152 +2097,8 @@
     "02_base_cover_L": {
      "mm2": 0.0,
      "share_pct": 0.0
-    }
-   },
-   "spots": [],
-   "n_spots": 0
-  },
-  "unsupported": {
-   "n": 0,
-   "islands": [],
-   "cantilever": [],
-   "bridge": [],
-   "max_bridge_span": 0.0,
-   "max_cantilever": 0.0,
-   "n_island": 0,
-   "n_cantilever": 0,
-   "n_bridge": 0,
-   "non_bridge_in_air_mm2": 0.0
-  },
-  "sec": 6.0
- },
- "선택_판200": {
-  "file": "선택_판200.gcode.3mf",
-  "problems": [],
-  "notes": [],
-  "file_check": {
-   "missing": [],
-   "md5_ok": true,
-   "printer_model_id": "BL-P001",
-   "nozzle": "0.4",
-   "support_used": "false",
-   "filament_type": "PLA",
-   "used_g": 37.78,
-   "used_m": 12.67,
-   "prediction_s": 3962,
-   "printer": "Bambu Lab X1 Carbon",
-   "bed_type": "Textured PEI Plate",
-   "nozzle_temp": "220",
-   "bed_temp": "55",
-   "layer_height": "0.2",
-   "enable_support": "0",
-   "brim": "auto_brim",
-   "max_flow_setting": "12",
-   "gcode_bytes": 1178106,
-   "warnings": [
-    "bed_temperature_too_high_than_filament"
-   ]
-  },
-  "range": {
-   "x": [
-    28.2,
-    227.8
-   ],
-   "y": [
-    38.2,
-    190.8
-   ],
-   "z_max": 9.0,
-   "edge_min": 28.2,
-   "in_exclude": false,
-   "layers": 45
-  },
-  "flow": {
-   "max_p999": 11.8,
-   "by_feature": {
-    "Inner wall": {
-     "flow_p99": 11.8,
-     "speed_max": 147.0,
-     "len_m": 78.8
     },
-    "Outer wall": {
-     "flow_p99": 11.8,
-     "speed_max": 159.0,
-     "len_m": 48.3
-    },
-    "Bottom surface": {
-     "flow_p99": 9.5,
-     "speed_max": 105.0,
-     "len_m": 42.5
-    },
-    "Internal solid infill": {
-     "flow_p99": 11.8,
-     "speed_max": 179.0,
-     "len_m": 112.8
-    },
-    "Sparse infill": {
-     "flow_p99": 11.8,
-     "speed_max": 147.0,
-     "len_m": 41.2
-    },
-    "Gap infill": {
-     "flow_p99": 11.8,
-     "speed_max": 250.0,
-     "len_m": 8.4
-    },
-    "Top surface": {
-     "flow_p99": 11.8,
-     "speed_max": 159.0,
-     "len_m": 56.6
-    },
-    "Overhang wall": {
-     "flow_p99": 4.0,
-     "speed_max": 50.0,
-     "len_m": 0.0
-    },
-    "Floating vertical shell": {
-     "flow_p99": 11.8,
-     "speed_max": 167.0,
-     "len_m": 0.4
-    }
-   }
-  },
-  "features_m": {
-   "Inner wall": 78.8,
-   "Outer wall": 48.3,
-   "Bottom surface": 42.5,
-   "Internal solid infill": 112.8,
-   "Sparse infill": 41.2,
-   "Gap infill": 8.4,
-   "Top surface": 56.6,
-   "Overhang wall": 0.0,
-   "Floating vertical shell": 0.4
-  },
-  "bed": [
-   {
-    "part": "12_blade_100x200",
-    "contact_mm2": 19940.0,
-    "islands": 1,
-    "smallest_island_mm2": 20060.0,
-    "height": 8.8,
-    "slender": 0.06
-   },
-   {
-    "part": "15_balance_200",
-    "contact_mm2": 501.0,
-    "islands": 1,
-    "smallest_island_mm2": 523.0,
-    "height": 9.0,
-    "slender": 0.4
-   }
-  ],
-  "missing": {
-   "by_part": {
-    "12_blade_100x200": {
-     "mm2": 0.0,
-     "share_pct": 0.0
-    },
-    "15_balance_200": {
+    "17_lan_cap_L": {
      "mm2": 0.0,
      "share_pct": 0.0
     }
@@ -1812,17 +2107,30 @@
    "n_spots": 0
   },
   "unsupported": {
-   "n": 0,
+   "n": 1,
    "islands": [],
    "cantilever": [],
-   "bridge": [],
-   "max_bridge_span": 0.0,
+   "bridge": [
+    {
+     "z": 2.8,
+     "kind": "다리",
+     "reach": 1.2,
+     "area": 29.8,
+     "w": 2.6,
+     "h": 12.8,
+     "x": 231.3,
+     "y": 229.9,
+     "part": "17_lan_cap_L",
+     "bridge_share": 0.84
+    }
+   ],
+   "max_bridge_span": 2.4,
    "max_cantilever": 0.0,
    "n_island": 0,
    "n_cantilever": 0,
-   "n_bridge": 0,
-   "non_bridge_in_air_mm2": 2.4
+   "n_bridge": 1,
+   "non_bridge_in_air_mm2": 3.8
   },
-  "sec": 2.0
+  "sec": 10.0
  }
 }

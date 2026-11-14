@@ -85,8 +85,8 @@ print("고정 나사: 0 / 54.7 / 90도에서 부채꼴 기어 구멍이 막힌 �
 
 # ---------------------------------------------------------------- 5. 자세별 판과 몸체 사이 틈
 mb, mc = v1.motor_body_dummy()
-ROT = union([P.rotor_bar(), P.blade(150.0), P.foil(150.0)])
-FIX = union([P.yoke(), mb.transform(P.motor1_T()), mc.transform(P.motor1_T()), mb.transform(P.motor2_T()), mc.transform(P.motor2_T()), P.pinion2(), P.m2_ring(), P.tub("S"), P.cover("S"), P.lan_cap()]
+ROT = P.rotor_set(150.0, low_cap=True)
+FIX = union([P.yoke(), P.pin_keeper(1), P.pin_keeper(-1), mb.transform(P.motor1_T()), mc.transform(P.motor1_T()), mb.transform(P.motor2_T()), mc.transform(P.motor2_T()), P.pinion2(), P.m2_ring(), P.tub("S"), P.cover("S"), P.lan_cap()]
             + [P.clip().rotate([0, 0, a]) for a in (0.0, 90.0, 180.0, 270.0)])       # 고리는 어느 쪽을 보고 끼워질지 모른다: 네 방향을 다 넣는다
 gaps = {}
 for pitch in (0.0, 20.0, 40.0, TILT3, 60.0, 70.0, 80.0, 85.0, 87.0):

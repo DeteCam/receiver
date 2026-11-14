@@ -132,7 +132,7 @@ def vis_check(A, pts, cam_az, cam_el, dist, focus, hide=(), tag=""):
 def envelope(pitch, length=150.0):
     """그 자세에서 판이 한 바퀴 돌 때의 가장 높은 점과 가장 먼 점 (mm)"""
     zmax = 0; rmax = 0
-    R = union([P.rotor_bar(), P.blade(length)])
+    R = P.rotor_set(length)
     for spin in np.arange(0, 360, 10.0):
         b = P.pose_head(R, 0, pitch, spin).bounding_box()
         zmax = max(zmax, b[5]); rmax = max(rmax, np.hypot(max(abs(b[0]), abs(b[3])), max(abs(b[1]), abs(b[4]))))
@@ -146,7 +146,7 @@ if "1" in WANT:
     px, pz = P.pin2_xz()
     a_sec = np.radians(166.0)
     pts = {
-        "plate": HP((80.3, -15, 55), yaw, pitch, spin), "pod": HP((-62, -23, 30), yaw, pitch, spin),
+        "plate": HP((FL_X1 + 1.0, -15, 62), yaw, pitch, spin), "pod": HP((POD_XC, -13.5, 30), yaw, pitch, spin), "bolt": HP((FL_X1 + 3.0, PLATE_BOLTS[0][0], PLATE_BOLTS[0][1]), yaw, pitch, spin),
         "crown": HP((33.1, -15.4, 21), yaw, pitch), "head": HP((HX, -14, -22), yaw, pitch),
         "sector": YP((66 * np.cos(a_sec), SEC_Y1, H_T + 66 * np.sin(a_sec)), yaw), "m2": YP((px, ARM_Y1 + 19.5, pz + M_OFFSET), yaw),
         "arm": YP((-40, ARM_Y1, 50), yaw), "box": YP((WING_X1, -22.0, 72.0), yaw), "base": np.array([68.0, 16.0, 14.0]),
@@ -159,11 +159,11 @@ if "1" in WANT:
     pix = {k: (v[0], v[1] - 150) for k, v in pix.items()}
     annotate(TMP + 'raw1c.png', OUT + '01_전체_모습.png', pix, [
         ("crown", "모터 3 (판 회전)\n머리 위 모터 자리에 들어간다", 'L', 190),
-        ("pod", "회전 막대 + 균형추\n판 무게를 반대쪽에서 맞춘다", 'L', 420),
+        ("pod", "회전 막대 + 동전 균형추\n100원 동전 8개로 판 무게를 맞춘다", 'L', 420),
         ("head", "머리\n라즈베리파이 + 드라이버 3장", 'L', 660),
         ("box", "전선 상자\n모터 1(받침 회전, 4 : 1)과 전선이 이 안에 있다", 'L', 900),
         ("base", "받침 (지름 14cm)\n배터리가 들어가고 움직이지 않는다", 'L', 1110),
-        ("plate", "판 100×150\n바깥면에 알루미늄 테이프", 'R', 190),
+        ("plate", "알루미늄 판 100×150 (1T)\nM3 볼트 4개로 판 받이에 조인다", 'R', 190),
         ("sector", "부채꼴 기어\n머리에 붙어 같이 끄덕인다", 'R', 440),
         ("pin", "끄덕임 축 핀\n각도 바늘이 달려 있다", 'R', 660),
         ("m2", "모터 2 (끄덕임)\n작은 기어 10T, 11.2 : 1", 'R', 880),
@@ -176,7 +176,8 @@ if "2" in WANT:
     poses = [(0.0, "세움 0°", "옮길 때, 수평 방향만 볼 때"), (TILT3, "기울임 54.7°", "재는 자세. 받침을 120°씩 세 번 (좁은 방은 60°씩 여섯 번)"), (85.0, "깊이 숙임 85°", "바로 위·아래를 볼 때. 모터로 갈 수 있는 끝")]
     sheet = Image.new('RGB', (h * 3, h + 250), BG); d = ImageDraw.Draw(sheet)
     d.text((48, 36), "머리가 끄덕이는 범위", font=font(50, True), fill=INK)
-    d.text((48, 108), "끄덕임 −5° ~ 85° (87°에서 멈춤 나사에 닿는다), 받침 회전 ±174°, 판은 계속 돈다. 판과 몸체 사이 틈은 재는 자세에서 6mm, 85°에서 4mm 남는다.", font=font(30), fill=SUB)
+    SWP = json.load(open(ROOT + 'audit_sweep.json', encoding='utf-8'))["받침 S · 판 150"]
+    d.text((48, 108), "끄덕임 −5° ~ 85° (87°에서 멈춤 나사에 닿는다), 받침 회전 ±174°, 판은 계속 돈다. 판과 몸체 사이 틈은 재는 자세에서 %.0fmm, 85°에서 %.0fmm 남는다." % (SWP["gap_tilt"], SWP["gap_soft"]), font=font(30), fill=SUB)
     for i, (p, t1, t2) in enumerate(poses):
         A = P.assembly(20.0, p, 110.0)
         render.render(A, TMP + 'raw2_%d.png' % i, cam_az=-62, cam_el=10, size=(h, h), dist=900, focus=(0, 0, 150), ground_z=-0.4)
@@ -198,13 +199,13 @@ if "3" in WANT:
     for k in range(3):
         A["d%d" % k] = (db.transform(P.driver_T(k)), "H", "#3B8F5E", False); A["dp%d" % k] = (dc.transform(P.driver_T(k)), "H", C["dark"], False)
     bpcb, bsw = P.button_dummy()
-    A["btn_pcb"] = (bpcb, "H", "#B03A2E", False); A["btn_sw"] = (bsw, "H", C["dark"], False); A["dongle"] = (P.dongle_dummy(), "H", "#5E6B85", False)
-    A["dongle2"] = (P.dongle_dummy(DONGLE2), "H", "#C9772E", False)
+    A["btn_pcb"] = (bpcb, "H", "#B03A2E", False); A["btn_sw"] = (bsw, "H", C["dark"], False); A["dongle"] = (P.dongle_dummy(), "H", "#C9772E", False)
+    A["dongle2"] = (P.dongle_dummy(DONGLE2), "H", "#1F9E8F", False)
     A["wbtn"] = (tube([(BTN_X, BTN_PCB_Y - 1.5, BTN_Z - 30), (BTN_X + 6, -22, -62), (-20, -24, -58), (4, -22, -30), (10.5, -12, -8.5)], 1.0), "H", "#8E5BD9", False)
     A["w3"] = (tube([(-25, 0, 16), (-21, -15, 9), (-21, -15, -6), (20, -8, -8), (DRV_X0 + 17.5, -7, DRV_ZC[0] - 9)], 1.5), "H", "#D9B13B", False)
     A["wpw"] = (tube([(-18, -24, -8), (8, -24, -10), (DRV_X0 + 6, -10, -6)], 1.2), "H", "#C0392B", False)
-    pts = {"pi": (-20, -3, -50), "ant": (0, -2.5, 0), "plug": (BX0 - 5.7, -4, -10), "d3": (DRV_X0 + 17.5, 0, DRV_ZC[0]), "d2": (DRV_X0 + 17.5, 0, DRV_ZC[1]),
-           "d1": (DRV_X0 + 17.5, 0, DRV_ZC[2]), "m3": (-8, -14, 20), "gpio": (BX0 + 52.5, -8, -28), "lan": (BX0 + 10.25, -14.0, BZ0 + 6), "dongle": (BX0 + DONGLE["x"], -PI_T / 2 - DONGLE["up"] - 4.0, BZ0 - 12), "dongle2": (BX0 + DONGLE2["x"], -PI_T / 2 - DONGLE2["up"] - 4.0, BZ0 - 12), "cable": (BX0 - 5.6, -4.2, -95),
+    pts = {"pi": (-20, -3, -50), "ant": (0, -2.5, 0), "plug": (BX0 - 5.7, -4, -10), "d3": (DRV_X0 + 17.5, -9.0, DRV_ZC[0]), "d2": (DRV_X0 + 17.5, -9.0, DRV_ZC[1]),
+           "d1": (DRV_X0 + 17.5, -9.0, DRV_ZC[2]), "m3": (-8, -14, 20), "gpio": (BX0 + 52.5, -8, -28), "lan": (BX0 + 10.25, -14.0, BZ0 + 6), "dongle": (BX0 + DONGLE["x"], -PI_T / 2 - DONGLE["up"] - 4.0, BZ0 - 12), "dongle2": (BX0 + DONGLE2["x"], -PI_T / 2 - DONGLE2["up"] - 4.0, BZ0 - 12), "cable": (BX0 - 5.6, -4.2, -95),
            "win": (-HX, -4, -14), "hole": (-21, -15, 8), "btn": (BTN_X, BTN_PCB_Y - 5.0, BTN_Z), "pin56": (10.5, -12, -8.5)}
     cam = dict(cam_az=-78, cam_el=12, dist=470, focus=(0, 0, -40))
     vis_check(A, pts, tag="3a", **cam)
@@ -214,17 +215,17 @@ if "3" in WANT:
         ("m3", "모터 3\n전선은 바닥 구멍으로 내려온다", 'L', 230),
         ("win", "전원 플러그 창\nㄱ자 플러그가 벽에 안 걸린다", 'L', 420),
         ("plug", "전원 플러그 (ㄱ자 마이크로 5핀)\n선은 아래로 내려 받침 속 배터리로", 'L', 610),
-        ("btn", "전원 버튼 모듈 (KY-004)\n뚜껑 구멍으로 누른다. 받침 살에 끼운다", 'L', 800),
-        ("pi", "라즈베리파이 3B+\n뒷벽 기둥 4개에 꽂고 뚜껑이 누른다", 'L', 990),
+        ("btn", "전원 버튼 모듈 (KY-004)\n받침 살에 얹고 뚜껑의 살이 눌러 고정한다", 'L', 800),
+        ("pi", "라즈베리파이 3B+\n뒷벽 기둥 4개에 M2.5 나사로 조인다", 'L', 990),
         ("lan", "랜 단자 (개발할 때만)\n쓰려면 조립할 때 랜선을 꽂아 둔다", 'L', 1180),
         ("ant", "안테나\n판 회전축이 여기를 지난다", 'R', 230),
         ("pin56", "버튼 선 2가닥 (보라)\nGPIO 5번, 6번 핀에 꽂는다", 'R', 420),
         ("gpio", "GPIO 핀\n점퍼선 10cm로 바로 옆 드라이버에", 'R', 610),
         ("d3", "드라이버 3 (판 회전)", 'R', 760),
         ("d2", "드라이버 2 (끄덕임)", 'R', 870),
-        ("d1", "드라이버 1 (받침 회전)\n셋 다 뒷벽에 폼테이프로 붙인다", 'R', 980),
-        ("dongle", "무선 동글 (폰과 통신)\n아래 USB 자리에 꽂는다", 'R', 1130),
-        ("dongle2", "탐지 동글 (주황. 둘레 기기 엿듣기)\n가운데 USB 의 위 칸. 없어도 된다", 'R', 1280),
+        ("d1", "드라이버 1 (받침 회전)\n셋 다 기둥 4개에 M2.5 나사로 조인다", 'R', 980),
+        ("dongle", "무선 동글 (주황. 폰과 통신)\nGPIO 쪽 USB 의 위 칸", 'R', 1130),
+        ("dongle2", "탐지 동글 (청록. 둘레 기기 엿듣기)\n가운데 USB 의 위 칸. 없어도 된다", 'R', 1280),
     ], foot="노란 선 = 모터 3 전선, 빨간 선 = 점퍼선 한 가닥(예), 보라 선 = 버튼 선. 실제로는 점퍼선 18가닥이 파이와 드라이버 사이를 오간다.", title="머리 속 (뚜껑을 떼고 앞에서 본 모습)", sub="안쪽 크기 108 × 33.6 × 108mm · 드라이버 자리 폭 37mm (보드 35mm) · 점퍼선을 꽂고도 뚜껑까지 5mm 넘게 남는다", pad_side=380)
 
     # (나) 전체: 껍데기를 반투명하게 하고 모터, 배터리, 전선 길을 보여 준다 (전선 길은 room_check.py 에서 길이를 잰 그 길)
@@ -246,7 +247,7 @@ if "3" in WANT:
            "pi": hp((-25, -1, -45)), "drv": hp((DRV_X0 + 17.5, 2, DRV_ZC[1])), "usb": np.array([3.0, 0.0, TUBE_Z1 + 3]), "w_m2": slot, "plugA": np.array([0.0, -R + BATT_IN - 5.0, 12.0]),
            "cap": np.array([-R - 1.0, 0.0, 24.0]), "dongle": hp((BX0 + DONGLE["x"], -PI_T / 2 - DONGLE["up"], BZ0 - 14)), "w_m1": m1c + [0, 0, 14]}
     del pts["drv"]
-    ghost = ("tub", "cover", "yoke", "head_shell", "head_lid", "crown", "sector", "blade", "rotor_bar", "foil", "clip", "pin_r", "pin_l", "m2_ring")
+    ghost = ("tub", "cover", "yoke", "head_shell", "head_lid", "crown", "sector", "rotor_bar", "plate", "coin_cap", "coins", "rotor_hw", "marker_frame", "keeper_r", "keeper_l", "clip", "pin_r", "pin_l", "m2_ring")
     pix = render.render(A, TMP + 'raw3b.png', cam_az=138, cam_el=17, size=(S, S), dist=860, focus=(0, 0, 135), label_pts=pts, ground=False, ghost=ghost, ghost_opacity=0.16)
     Image.open(TMP + 'raw3b.png').crop((0, 0, S, S - 110)).save(TMP + 'raw3bc.png')
     texts = {
@@ -280,20 +281,20 @@ def hm(sec):
 if "4" in WANT:
     SL = slice_summary()["parts"]
     tw = 400
-    names = ["01_base_tub_S", "02_base_cover_S", "03_clip", "04_yoke", "05_pinion_fit2", "16_m2_ring", "06_sector_gear", "07_head_shell", "08_head_lid", "09_crown",
-             "10_rotor_bar_fit2", "11_blade_100x150", "13_pin_fit2", "14_trim_plate", "90_test_coupon", "91_tenon_gauge", "17_lan_cap", "12_blade_100x200", "15_balance_200", "01_base_tub_L", "02_base_cover_L"]
-    short = {"01_base_tub_S": "받침 통 S", "02_base_cover_S": "받침 덮개 S", "05_pinion_fit2": "작은 기어 10T", "10_rotor_bar_fit2": "회전 막대 + 균형추", "13_pin_fit2": "끄덕임 축 핀",
-             "12_blade_100x200": "판 100×200 (선택)", "15_balance_200": "판 200용 균형 덩어리 (선택)", "01_base_tub_L": "받침 통 L (선택)", "02_base_cover_L": "받침 덮개 L (선택)", "11_blade_100x150": "판 100×150",
-             "04_yoke": "요크", "17_lan_cap": "랜선 홈 마개"}
+    names = ["01_base_tub_S", "02_base_cover_S", "03_clip", "04_yoke", "05_pinion_fit2", "16_m2_ring", "06_sector_gear", "07_head_shell", "08_head_lid", "09_crown", "15_marker_frame",
+             "10_rotor_bar_fit2", "11_coin_cap", "12_coin_spacer", "13_pin_fit2", "14_pin_keeper", "17_lan_cap", "18_drill_jig", "90_test_coupon", "91_driver_check", "01_base_tub_L", "02_base_cover_L", "17_lan_cap_L"]
+    short = {"01_base_tub_S": "받침 통 S", "02_base_cover_S": "받침 덮개 S", "05_pinion_fit2": "작은 기어 10T", "10_rotor_bar_fit2": "회전 막대", "13_pin_fit2": "끄덕임 축 핀",
+             "01_base_tub_L": "받침 통 L (선택)", "02_base_cover_L": "받침 덮개 L (선택)", "11_coin_cap": "균형추 통 마개", "12_coin_spacer": "채움 조각", "14_pin_keeper": "핀 막이",
+             "15_marker_frame": "마커 틀", "18_drill_jig": "구멍 뚫기 틀", "91_driver_check": "보드 구멍 맞춤 판", "04_yoke": "요크", "17_lan_cap": "랜선 홈 마개 S", "17_lan_cap_L": "랜선 홈 마개 L (선택)"}
     spec = {s[0]: s for s in E.SPEC}
-    cols = 7; nrow = int(np.ceil(len(names) / cols)); ch = tw + 122
+    cols = 8; nrow = int(np.ceil(len(names) / cols)); ch = tw + 122
     sheet = Image.new('RGB', (tw * cols, ch * nrow + 190), BG); d = ImageDraw.Draw(sheet)
     d.text((40, 30), "출력 부품 (출력판에 놓는 방향 그대로)", font=font(44, True), fill=INK)
-    d.text((40, 98), "모두 받침(서포트) 없이 뽑는다. 숫자는 Bambu Studio로 슬라이싱한 값이다: 0.2mm 층, 벽 3겹, 채움 15% (회전 막대·판·균형 조각은 100%). 시간은 프린터가 준비하는 약 10분을 뺀 것.", font=font(26), fill=SUB)
+    d.text((40, 98), "모두 받침(서포트) 없이 뽑는다. 숫자는 Bambu Studio로 슬라이싱한 값이다: 0.2mm 층, 벽 3겹, 채움 15% (회전 막대·마개·채움 조각은 100%). 시간은 프린터가 준비하는 약 10분을 뺀 것.", font=font(26), fill=SUB)
     for i, n in enumerate(names):
         name, fn, rot, qty, ko, pick, infill = spec[n]
         m = E.oriented(fn, rot); bb = m.bounding_box(); span = max(bb[3] - bb[0], bb[4] - bb[1], (bb[5] - bb[2]) * 1.4)
-        col = P.COL["accent"] if n[:2] in ("03", "05", "06", "09", "10", "13", "14", "15", "16", "17") else P.COL["body"]
+        col = P.COL["accent"] if n[:2] in ("03", "05", "06", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18") else P.COL["body"]
         render.render({n: (m, "X", col, True)}, TMP + 'thumb.png', cam_az=-55, cam_el=32, size=(tw, tw), dist=max(span, 34) * 3.3, focus=(0, 0, (bb[5] - bb[2]) / 2), ground=True, ground_z=-0.05)
         x, y = (i % cols) * tw, (i // cols) * ch + 160
         sheet.paste(Image.open(TMP + 'thumb.png'), (x, y))
@@ -315,11 +316,11 @@ if "5" in WANT:
     bpcb, bsw = P.button_dummy()
     headi = {"shell": P.head_shell(), "pi": pb + pc, "d0": (db + dc).transform(P.driver_T(0)), "d1": (db + dc).transform(P.driver_T(1)), "d2": (db + dc).transform(P.driver_T(2)), "plug": P.usb_plug_dummy(),
              "btn": bpcb + bsw, "dongle": P.dongle_dummy() + P.dongle_dummy(DONGLE2)}
-    heado = {"crown": P.crown(), "motor3": v1._m1(mb) + v1._m1(mc), "sector": P.sector_head()}
+    heado = {"crown": P.crown(), "motor3": v1._m1(mb) + v1._m1(mc), "sector": P.sector_head(), "marker_frame": P.marker_frame()}
     lid = {"lid": P.head_lid()}                                  # 뚜껑은 머리를 요크에 올리고 전선을 다 꽂은 뒤 마지막에 닫는다
-    join = {"pin_r": Yk(P.pin(1)), "pin_l": Yk(P.pin(-1)), "motor2": Yk((mb + mc).transform(P.motor2_T())), "pinion2": Yk(P.pinion2()), "m2_ring": Yk(P.m2_ring())}
-    rot = {"rotor_bar": Rt(P.rotor_bar()), "blade": Rt(P.blade(150.0)), "foil": Rt(P.foil(150.0))}
-    gray = {"battery": C["batt"], "motor1": C["metal"], "motor2": C["metal"], "motor3": C["metal"], "pi": C["pcb"], "d0": "#3B8F5E", "d1": "#3B8F5E", "d2": "#3B8F5E", "plug": C["dark"], "foil": C["foil"], "btn": "#B03A2E", "dongle": "#5E6B85", "cap": AC}
+    join = {"pin_r": Yk(P.pin(1)), "pin_l": Yk(P.pin(-1)), "keeper_r": Yk(P.pin_keeper(1)), "keeper_l": Yk(P.pin_keeper(-1)), "motor2": Yk((mb + mc).transform(P.motor2_T())), "pinion2": Yk(P.pinion2()), "m2_ring": Yk(P.m2_ring())}
+    rot = {"rotor_bar": Rt(P.rotor_bar()), "plate": Rt(P.al_plate(150.0)), "coin_cap": Rt(P.coin_cap()), "rotor_hw": Rt(P.rotor_hw())}
+    gray = {"battery": C["batt"], "motor1": C["metal"], "motor2": C["metal"], "motor3": C["metal"], "pi": C["pcb"], "d0": "#3B8F5E", "d1": "#3B8F5E", "d2": "#3B8F5E", "plug": C["dark"], "plate": C["foil"], "rotor_hw": C["screw"], "btn": "#B03A2E", "dongle": "#5E6B85", "cap": AC}
 
     def scene(old, new, hi_names=None):
         A = {}
@@ -335,10 +336,10 @@ if "5" in WANT:
     steps = [
         ("① 받침", "전원선을 덮개의 가운데 통으로 올려 둔다.\n통 뒤쪽 홈에 마개를 위에서 끼우고,\n덮개를 나사 4개로 덮는다.", scene({"tub": base["tub"], "battery": base["battery"]}, {"cover": base["cover"], "cap": base["cap"]}), dict(cam_az=-60, cam_el=28, dist=520, focus=(0, 0, 25))),
         ("② 요크", "모터 1을 상자 속 돋은 자리에 나사 2개로 달고,\n아래에서 작은 기어를 축에 끼운다. 전원선을 꿰며\n요크를 받침에 얹고, 고리를 뒤에서 밀어 잠근다.", scene(base, yoke), dict(cam_az=-60, cam_el=24, dist=640, focus=(-10, 0, 70))),
-        ("③ 머리 속", "몸통 기둥에 파이를 꽂고, 드라이버 3장을 폼테이프로\n붙인다. 점퍼선, ㄱ자 젠더, 전원 버튼 모듈(왼쪽 받침\n살)을 달고, 동글 두 개를 아래 USB 에 꽂는다.", scene({"shell": headi["shell"]}, {k: v for k, v in headi.items() if k != "shell"}), dict(cam_az=-72, cam_el=18, dist=430, focus=(0, 0, -46))),
-        ("④ 머리 겉", "모터 3을 넣은 모터 자리(나사 4)를 얹고\n전선을 드라이버 3에 꽂는다. 부채꼴 기어(나사 2)를\n붙인다. 뚜껑은 아직 닫지 않는다.", scene(headi, heado), dict(cam_az=-40, cam_el=20, dist=520, focus=(10, 0, -40))),
-        ("⑤ 머리 올리기", "모터 2에 맞춤 링과 작은 기어를 끼워 오른쪽 팔\n바깥에서 넣는다. 머리를 내리며 이를 맞물리고 핀 2개를\n민다. 전선을 다 꽂은 뒤 뚜껑(나사 4)을 닫는다.", scene({**base, **yoke, **posed_head}, {**join, **posed_lid}), dict(cam_az=62, cam_el=16, dist=820, focus=(0, 0, 120))),
-        ("⑥ 판", "회전 막대를 모터 3 축에 꽂고,\n테이프를 붙인 판을 막대 끝에 끼워\n나사 1개로 고정한다.", scene({**base, **yoke, **posed_head, **posed_lid, **join}, rot, ("rotor_bar", "blade")), dict(cam_az=-58, cam_el=14, dist=900, focus=(0, 0, 150))),
+        ("③ 머리 속", "몸통 기둥에 파이(M2.5 나사 4)와 드라이버 3장(M2.5\n나사 12)을 조인다. 점퍼선, ㄱ자 젠더, 전원 버튼 모듈\n(왼쪽 받침 살)을 달고, 동글 두 개를 아래 USB 에 꽂는다.", scene({"shell": headi["shell"]}, {k: v for k, v in headi.items() if k != "shell"}), dict(cam_az=-72, cam_el=18, dist=430, focus=(0, 0, -46))),
+        ("④ 머리 겉", "모터 3을 넣은 모터 자리(나사 4)를 얹고 전선을 드라이버\n3에 꽂는다. 부채꼴 기어(나사 2)를 붙이고, 등판에 마커\n종이를 대고 마커 틀(나사 4)로 덮는다. 뚜껑은 아직.", scene(headi, heado), dict(cam_az=-40, cam_el=20, dist=520, focus=(10, 0, -40))),
+        ("⑤ 머리 올리기", "모터 2에 맞춤 링과 작은 기어를 끼워 오른쪽 팔 바깥에서\n넣는다. 머리를 내리며 이를 맞물리고 핀 2개를 민 뒤 핀 막이\n(나사 1개씩)를 단다. 전선을 꽂고 뚜껑(나사 4)을 닫는다.", scene({**base, **yoke, **posed_head}, {**join, **posed_lid}), dict(cam_az=62, cam_el=16, dist=820, focus=(0, 0, 120))),
+        ("⑥ 판", "알루미늄 판을 판 받이에 볼트 4개로 조이고, 균형추 통에\n동전을 넣어 마개(나사 2)로 막는다. 회전 막대를 모터 3\n축에 꽂고 축 고정 나사를 조인다.", scene({**base, **yoke, **posed_head, **posed_lid, **join}, rot, ("rotor_bar", "plate", "coin_cap")), dict(cam_az=-58, cam_el=14, dist=900, focus=(0, 0, 150))),
     ]
     band = 186
     sheet = Image.new('RGB', (h * 3, (h + band) * 2 + 150), BG); d = ImageDraw.Draw(sheet)
@@ -421,9 +422,9 @@ if "6" in WANT:
     im.save(OUT + '07_배선.png')
 
 # ---------------------------------------------------------------- 7 출력판 나누기
-PLATE_KO = {"90_test_coupon": "시험 조각", "91_tenon_gauge": "시험용 돌기", "16_m2_ring": "맞춤 링", "02_base_cover_S": "받침 덮개", "01_base_tub_S": "받침 통", "03_clip": "고리", "04_yoke": "요크", "17_lan_cap": "홈 마개",
-            "07_head_shell": "머리 몸통", "08_head_lid": "머리 뚜껑", "09_crown": "모터 자리", "06_sector_gear": "부채꼴 기어", "11_blade_100x150": "판 100×150", "14_trim_plate": "균형 조각",
-            "01_base_tub_L": "받침 통 L", "02_base_cover_L": "받침 덮개 L", "12_blade_100x200": "판 100×200", "15_balance_200": "균형 덩어리"}
+PLATE_KO = {"90_test_coupon": "시험 조각", "91_driver_check": "보드 맞춤 판", "16_m2_ring": "맞춤 링", "02_base_cover_S": "받침 덮개", "01_base_tub_S": "받침 통", "03_clip": "고리", "04_yoke": "요크", "17_lan_cap": "홈 마개",
+            "07_head_shell": "머리 몸통", "08_head_lid": "머리 뚜껑", "09_crown": "모터 자리", "06_sector_gear": "부채꼴 기어", "11_coin_cap": "마개", "12_coin_spacer": "채움 조각", "14_pin_keeper": "핀 막이",
+            "15_marker_frame": "마커 틀", "18_drill_jig": "구멍 뚫기 틀", "01_base_tub_L": "받침 통 L", "02_base_cover_L": "받침 덮개 L", "17_lan_cap_L": "홈 마개 L"}
 
 
 def plate_panel(row, px):
@@ -442,7 +443,7 @@ def plate_panel(row, px):
     d.rectangle([X(0), Y(28), X(18), Y(0)], fill="#D9A79B", outline="#B8553F", width=2)          # 앞 왼쪽 금지 구역
     d.text((X(129), Y(7)), "프린터가 시작할 때 줄을 긋는 자리", font=font(px * 0.026), fill="#8A8273", anchor="mm")
     body = P.COL["body"]
-    small = []
+    small = []; once = set()
     for name, cx, cy, rot in row["items"]:
         m = E.oriented(spec[name][1], spec[name][2]); tm, _ = E.clean32(m)
         poly = trimesh.path.polygons.projected(tm, normal=[0, 0, 1])
@@ -458,6 +459,8 @@ def plate_panel(row, px):
         for key in ("13_pin_fit", "05_pinion_fit"):
             if name.startswith(key):
                 m_ = name[-1]
+        if name in ("12_coin_spacer", "14_pin_keeper"):                             # 여러 개 놓이는 작은 것: 이름은 한 번만 (아래에서 줄 왼쪽에 적는다)
+            continue
         if m_:
             d.text((X(cx), Y(cy - (y1 - y0) / 2) + px * 0.022), m_, font=font(px * 0.03, True), fill=INK, anchor="mm")
         elif name.startswith("10_rotor_bar"):
@@ -467,6 +470,9 @@ def plate_panel(row, px):
             if tw_ < w - 8 and (y1 - y0) * sc > px * 0.05:                         # 큰 부품: 가운데에 이름표 (구멍 위에서도 읽히게 바탕을 깐다)
                 d.rounded_rectangle([X(cx) - tw_ / 2 - 10, Y(cy) - px * 0.024, X(cx) + tw_ / 2 + 10, Y(cy) + px * 0.024], 8, fill="#0F1838")
                 d.text((X(cx), Y(cy)), lab, font=f, fill="#FFFFFF", anchor="mm")
+            elif name == "91_driver_check":                                         # 위에 구멍 뚫기 틀이 있어서, 판 안쪽 빈 곳에 두 줄로
+                f2 = font(px * 0.024, True)
+                d.text((X(cx), Y(cy) - px * 0.016), "보드", font=f2, fill=INK, anchor="mm"); d.text((X(cx), Y(cy) + px * 0.016), "맞춤 판", font=f2, fill=INK, anchor="mm")
             elif name == "16_m2_ring":                                              # 옆 부품의 이름과 겹치지 않게 아래에
                 d.text((X(cx), Y(cy - (y1 - y0) / 2) + px * 0.024), lab, font=f, fill=INK, anchor="mm")
             else:
@@ -476,17 +482,23 @@ def plate_panel(row, px):
         d.text((X(min(it[1] for it in pins) - 14), Y(pins[0][2])), "핀", font=font(px * 0.03, True), fill=INK, anchor="rm")
     if gears:
         d.text((X(min(it[1] for it in gears) - 14), Y(gears[0][2])), "작은 기어", font=font(px * 0.03, True), fill=INK, anchor="rm")
+    its = [it for it in row["items"] if it[0] == "12_coin_spacer"]
+    if its:
+        d.text((X(min(it[1] for it in its) - 16), Y(np.mean([it[2] for it in its]))), "채움 조각 × %d" % len(its), font=font(px * 0.028, True), fill=INK, anchor="rm")
+    its = [it for it in row["items"] if it[0] == "14_pin_keeper"]
+    if its:                                                                         # 왼쪽 가장자리에 있어서 이름은 위에 적는다
+        d.text((X(np.mean([it[1] for it in its])), Y(max(it[2] for it in its) + 9.5)), "핀 막이 × %d" % len(its), font=font(px * 0.028, True), fill=INK, anchor="mm")
     d.text((X(BEDS / 2), px - mg * 0.45), "앞 (문 쪽)", font=font(px * 0.026), fill=SUB, anchor="mm")
     return im
 
 
 if "7" in WANT:
     SUMM = slice_summary()["plates"]
-    main = [("0판_시험조각", "0판 · 먼저 뽑는 시험 조각", "시험 조각, 시험용 돌기, 맞춤 링,\n핀과 작은 기어 맞춤 1·2·3 을 2개씩"),
-            ("1판_받침_S", "1판 · 받침", "받침 통, 받침 덮개, 고리,\n랜선 홈 마개"),
+    main = [("0판_시험조각", "0판 · 시험 조각과 작은 것들", "시험 조각, 보드 구멍 맞춤 판, 맞춤 링, 핀과 작은 기어\n맞춤 1·2·3 을 2개씩, 구멍 뚫기 틀, 마커 틀, 핀 막이 2개, 고리"),
+            ("1판_받침_S", "1판 · 받침 (작은 것)", "받침 통, 받침 덮개, 랜선 홈 마개"),
             ("2판_요크", "2판 · 요크", "요크 (회전판 + 팔 + 전선 상자)"),
             ("3판_머리", "3판 · 머리", "머리 몸통, 머리 뚜껑, 모터 자리,\n부채꼴 기어"),
-            ("4판_회전부_맞춤2", "4판 · 회전부 (채움 100%)", "회전 막대, 판, 균형 조각 2장.\n막대는 맞춤 1·2·3 파일이 따로 있다")]
+            ("4판_회전부_맞춤2", "4판 · 회전부 (채움 100%)", "회전 막대, 균형추 통 마개, 채움 조각 9개.\n막대는 맞춤 1·2·3 파일이 따로 있다")]
     h = 640; sheet = Image.new('RGB', (h * 5, h + 440), BG); d = ImageDraw.Draw(sheet)
     d.text((40, 30), "출력판 나누기 (Bambu X1 Carbon, 256×256mm 판 다섯 번)", font=font(44, True), fill=INK)
     d.text((40, 96), "Bambu Studio 프로젝트 파일(슬라이스/프로젝트)에 넣어 둔 자리 그대로다. 붉은 칸은 앞 왼쪽 금지 구역. 시간과 무게는 Bambu Studio 2.5.1 로 슬라이싱한 값.", font=font(26), fill=SUB)
@@ -499,14 +511,14 @@ if "7" in WANT:
         d.text((i * h + 40, h + 202), "%s · %.0f g" % (hm(row["sec"]), row["g"]), font=font(28, True), fill="#1B2A57")
         for j, l in enumerate(what.split("\n")):
             d.text((i * h + 40, h + 246 + j * 34), l, font=font(24), fill=SUB)
-    L = SUMM["선택_받침통_L"]; LC = SUMM["선택_받침덮개_L"]; B2 = SUMM["선택_판200"]
+    L = SUMM["선택_받침통_L"]; LC = SUMM["선택_받침덮개_L"]
     d.text((40, h + 330), "합계 %s, 필라멘트 %.0f g (1kg 한 통의 %.0f%%). 모두 0.2mm 층 · 벽 3겹 · 채움 15%% (4판만 100%%) · 서포트 없음 · Textured PEI 판 · PLA 220°C / 판 55°C." % (
         hm(total_s), total_g, total_g / 10), font=font(27), fill=INK)
-    d.text((40, h + 372), "선택: 큰 받침(L)은 1판 대신 통 %s · %.0f g + 덮개 %s · %.0f g 두 판. 비교용 판 100×200 + 균형 덩어리는 %s · %.0f g." % (
-        hm(L["sec"]), L["g"], hm(LC["sec"]), LC["g"], hm(B2["sec"]), B2["g"]), font=font(27), fill=SUB)
+    d.text((40, h + 372), "큰 받침(L, 지름 19cm. 잘 안 넘어진다)을 쓰면 1판 대신 통 %s · %.0f g + 덮개 %s · %.0f g 두 판을 뽑는다 (L 용 홈 마개는 덮개 판에 같이 있다). 알루미늄 판, 볼트·너트, 100원 동전은 사는 것." % (
+        hm(L["sec"]), L["g"], hm(LC["sec"]), LC["g"]), font=font(27), fill=SUB)
     sheet.save(OUT + '08_출력판_나누기.png')
     json.dump(dict(plates=[dict(key=k, title=t, files=[it[0] for it in SUMM[k]["items"]], sec=SUMM[k]["sec"], g=SUMM[k]["g"]) for k, t, w in main], total_sec=total_s, total_g=round(total_g, 1),
-                   optional=[dict(key=k, sec=SUMM[k]["sec"], g=SUMM[k]["g"]) for k in ("선택_받침통_L", "선택_받침덮개_L", "선택_판200")], slicer="Bambu Studio 2.5.1"),
+                   optional=[dict(key=k, sec=SUMM[k]["sec"], g=SUMM[k]["g"]) for k in ("선택_받침통_L", "선택_받침덮개_L")], slicer="Bambu Studio 2.5.1"),
               open(ROOT + 'plates.json', 'w'), ensure_ascii=False, indent=1)
 
 print(sorted(os.listdir(OUT)))

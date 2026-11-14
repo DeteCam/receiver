@@ -124,6 +124,9 @@ def tub(size="S"):
     y0 = -R + BATT_IN                                                                  # 배터리를 1cm 더 안으로: ㄱ자 USB 플러그가 받침 안에 들어온다
     rails = [box(s * (bw / 2 + 0.5) if s > 0 else -(bw / 2 + 2.5), (bw / 2 + 2.5) if s > 0 else -(bw / 2 + 0.5), y0, y0 + bl, 1.9, 5.0) for s in (1, -1)]
     rails.append(box(-28, 28, y0 + bl, y0 + bl + 2.0, 1.9, 6.0))
+    for s in (1, -1):                                                                  # 배터리 문턱 2개: 받침을 기울여도 배터리가 창 쪽으로 미끄러져 나오지 않는다. 뒤에서 세게 밀면 비탈을 타고 넘어온다
+        x0, x1 = (bw / 2 - 11.5, bw / 2 + 0.6) if s > 0 else (-bw / 2 - 0.6, -bw / 2 + 11.5)
+        rails.append(prism_xy_to_yz(poly([(y0 - 8.0, 1.9), (y0 - 5.0, 4.9), (y0 - 3.0, 4.9), (y0, 1.9)]), x0, x1))
     m = union([shell] + posts + [union(rails) ^ inner])
     wall = cz(R + 1, 2.0, TUB_H + 1) - cz(R - 3.1, 1, TUB_H + 2)
     cut = [wall ^ box(-(bw / 2 + 2.0), bw / 2 + 2.0, -R - 2, 0, 2.0, TUB_H + 2)]        # 배터리 창 (선은 배터리 위로 지나 가운데 통으로 간다)
@@ -137,9 +140,10 @@ def tub(size="S"):
     return m - union(cut)
 
 
-def lan_cap():
-    """랜선 홈 마개: 랜선을 안 쓸 때(혼자 동작) 받침 뒤의 홈을 막는다. 덮개를 덮기 전에 위에서 벽에 끼워 내린다. 출력: 그대로 (세워서)."""
-    R = BASE["S"]["R"]; hw, z0 = LAN_NOTCH; c = LANCAP
+def lan_cap(size="S"):
+    """랜선 홈 마개: 랜선을 안 쓸 때(혼자 동작) 받침 뒤의 홈을 막는다. 덮개를 덮기 전에 위에서 벽에 끼워 내린다. 출력: 그대로 (세워서).
+    받침 크기마다 벽의 둥글기가 달라서 S 용과 L 용이 따로 있다."""
+    R = BASE[size]["R"]; hw, z0 = LAN_NOTCH; c = LANCAP
     zt = TUB_H - 0.2; yb = hw - c["side"]; yf = hw + c["lap"]; zf = z0 - c["lap"]
     body = revolve_profile([(R - 3.3, z0 + 0.1), (R + 0.3, z0 + 0.1), (R + 0.3, TUB_H - 2.2), (R - 1.8, zt), (R - 3.3, zt)]) ^ box(-R - 3, 0, -yb, yb, z0, TUB_H)
     inner = (cz(R - 3 - c["slot"], zf, zt) - cz(R - 3 - c["slot"] - c["t_in"], zf - 1, zt + 1)) ^ box(-R - 3, 0, -yf, yf, zf - 1, zt + 1)
@@ -186,7 +190,7 @@ def arm_profile():
     body = poly([(WING_X1, DECK_Z0), (WING_X1, H_T), (-10.0, 129.0), (WING_X0, 86.0), (WING_X0, 64.0), (-68.0, DECK_Z0)])
     sx, sz = stop_screws_xz()[1]
     lobe = CS.batch_hull([CS.circle(6.5).translate([sx, sz]), CS.circle(1.0).translate([sx - 20.0, sz - 20.0]), CS.circle(1.0).translate([sx + 12.0, sz - 2.0])])   # 위쪽 멈춤 나사 자리. 뒤로 비스듬히 이어서 받침 없이 출력
-    return body + CS.circle(12.0).translate([0, H_T]) + lobe      # 축 둘레 원은 앞 모서리(x = 12)와 딱 맞닿는다
+    return body + CS.circle(12.0).translate([0, H_T]) + lobe + keeper_cs(0.3).translate([0, H_T])      # 축 둘레 원은 앞 모서리(x = 12)와 딱 맞닿는다. 핀 막이가 얹히는 귀를 덧댄다
 
 
 def arm_window():
@@ -290,11 +294,41 @@ def yoke():
     cut.append(cy(1.7, ARM_Y0 - 1, ARM_Y1 + 1, lx, lz))                                                # 끄덕임 고정 나사 구멍
     for x, z in stop_screws_xz():
         cut.append(cy(1.3, -ARM_Y1 - 1, -ARM_Y0 + 1, x, z))                                            # 끄덕임 멈춤 나사 2개
+    kx, kz = keeper_xz()
+    cut.append(cy(1.3, ARM_Y0 + 0.6, ARM_Y1 + 1, kx, kz))                                              # 핀 막이 나사 (오른쪽, 막힌 구멍)
+    cut.append(cy(1.3, -ARM_Y1 - 1, -ARM_Y0 - 0.6, kx, kz))                                            # 핀 막이 나사 (왼쪽)
     for k, p in enumerate(LOCK_ANGLES + (85.0,)):                                                      # 오른쪽 팔 바깥면 각도 눈금 (0, 54.7, 85)
         a = np.radians(270.0 - p); r0, r1 = 15.5, 20.5
         tick = box(-0.6, 0.6, ARM_Y1 - 0.6, ARM_Y1 + 1, r0, r1).rotate([0, np.degrees(-(a - np.pi / 2)), 0]).translate([0, 0, H_T])
         cut.append(tick)
     return m - union(cut)
+
+
+KEEPER_R, KEEPER_DIR = 10.6, 110.0      # 핀 막이 나사: 끄덕임 축에서의 거리와 방향 (요크 XZ). 나사 머리(반지름 3)가 핀 머리(반지름 7)에 닿지 않는 거리. 각도 바늘이 지나는 쪽(184~275도)을 피해 위쪽
+
+
+def keeper_xz():
+    x, z = pol(KEEPER_R, KEEPER_DIR)
+    return x, H_T + z
+
+
+def keeper_cs(grow=0.0):
+    """핀 막이의 바깥 모양 (끄덕임 축을 원점으로 한 요크 XZ). 팔에도 같은 모양의 귀를 덧대어 막이가 팔 위에 온전히 얹힌다."""
+    d = np.array(pol(1.0, KEEPER_DIR)); n = np.array([-d[1], d[0]]); c = d * KEEPER_R
+    return CS.batch_hull([CS.circle(4.6 + grow).translate(list(c)), CS.circle(3.0 + grow).translate(list(c + n * 6.0)), CS.circle(3.0 + grow).translate(list(c - n * 6.0))])
+
+
+def pin_keeper(side=1):
+    """핀 막이: 끄덕임 축 핀의 머리(지름 14, 두께 2)를 위에서 덮어 핀이 빠져나오지 못하게 한다. 팔 바깥면에 M3 x 6 나사 1개로 조인다 (머리는 파 놓은 자리에 숨는다).
+    핀은 머리와 같이 돌고 막이는 팔에 붙어 있다: 핀 머리 위로 0.25mm 떠서 덮는다. 출력: 바깥면을 바닥에."""
+    y0 = ARM_Y1; t0 = 2.25; t1 = 3.9
+    d = np.array(pol(1.0, KEEPER_DIR)); c = d * KEEPER_R
+    base = keeper_cs() - CS.circle(7.35)                                         # 핀 머리(반지름 7) 둘레를 0.35 띄우고 감싼다: 막이가 나사 둘레로 돌지 못한다
+    lip = CS.batch_hull([keeper_cs(), CS.circle(2.0).translate(list(d * 4.6))]) - CS.circle(4.3)
+    m = prism_xz(base, y0, y0 + t1) + prism_xz(lip, y0 + t0, y0 + t1)
+    m = m - cy(1.7, y0 - 1, y0 + t1 + 1, c[0], c[1]) - cy(3.1, y0 + t1 - 2.5, y0 + t1 + 1, c[0], c[1])       # 나사 구멍과 머리 자리 (지름 6.2, 깊이 2.5)
+    m = m.translate([0, 0, H_T])
+    return m if side > 0 else m.mirror([0, 1, 0])
 
 
 def pinion(phase=0.0, d=D_BORE_D, flat=D_BORE_FLAT):
@@ -379,7 +413,8 @@ def _yz_prism(pts, x0, x1):
 
 
 def button_seat():
-    """전원 버튼 모듈(KY-004)이 앉는 자리: 뒷벽에서 올라온 살 두 줄. 기판 뒷면을 폼테이프로 살 위에 붙이고, 윗변은 턱에, 왼쪽 변은 옆벽에 댄다.
+    """전원 버튼 모듈(KY-004)이 앉는 자리: 뒷벽에서 올라온 살 두 줄. 기판을 살 위에 얹고, 윗변은 턱에, 왼쪽 변은 옆벽에 댄다.
+    테이프는 쓰지 않는다: 뚜껑을 나사로 조이면 뚜껑 안쪽의 누름 살 두 개가 기판 앞면을 누르고, 울타리 살이 오른쪽 변을 막는다 (head_lid).
     버튼은 앞(뚜껑 쪽)을 보고, 누르는 힘은 살이 받는다. 전원선은 두 살 사이로 지나간다."""
     xi = HX - HW; yb = HY1 - HWB
     ys = BTN_PCB_Y + 1.6                                   # 기판 뒷면이 닿는 면
@@ -395,15 +430,31 @@ def button_seat():
     return out
 
 
+def driver_holes(k):
+    """드라이버 k (0 = 맨 위) 의 나사 구멍 4개의 (X, Z)"""
+    a, b = DRV_HOLE[0] / 2, DRV_HOLE[1] / 2; xc = DRV_X0 + 17.5; zc = DRV_ZC[k]
+    return [(xc + sx * a, zc + sz * b) for sx in (-1, 1) for sz in (-1, 1)]
+
+
+def marker_screws():
+    """마커 틀 나사 4개의 (X, Z)"""
+    return [(s * MK_FRAME["x"], z) for s in (-1, 1) for z in MK_FRAME["z"]]
+
+
 def head_shell():
-    """머리 몸통: 뒷벽과 옆벽. 파이와 드라이버 3장이 들어간다. 위는 모터 자리, 앞은 뚜껑이 닫는다. 출력: 뒷벽을 바닥에."""
+    """머리 몸통: 뒷벽과 옆벽. 파이와 드라이버 3장이 들어간다 (모두 M2.5 나사로 기둥에 조인다). 위는 모터 자리, 앞은 뚜껑이 닫는다. 출력: 뒷벽을 바닥에."""
     xi = HX - HW; yb = HY1 - HWB
     back = box(-HX, HX, yb, HY1, HZ0, HZ1)
     sides = box(-HX, -xi, HYL, HY1, HZ0, HZ1) + box(xi, HX, HYL, HY1, HZ0, HZ1)
     add = [back, sides]
-    for x, z in pi_hole_xz():                                                  # 파이 받침 기둥 + 꽂는 못
-        add.append(cy(3.0, PI_T / 2, yb + 0.1, x, z))
-        add.append(cy(PEG_R, -3.0, PI_T / 2 + 0.1, x, z))
+    for x, z in pi_hole_xz():                                                  # 파이 받침 기둥 (M2.5 나사로 조인다)
+        add.append(cy(PI_POST_R, PI_T / 2, yb + 0.1, x, z))
+    for k in range(3):                                                         # 드라이버 받침 기둥 12개 (M2.5 나사)
+        for x, z in driver_holes(k):
+            add.append(cy(DRV_POST_R, yb - DRV_POST_H, yb + 0.1, x, z))
+    for sx, sz in marker_screws():                                             # 마커 틀 나사 받이 (등판 안쪽 네 귀, 옆벽에 붙는다)
+        s = 1 if sx > 0 else -1; x0, x1 = (sx - 2.6, xi + 0.1) if s > 0 else (-xi - 0.1, sx + 2.6)
+        add.append(box(x0, x1, yb - MK_FRAME["boss"], yb + 0.1, sz - 3.0, sz + 3.0))
     for sx, sy in CROWN_SCREWS:                                                # 모터 자리 고정 나사 받이 (모서리 덩어리)
         s = 1 if sx > 0 else -1
         x0, x1 = (sx - 3.5, xi + 0.1) if s > 0 else (-xi - 0.1, sx + 3.5)
@@ -440,6 +491,13 @@ def head_shell():
         cut.append(cz(1.3, 0.5, HZ1 + 1, sx, sy))
     for sx, sz in LID_SCREWS:
         cut.append(cy(1.3, HYL - 1, HYL + 6.4, sx, sz))
+    for x, z in pi_hole_xz():                                                  # 파이 나사 구멍 (M2.5 x 6: 기판 1.6 + 기둥 속으로 4.4). 등판 겉으로 0.4 남긴다
+        cut.append(cy(PILOT25, PI_T / 2 - 0.1, HY1 - 0.4, x, z))
+    for k in range(3):
+        for x, z in driver_holes(k):                                           # 드라이버 나사 구멍 (M2.5 x 6: 보드 1.6 + 기둥 속으로 4.4)
+            cut.append(cy(PILOT25, yb - DRV_POST_H - 0.1, HY1 - 0.4, x, z))
+    for sx, sz in marker_screws():                                             # 마커 틀 나사 구멍 (M3 x 8, 등판 겉에서 조인다)
+        cut.append(cy(1.3, yb - MK_FRAME["boss"] - 1, HY1 + 1, sx, sz))
     for (y, z) in sector_mount_yz():
         cut.append(cx(1.3, xi - 5, HX + 1, y, z))
     wz0, wz1, wy0, wy1 = PLUG_WIN; c = 4.0                                      # 전원 플러그 창 (왼쪽 옆벽). 출력할 때 위가 되는 두 모서리(-Y)는 45도로 깎는다
@@ -454,14 +512,14 @@ def head_shell():
 
 
 def head_lid():
-    """머리 뚜껑 (앞면). 나사 4개. 출력: 바깥면을 바닥에."""
+    """머리 뚜껑 (앞면). 나사 4개. 안쪽에 전원 버튼 기판을 누르는 살이 있다. 출력: 바깥면을 바닥에."""
     m = box(-HX + 0.15, HX - 0.15, HY0, HYL, HZ0, HZ1)                         # 옆은 0.15 씩 좁게: 옆에 붙는 부채꼴 기어를 밀지 않게
-    holes = pi_hole_xz()
-    for k, (x, z) in enumerate(holes):                                          # 파이 누름 기둥 4개 (못 끝이 들어간다). 위쪽 둘은 전원 단자와 GPIO 핀을 피해 가늘게
-        m = m + cy(2.6 if k < 2 else 3.0, HYL - 0.1, -PI_T / 2 - 0.3, x, z)
+    # 전원 버튼 기판(KY-004)을 누르는 살: 뚜껑을 조이면 기판 앞면의 좌우 빈 자리를 눌러 받침 살에 붙인다. 울타리 살은 기판 오른쪽 변을 막는다
+    zt = BTN_Z + BTN_TOP; zb = zt - BTN_L; yf = BTN_PCB_Y
+    for x0, x1 in ((BTN_X - BTN_W / 2 + 0.5, BTN_X - 3.8), (BTN_X + 3.8, BTN_X + BTN_W / 2 - 0.5)):
+        m = m + box(x0, x1, HYL - 0.1, yf, BTN_Z - 3.0, BTN_Z + 3.0)
+    m = m + box(BTN_X + BTN_W / 2 + 0.3, BTN_X + BTN_W / 2 + 1.5, HYL - 0.1, yf + 1.2, zb + 2.0, zt - 2.0)
     cut = []
-    for x, z in holes:
-        cut.append(cy(1.6, -4.0, 0, x, z))
     for sx, sz in LID_SCREWS:
         cut.append(cy(1.7, HY0 - 1, HYL + 1, sx, sz))
     eye = M.batch_hull([cy(4.5, HY0 - 1, HY0 + 0.8, -30.0, -20.0), cy(4.5, HY0 - 1, HY0 + 0.8, 30.0, -20.0)])     # 앞면 '눈' 띠 (0.8 깊이)
@@ -504,70 +562,143 @@ def crown():
 
 
 # ----------------------------------------------------------------- 회전부 (머리 좌표, 판은 +X 쪽)
-def blade(length=150.0):
-    """판 받침. 바깥면(반지름 80)에 알루미늄 테이프를 붙인다. 출력: 바깥면을 바닥에."""
-    hw = PLATE_W / 2; z0, z1 = BL_Z0, BL_Z0 + length
-    x1 = R_FOIL; x0 = x1 - PANEL_T; rib = 3.0
-    panel = box(x0, x1, -hw, hw, z0, z1)
-    frame = box(x0 - rib, x0 + 0.1, -hw, hw, z0, z1) - box(x0 - rib - 1, x0 + 1, -hw + 2.4, hw - 2.4, z0 + 2.4, z1 - 2.4)
-    zc = (BAR_Z0 + BAR_Z1) / 2; zt = zc + 6.0                                   # 막대 높이, 꽂는 자리의 윗면
-    sx = COLLAR_X0 + 3.6; yw = 5.6                                              # 고정 나사 자리, 갈라 놓은 세로 살의 위치
-    ribs = [box(x0 - rib, x0 + 0.1, -hw, hw, z - 1.0, z + 1.0) for z in np.arange(z0 + 46.0, z1 - 20.0, 46.0)]
-    ribs.append(box(x0 - rib, x0 + 0.1, -1.0, 1.0, z0, zc))                     # 세로 살: 꽂는 자리 아래는 가운데 한 줄
-    collar = box(COLLAR_X0, x0 + 0.1, -9.0, 9.0, zc - 6.0, zt)
-    web = [box(x0 - 6.0, x0 + 0.1, -1.2, 1.2, zc - 26.0, zc), box(x0 - 6.0, x0 + 0.1, -26.0, 26.0, zc - 1.2, zc + 1.2)]
-    for s in (1, -1):                                                           # 꽂는 자리 위는 두 줄로 가른다: 그 사이로 나사와 드라이버가 들어간다
-        ribs.append(box(x0 - rib, x0 + 0.1, s * yw - 1.0, s * yw + 1.0, zc, z1))
-        web.append(box(x0 - 6.0, x0 + 0.1, s * yw - 1.2, s * yw + 1.2, zc, zc + 26.0))
-    m = union([panel, frame, collar] + ribs + web)
-    cut = [box(COLLAR_X0 - 1, x0 - 0.6, -TENON_W / 2 - 0.15, TENON_W / 2 + 0.15, BAR_Z0 - 0.15, BAR_Z1 + 0.15)]      # 막대 끝이 들어가는 구멍
-    cut.append(cz(1.7, BAR_Z1, zt + 1.0, sx, 0))                                                                   # 고정 나사 (위에서)
-    cut.append(cz(3.7, zt, z1 + 1.0, sx, 0))                                                                       # 드라이버 길 (지름 7.4): 위쪽 테두리와 가로 살을 판 두께만 남기고 판다
-    return m - union(cut)
+def al_plate(length=150.0, t=AL_T):
+    """알루미늄 판 (사는 것). 구멍 4개는 직접 뚫는다 (drill_jig 로 자리를 찍는다). 판 받이 바깥면에 대고 M3 볼트 4개로 조인다."""
+    m = box(FL_X1, FL_X1 + t, -PLATE_W / 2, PLATE_W / 2, BL_Z0, BL_Z0 + length)
+    return m - union([cx(1.7, FL_X1 - 1, FL_X1 + t + 1, y, z) for y, z in PLATE_BOLTS])
 
 
-def foil(length=150.0):
-    return box(R_FOIL, R_FOIL + 0.15, -PLATE_W / 2, PLATE_W / 2, BL_Z0, BL_Z0 + length)
+def hex_cs(af):
+    """맞변 거리 af 인 육각형 (변 두 개가 위아래로 수평)"""
+    r = af / 2 / np.cos(np.radians(30.0))
+    return poly([(r * np.cos(np.radians(60 * k)), r * np.sin(np.radians(60 * k))) for k in range(6)])
 
 
 def rotor_bar(d=D_BORE_D, flat=D_BORE_FLAT):
-    """회전 막대: 가운데가 모터 축, 한쪽 끝에 판, 반대쪽 끝은 균형추. 속을 꽉 채워(100%) 출력한다. 출력: 뒤집어서."""
+    """회전 막대 (한 덩어리): 가운데가 모터 축, +X 끝에 알루미늄 판을 볼트로 조이는 판 받이, -X 끝에 동전을 넣는 균형추 통.
+    축에는 M3 나사 1개로 조인다 (축의 납작한 면을 누른다). 속을 꽉 채워(100%) 출력한다. 출력: 뒤집어서 (윗면을 바닥에)."""
     hub = cz(9.5, M1_ZT + 2.0, BAR_Z1)
     mid = chbox(-9.5, 9.5, -8.0, 8.0, BAR_Z0, BAR_Z1, 1.2)
-    arm1 = M.batch_hull([mid, chbox(62.0, COLLAR_X0 - 0.3, -6.0, 6.0, BAR_Z0, BAR_Z1, 1.2)])
-    tenon = box(COLLAR_X0 - 1.5, TENON_X1, -TENON_W / 2, TENON_W / 2, BAR_Z0, BAR_Z1)
-    arm2 = M.batch_hull([mid, chbox(-POD_R0 - 4, -POD_R0 + 2, -8.0, 8.0, BAR_Z0, BAR_Z1, 1.2)])
-    pod = chbox(-POD_R1, -POD_R0, -POD_W / 2, POD_W / 2, POD_Z0, BAR_Z1, 2.5)
-    m = union([hub, mid, arm1, tenon, arm2, pod])
+    xf = FL_X1 - FL_T
+    arm1 = M.batch_hull([mid, chbox(58.0, 62.0, -6.0, 6.0, BAR_Z0, BAR_Z1, 1.2)])
+    flare = M.batch_hull([chbox(58.0, 62.0, -6.0, 6.0, BAR_Z0, BAR_Z1, 1.2), box(xf - 1.5, xf + 0.1, -FL_HW, FL_HW, BAR_Z0, BAR_Z1)])       # 막대가 판 받이 쪽으로 부채꼴로 넓어진다
+    flange = chbox(xf, FL_X1, -FL_HW, FL_HW, FL_Z0, BAR_Z1, 0.0) if False else box(xf, FL_X1, -FL_HW, FL_HW, FL_Z0, BAR_Z1)
+    gus = [prism_xz(poly([(xf + 0.05, FL_Z0), (xf + 0.05, BAR_Z0 + 0.1), (62.0, BAR_Z0 + 0.1)]), y - 1.2, y + 1.2) for y in (-9.0, 9.0)]             # 판 받이를 받치는 세모 살 2개
+    ro = POD_RI + POD_WALL
+    arm2 = M.batch_hull([mid, chbox(POD_XC + ro - 4.0, POD_XC + ro - 1.0, -8.0, 8.0, BAR_Z0, BAR_Z1, 1.2)])
+    pod = cz(ro, POD_Z0, BAR_Z1, POD_XC, 0)
+    ears = [M.batch_hull([cz(3.3, POD_Z0, POD_Z0 + 11.0, POD_XC, s * CAP_EAR_Y), cz(3.3, POD_Z0, POD_Z0 + 11.0, POD_XC, s * (ro - 2.0)),
+                          cz(0.6, POD_Z0 + 11.0, POD_Z0 + 17.0, POD_XC, s * (ro - 0.3))]) for s in (1, -1)]                                         # 마개 나사 받이 2개. 위쪽(출력할 때 아래쪽)은 비스듬히 통에 붙는다
+    m = union([hub, mid, arm1, flare, flange, arm2, pod] + gus + ears)
     cut = [cz(2.7, M1_ZT + 1.0, M1_ZT + 4.05)]                                                  # 축의 둥근 부분
     cut.append(extrude_z(d_bore_cs(d, flat), M1_ZT + 4.0, M1_ZT + 10.0))                        # 축의 납작한 부분 (위는 1mm 막힘)
-    cut.append(cz(1.3, BAR_Z0 - 1, BAR_Z1 + 1, COLLAR_X0 + 3.6, 0))                             # 판 고정 나사
-    zt = (POD_Z0 + BAR_Z0) / 2
-    cut.append(prism_xy_to_yz(teardrop_cs(1.3, -90.0), -POD_R1 - 1, -POD_R1 + 12.0).translate([0, 0, zt]))      # 균형 조각 나사 (뒤집어 출력: 꼭지가 -Z)
+    zs = M1_ZT + 7.0                                                                            # 축 고정 나사 높이 (납작한 부분의 가운데)
+    cut.append(cy(1.7, flat / 2 - 0.5, 12.0, 0, zs))                                            # 축 고정 나사 M3 x 8: +Y 쪽에서 들어가 축의 납작한 면을 누른다
+    cut.append(box(-2.9, 2.9, 4.0, 6.6, zs - 3.2, BAR_Z1 + 1))                                  # 그 나사의 너트 자리 (윗면에서 떨어뜨려 넣는다. 너트는 꼭짓점이 바닥에 닿아 나사 높이에 온다)
+    cut.append(box(-4.0, 4.0, 9.2, 12.0, zs - 4.0, zs + 4.0))                                   # 나사 머리가 앉는 평평한 자리
+    for y, z in PLATE_BOLTS:
+        cut.append(cx(1.7, xf - 1, FL_X1 + 1, y, z))                                            # 판 볼트 구멍 (M3)
+        cut.append(prism_xy_to_yz(hex_cs(5.8), xf - 1, xf + 2.2).translate([0, y, z]))          # 너트 자리 (안쪽 면에서 2.2 깊이): 너트가 돌지 않아 드라이버 하나로 조인다
+    cut.append(cz(POD_RI, POD_Z0 - 1, POD_Z1, POD_XC, 0))                                       # 동전 통 (아래로 열린다)
+    for s_ in (1, -1):
+        cut.append(cz(1.3, POD_Z0 - 1, POD_Z0 + 9.5, POD_XC, s_ * CAP_EAR_Y))                   # 마개 나사 구멍 (M3 x 8)
     cut.append(box(8.2, 9.6, -0.8, 0.8, BAR_Z1 - 0.6, BAR_Z1 + 1))                              # 0도 표시
     return m - union(cut)
 
 
-def trim_plate():
-    """균형 조각: 균형추 바깥면에 나사로 덧붙여 무게를 맞춘다."""
-    zt = (POD_Z0 + BAR_Z0) / 2
-    m = chbox(-POD_R1 - 3.0, -POD_R1, -18.0, 18.0, zt - 8.0, zt + 8.0, 0.6)
-    return m - cx(1.7, -POD_R1 - 4, -POD_R1 + 1, 0, zt)
+def coin_gap(n_coin=8):
+    """마개 턱과 통 입구 사이에 남는 틈 (동전 n 개 + 채움 조각을 합쳐 12장을 넣었을 때)"""
+    return COIN_T * n_coin + SPACER_T * (COIN_SLOTS - n_coin) + CAP_PLUG - POD_DEPTH
 
 
-def balance_200():
-    """판 100 x 200 을 쓸 때 균형추 바깥면에 덧붙이는 덩어리 (속을 꽉 채워 출력)."""
-    zt = (POD_Z0 + BAR_Z0) / 2
-    m = chbox(-POD_R1 - 9.0, -POD_R1, -18.0, 18.0, zt - 8.5, zt + 8.5, 1.0)
-    return m - cx(1.7, -POD_R1 - 10, -POD_R1 + 1, 0, zt)
+def coin_cap(n_coin=8):
+    """균형추 통의 마개: 동전과 채움 조각을 아래에서 밀어 올려 누른다. M3 x 8 나사 2개. 통 입구와 마개 턱 사이에 0.4~1.3mm 틈이 남는 것이 정상이다
+    (동전과 채움 조각의 두께 차이를 나사가 눌러 흡수한다). 출력: 턱을 바닥에."""
+    ro = POD_RI + POD_WALL; zt = POD_Z0 - coin_gap(n_coin); t = CAP_T
+    flange = M.batch_hull([cz(ro, zt - t, zt, POD_XC, 0)] + [cz(3.3, zt - t, zt, POD_XC, s * CAP_EAR_Y) for s in (1, -1)])
+    plug = cz(POD_RI - 0.3, zt - 0.1, zt + CAP_PLUG, POD_XC, 0) - cz(POD_RI - 2.7, zt, zt + CAP_PLUG + 1, POD_XC, 0)
+    m = flange + plug
+    return m - union([cz(1.7, zt - t - 1, zt + 1, POD_XC, s * CAP_EAR_Y) for s in (1, -1)])
+
+
+def coin_spacer():
+    """채움 조각: 동전 1개 자리를 채우는 원판 (두께 1.6). 동전과 합쳐 항상 12장이 되게 넣는다. 가운데 구멍은 꺼낼 때 쓴다."""
+    return cz(COIN_D / 2 - 0.2, 0, SPACER_T) - cz(3.0, -1, SPACER_T + 1)
+
+
+def rotor_hw(length=150.0, n_coin=8, t=AL_T):
+    """회전부에 붙는 쇠붙이 (모양만): 판 볼트 4개의 머리·몸통·너트, 마개 나사 머리, 축 고정 나사 머리. 돌 때 어디에 닿는지 볼 때 같이 넣는다."""
+    out = []
+    for y, z in PLATE_BOLTS:
+        out.append(cx(2.8, FL_X1 + t, FL_X1 + t + 2.4, y, z)); out.append(cx(1.5, FL_X1 + t + 2.4 - 8.0 - 2.4, FL_X1 + t, y, z))
+        out.append(prism_xy_to_yz(hex_cs(5.5), FL_X1 - FL_T - 0.2, FL_X1 - FL_T + 2.2).translate([0, y, z]))
+    zt = POD_Z0 - coin_gap(n_coin) - CAP_T
+    for s in (1, -1):
+        out.append(cz(2.8, zt - 2.4, zt, POD_XC, s * CAP_EAR_Y))
+    out.append(cy(2.8, 9.2, 11.6, 0, M1_ZT + 7.0))
+    return union(out)
+
+
+def coins(n_coin=8):
+    """동전 n 개 (통의 막힌 쪽 = 위쪽에 먼저 넣는다)"""
+    return cz(COIN_D / 2, POD_Z1 - COIN_T * n_coin, POD_Z1, POD_XC, 0)
+
+
+COINS = {(150.0, 1.0): 8, (150.0, 0.5): 4, (200.0, 1.0): 11, (200.0, 0.5): 5}      # 판(길이, 두께)마다 넣는 100원 동전 수. mass.py 가 다시 계산해 이 표와 같은지 본다
+
+
+def rotor_set(length=150.0, n_coin=None, t=AL_T, low_cap=False):
+    """돌아가는 것 전부를 한 덩어리로: 회전 막대, 알루미늄 판, 볼트·너트·나사 머리, 마개. low_cap=True 면 마개가 가장 아래로 내려온 경우(동전 3개)로 둔다 (걸리는 데가 없는지 볼 때)."""
+    n = COINS[(float(length), float(t))] if n_coin is None else n_coin; nc = 3 if low_cap else n
+    return union([rotor_bar(), al_plate(length, t), rotor_hw(length, nc, t), coin_cap(nc)])
+
+
+def head_hw():
+    """머리 바깥으로 나오는 나사 머리 (모양만): 마커 틀 나사 4개"""
+    y = HY1 + MK_FRAME["t"]
+    return union([cy(2.8, y, y + 2.4, sx, sz) for sx, sz in marker_screws()])
+
+
+def drill_jig():
+    """구멍 뚫기 틀: 알루미늄 판 위에 얹고 두 변의 턱을 판의 아래 변과 옆 변에 붙인 뒤, 구멍 4곳에 송곳이나 센터 펀치로 자리를 찍는다 (틀을 떼고 3.2~3.5mm 날로 뚫는다).
+    구멍은 판 한가운데에서 좌우 19, 위아래 9 (100 x 150 판): 어느 귀에 걸어도 같은 자리가 나온다.
+    좌표: 원점 = 판의 귀. 출력: 그대로 (판에 닿는 면이 위, 걸림 턱이 위로 0.8 올라온다. 쓸 때는 뒤집어 판 위에 얹는다)."""
+    t = 3.0; lip = 0.8; w = PLATE_W
+    pts = [(w / 2 + y, z - BL_Z0) for y, z in PLATE_BOLTS]                        # 판 위의 구멍 자리 (옆 변에서, 아래 변에서)
+    xs = sorted(set(round(q[0], 3) for q in pts)); zs = sorted(set(round(q[1], 3) for q in pts)); zt = zs[-1] + 7.0
+    rail = box(-2.0, xs[-1] + 6.0, -2.0, 8.0, 0, t)                               # 아래 변을 따라가는 띠
+    side = box(-2.0, 8.0, -2.0, zt, 0, t)                                         # 옆 변을 따라가는 띠
+    struts = [box(x - 6.0, x + 6.0, 0.0, zt, 0, t) for x in xs]
+    bars = [box(-2.0, xs[-1] + 6.0, z - 6.0, z + 6.0, 0, t) for z in zs]
+    lips = [box(-2.0, xs[-1] + 6.0, -2.0, -0.05, 0, t + lip), box(-2.0, -0.05, -2.0, zt, 0, t + lip)]      # 걸림 턱: 판(두께 1 또는 0.5)의 변에 닿는다
+    m = union([rail, side] + struts + bars + lips)
+    cut = [cz(1.1, -1, t + 1, x, z) for x, z in pts]                              # 자리 찍는 구멍 (지름 2.2)
+    cut += [M.cylinder(1.2, 2.3, 1.1).translate([x, z, -0.01]) for x, z in pts]   # 송곳이 들어가는 쪽(출력할 때 바닥 쪽 = 쓸 때 위쪽)을 깔때기처럼 넓힌다
+    return m - union(cut)
+
+
+def marker_frame():
+    """마커 틀: 종이에 인쇄한 AR 마커 띠(108 x 44)를 등판에 대고 이 틀로 덮어 M3 나사 4개로 조인다 (풀·테이프를 쓰지 않는다).
+    창 두 개로 마커와 그 둘레의 흰 여백(4mm)이 보인다. 머리 좌표로 만든다. 출력: 등판에 닿는 면을 바닥에."""
+    t = MK_FRAME["t"]; y0 = HY1; y1 = HY1 + t
+    x1 = HX - 1.5; z0 = HZ0; z1 = -52.5
+    m = box(-x1, x1, y0, y1, z0, z1)
+    wz0, wz1 = -97.5, -55.5
+    cut = [box(6.0, 48.0, y0 - 1, y1 + 1, wz0, wz1), box(-48.0, -6.0, y0 - 1, y1 + 1, wz0, wz1)]
+    for sx, sz in marker_screws():
+        cut.append(cy(1.7, y0 - 1, y1 + 1, sx, sz))
+    c = 0.8                                                                      # 바깥 모서리를 살짝 깎는다
+    for s in (1, -1):
+        cut.append(extrude_z(poly([(s * (x1 - c), y1 + 0.01), (s * (x1 + 0.01), y1 + 0.01), (s * (x1 + 0.01), y1 - c)]), z0 - 1, z1 + 1))
+    return m - union(cut)
 
 
 def test_coupon():
-    """맞춤 시험 조각: 모터 축 구멍 3종(점 개수 = 번호), 세운 벽의 핀 구멍 2종(빡빡/헐렁), 판 꽂는 구멍, M3 나사 구멍 2종,
-    파이 기둥 못 2종(지름 2.5 = 머리 몸통과 같은 것, 2.3 = 옆에 점이 있는 것)."""
+    """맞춤 시험 조각: 모터 축 구멍 3종(점 개수 = 번호), 세운 벽의 핀 구멍 2종(빡빡/헐렁), M3 나사 구멍 2종(스스로 나사산을 내는 2.6, 그냥 지나가는 3.4),
+    M2.5 나사 구멍 2종(지름 2.1 = 머리 몸통과 같은 것, 2.3 = 옆에 점이 있는 것), M3 너트 자리(판 받이와 같은 것)."""
     m = box(0, 62, 0, 34, 0, 6)
-    for k, (px_, r_) in enumerate(((46.0, PEG_R), (56.0, PEG_R - 0.1))):          # 파이 기둥과 못: 머리 몸통에서와 같은 모양, 같은 방향(세워서)으로 뽑힌다
-        m = m + cz(3.0, 5.9, 7.6, px_, 21.0) + cz(r_, 7.5, 7.6 + 3.8, px_, 21.0)
+    for px_ in (46.0, 56.0):                                                       # 파이·드라이버 기둥과 같은 모양, 같은 방향(세워서)으로 뽑힌다
+        m = m + cz(PI_POST_R, 5.9, 6.0 + 4.0, px_, 21.0)
     cut = []
     for i in (1, 2, 3):
         d, f, _ = FITS[i]
@@ -579,23 +710,33 @@ def test_coupon():
     cut.append(prism_xz(teardrop_cs(PIN_R_TIGHT, 90.0), -1, 7).translate([44.5, 0, 14.5]))
     cut.append(prism_xz(teardrop_cs(PIN_R_LOOSE, 90.0), -1, 7).translate([55.5, 0, 14.5]))
     cut.append(box(53.5, 57.5, 2.6, 3.4, 23.2, 25))                               # 헐거운 구멍 표시 (벽 윗면의 짧은 줄)
-    c = 0.15
-    cut.append(box(-TENON_W / 2 - c, TENON_W / 2 + c, -3 - c, 3 + c, -1, 7).translate([10, 25, 0]))      # 판 꽂는 구멍 (10 x 6)
     cut.append(cz(1.3, -1, 7, 24.0, 25.0))
     cut.append(cz(1.7, -1, 7, 32.0, 25.0))
-    cut.append(cz(0.9, 5.2, 7, 56.0, 28.5))                                       # 가는 못(2.3) 표시
+    cut.append(extrude_z(hex_cs(5.8), 3.8, 7).translate([10.0, 25.0, 0]) + cz(1.7, -1, 7, 10.0, 25.0))      # M3 너트 자리 (깊이 2.2) + 볼트 구멍
+    cut.append(cz(PILOT25, 1.5, 11, 46.0, 21.0))                                  # M2.5 구멍: 지름 2.1
+    cut.append(cz(PILOT25 + 0.1, 1.5, 11, 56.0, 21.0))                            # M2.5 구멍: 지름 2.3
+    cut.append(cz(0.9, 5.2, 7, 56.0, 28.5))                                       # 2.3 쪽 표시
     return m - union(cut)
 
 
-def tenon_gauge():
-    """시험용 돌기 (막대 끝과 같은 10 x 6)"""
-    return box(-9, 9, -6, 6, 0, 3) + box(-TENON_W / 2, TENON_W / 2, -3, 3, 0, 10)
+def driver_check():
+    """보드 구멍 맞춤 판: 드라이버 보드(ULN2003) 한 장을 얹어 구멍 4개가 기둥과 맞는지 본다. 머리 몸통의 기둥과 같은 간격, 같은 구멍.
+    안 맞으면 p2.py 의 DRV_HOLE 을 보드에 맞게 고쳐 머리 몸통을 다시 내보낸다. 출력: 그대로."""
+    a, b = DRV_HOLE[0] / 2, DRV_HOLE[1] / 2
+    m = box(-18.5, 18.5, -17.0, 17.0, 0, 1.6)
+    m = m - box(-11.0, 11.0, -9.5, 9.5, -1, 3)                                    # 가운데는 비운다 (재료를 아낀다)
+    for sx in (-1, 1):
+        for sz in (-1, 1):
+            m = m + cz(DRV_POST_R, 1.5, 1.6 + DRV_POST_H, sx * a, sz * b)
+    cut = [cz(PILOT25, 0.4, 1.6 + DRV_POST_H + 1, sx * a, sz * b) for sx in (-1, 1) for sz in (-1, 1)]
+    cut.append(box(-18.5 - 1, -17.5, -17.0 - 1, -16.0, -1, 3))                    # 보드 바깥 크기(35 x 32) 표시는 판 가장자리에서 1mm 안쪽
+    return m - union(cut)
 
 
 # ----------------------------------------------------------------- 구매 부품 (모양만)
 def driver_T(k):
-    """드라이버 k (0 = 맨 위). 뒷벽에 폼테이프로 붙이고 부품은 앞(-Y)을 향한다."""
-    return np.array([[1, 0, 0, DRV_X0 + 17.5], [0, 0, -1, HY1 - HWB - 1.5], [0, 1, 0, DRV_ZC[k]]], dtype=np.float64)
+    """드라이버 k (0 = 맨 위). 뒷벽의 기둥 4개에 M2.5 나사로 조이고 부품은 앞(-Y)을 향한다."""
+    return np.array([[1, 0, 0, DRV_X0 + 17.5], [0, 0, -1, HY1 - HWB - DRV_POST_H], [0, 1, 0, DRV_ZC[k]]], dtype=np.float64)
 
 
 def driver_keepout(k):
@@ -673,8 +814,8 @@ def assembly(yaw=0.0, pitch=0.0, spin=0.0, size="S", length=150.0, dummies=True,
     A["tub"] = (tub(size), "B", c["body"], True)
     A["cover"] = (cover(size), "B", c["accent"], True)
     A["clip"] = (clip(), "B", c["accent"], True)
-    if not lan and size == "S":
-        A["lan_cap"] = (lan_cap(), "B", c["accent"], True)
+    if not lan:
+        A["lan_cap"] = (lan_cap(size), "B", c["accent"], True)
     A["yoke"] = (Y(yoke()), "Y", c["body"], True)
     A["pinion1"] = (Y(pinion1()), "Y", c["accent"], True)
     A["pinion2"] = (Y(pinion2()), "Y", c["accent"], True)
@@ -686,9 +827,14 @@ def assembly(yaw=0.0, pitch=0.0, spin=0.0, size="S", length=150.0, dummies=True,
     A["crown"] = (H(crown()), "H", c["accent"], True)
     A["sector"] = (H(sector_head()), "H", c["accent"], True)
     A["rotor_bar"] = (R(rotor_bar()), "R", c["accent"], True)
-    A["blade"] = (R(blade(length)), "R", c["body"], True)
+    A["coin_cap"] = (R(coin_cap()), "R", c["accent"], True)
+    A["marker_frame"] = (H(marker_frame()), "H", c["accent"], True)
+    A["keeper_r"] = (Y(pin_keeper(1)), "Y", c["accent"], True)
+    A["keeper_l"] = (Y(pin_keeper(-1)), "Y", c["accent"], True)
     if dummies:
-        A["foil"] = (R(foil(length)), "R", c["foil"], False)
+        A["plate"] = (R(al_plate(length)), "R", c["foil"], False)
+        A["rotor_hw"] = (R(rotor_hw(length)), "R", c["screw"], False)
+        A["coins"] = (R(coins()), "R", c["metal"], False)
         mb, mc = v1.motor_body_dummy()
         A["motor3"] = (H(v1._m1(mb)), "H", c["metal"], False)
         A["motor3_cap"] = (H(v1._m1(mc)), "H", c["cap"], False)

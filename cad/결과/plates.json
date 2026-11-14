@@ -2,10 +2,10 @@
  "plates": [
   {
    "key": "0판_시험조각",
-   "title": "0판 · 먼저 뽑는 시험 조각",
+   "title": "0판 · 시험 조각과 작은 것들",
    "files": [
     "90_test_coupon",
-    "91_tenon_gauge",
+    "91_driver_check",
     "16_m2_ring",
     "13_pin_fit1",
     "13_pin_fit1",
@@ -18,22 +18,26 @@
     "05_pinion_fit2",
     "05_pinion_fit2",
     "05_pinion_fit3",
-    "05_pinion_fit3"
+    "05_pinion_fit3",
+    "18_drill_jig",
+    "15_marker_frame",
+    "14_pin_keeper",
+    "14_pin_keeper",
+    "03_clip"
    ],
-   "sec": 4100,
-   "g": 21.41
+   "sec": 6556,
+   "g": 40.35
   },
   {
    "key": "1판_받침_S",
-   "title": "1판 · 받침",
+   "title": "1판 · 받침 (작은 것)",
    "files": [
     "02_base_cover_S",
     "01_base_tub_S",
-    "03_clip",
     "17_lan_cap"
    ],
-   "sec": 12741,
-   "g": 126.08
+   "sec": 12703,
+   "g": 125.82
   },
   {
    "key": "2판_요크",
@@ -41,8 +45,8 @@
    "files": [
     "04_yoke"
    ],
-   "sec": 12586,
-   "g": 124.48
+   "sec": 12689,
+   "g": 125.09
   },
   {
    "key": "3판_머리",
@@ -53,39 +57,41 @@
     "09_crown",
     "06_sector_gear"
    ],
-   "sec": 13327,
-   "g": 107.43
+   "sec": 13131,
+   "g": 105.61
   },
   {
    "key": "4판_회전부_맞춤2",
    "title": "4판 · 회전부 (채움 100%)",
    "files": [
-    "11_blade_100x150",
     "10_rotor_bar_fit2",
-    "14_trim_plate",
-    "14_trim_plate"
+    "11_coin_cap",
+    "12_coin_spacer",
+    "12_coin_spacer",
+    "12_coin_spacer",
+    "12_coin_spacer",
+    "12_coin_spacer",
+    "12_coin_spacer",
+    "12_coin_spacer",
+    "12_coin_spacer",
+    "12_coin_spacer"
    ],
-   "sec": 7464,
-   "g": 77.43
+   "sec": 5642,
+   "g": 43.95
   }
  ],
- "total_sec": 50218,
- "total_g": 456.8,
+ "total_sec": 50721,
+ "total_g": 440.8,
  "optional": [
   {
    "key": "선택_받침통_L",
-   "sec": 10659,
-   "g": 117.42
+   "sec": 10722,
+   "g": 117.73
   },
   {
    "key": "선택_받침덮개_L",
-   "sec": 8324,
-   "g": 79.87
-  },
-  {
-   "key": "선택_판200",
-   "sec": 3963,
-   "g": 37.78
+   "sec": 8457,
+   "g": 80.73
   }
  ],
  "slicer": "Bambu Studio 2.5.1"

@@ -1,0 +1,328 @@
+{
+ "speed_deg_s": {
+  "yaw": 11.04,
+  "pitch": 2.63,
+  "spin": 58.88
+ },
+ "torque_Nm": {
+  "yaw": 0.1235,
+  "pitch": 0.3457,
+  "spin": 0.0343
+ },
+ "mujoco": "4.0.1",
+ "받침 S, 배터리 있음": {
+  "scan": {
+   "tilt_deg": 0.027,
+   "slide_mm": 0.061,
+   "sim_s": 83.8,
+   "joint_err_deg": 0.02
+  },
+  "zmp": {
+   "scan": {
+    "zmp_max_mm": 15.4,
+    "margin_mm": 53.1,
+    "mu_need": 0.0096,
+    "twist_Nm": 0.0093,
+    "twist_hold_Nm": 0.155
+   },
+   "abrupt": {
+    "zmp_max_mm": 21.1,
+    "margin_mm": 47.4,
+    "mu_need": 0.0369,
+    "twist_Nm": 0.0367
+   }
+  },
+  "abrupt": {
+   "실제 속도": {
+    "tilt_deg": 0.0268,
+    "slide_mm": 0.03
+   },
+   "3배 속도": {
+    "tilt_deg": 0.0257,
+    "slide_mm": 1.008
+   }
+  },
+  "slope_tip": {
+   "angle_deg": 29.6,
+   "kind": "넘어감"
+  },
+  "slope_slide": {
+   "angle_deg": 17.3,
+   "kind": "미끄러짐"
+  },
+  "push": {
+   "force_N": 1.9,
+   "top_h": 279
+  },
+  "push_axis": {
+   "force_N": 1.9,
+   "top_h": 279
+  },
+  "wall": [
+   {
+    "gap_mm": 40.0,
+    "mu": 0.35,
+    "touched": true,
+    "tilt_deg": 25.0,
+    "slide_mm": 2.2,
+    "reached_pitch": 44.6,
+    "result": "넘어짐"
+   },
+   {
+    "gap_mm": 80.0,
+    "mu": 0.35,
+    "touched": true,
+    "tilt_deg": 25.0,
+    "slide_mm": 5.9,
+    "reached_pitch": 72.6,
+    "result": "넘어짐"
+   },
+   {
+    "gap_mm": 150.0,
+    "mu": 0.35,
+    "touched": false,
+    "tilt_deg": 0.03,
+    "slide_mm": 0.0,
+    "reached_pitch": 84.9,
+    "result": "벽에 닿지 않음"
+   },
+   {
+    "gap_mm": 40.0,
+    "mu": 0.8,
+    "touched": true,
+    "tilt_deg": 25.0,
+    "slide_mm": 2.3,
+    "reached_pitch": 44.6,
+    "result": "넘어짐"
+   },
+   {
+    "gap_mm": 80.0,
+    "mu": 0.8,
+    "touched": true,
+    "tilt_deg": 24.38,
+    "slide_mm": 2.5,
+    "reached_pitch": 85.0,
+    "result": "넘어짐"
+   },
+   {
+    "gap_mm": 150.0,
+    "mu": 0.8,
+    "touched": false,
+    "tilt_deg": 0.03,
+    "slide_mm": 0.0,
+    "reached_pitch": 84.9,
+    "result": "벽에 닿지 않음"
+   }
+  ]
+ },
+ "받침 S, 배터리 없음": {
+  "scan": {
+   "tilt_deg": 0.0354,
+   "slide_mm": 0.266,
+   "sim_s": 83.8,
+   "joint_err_deg": 0.04
+  },
+  "zmp": {
+   "scan": {
+    "zmp_max_mm": 19.9,
+    "margin_mm": 48.6,
+    "mu_need": 0.0122,
+    "twist_Nm": 0.0093,
+    "twist_hold_Nm": 0.122
+   },
+   "abrupt": {
+    "zmp_max_mm": 26.6,
+    "margin_mm": 41.9,
+    "mu_need": 0.0471,
+    "twist_Nm": 0.0367
+   }
+  },
+  "abrupt": {
+   "실제 속도": {
+    "tilt_deg": 0.0329,
+    "slide_mm": 0.161
+   },
+   "3배 속도": {
+    "tilt_deg": 0.0321,
+    "slide_mm": 1.987
+   }
+  },
+  "slope_tip": {
+   "angle_deg": 22.5,
+   "kind": "넘어감"
+  },
+  "slope_slide": {
+   "angle_deg": 17.3,
+   "kind": "미끄러짐"
+  },
+  "push": {
+   "force_N": 1.38,
+   "top_h": 279
+  },
+  "push_axis": {
+   "force_N": 1.38,
+   "top_h": 279
+  },
+  "wall": [
+   {
+    "gap_mm": 40.0,
+    "mu": 0.35,
+    "touched": true,
+    "tilt_deg": 25.0,
+    "slide_mm": 4.5,
+    "reached_pitch": 41.8,
+    "result": "넘어짐"
+   },
+   {
+    "gap_mm": 80.0,
+    "mu": 0.35,
+    "touched": true,
+    "tilt_deg": 25.0,
+    "slide_mm": 8.5,
+    "reached_pitch": 64.8,
+    "result": "넘어짐"
+   },
+   {
+    "gap_mm": 150.0,
+    "mu": 0.35,
+    "touched": false,
+    "tilt_deg": 0.03,
+    "slide_mm": 0.0,
+    "reached_pitch": 85.0,
+    "result": "벽에 닿지 않음"
+   },
+   {
+    "gap_mm": 40.0,
+    "mu": 0.8,
+    "touched": true,
+    "tilt_deg": 25.0,
+    "slide_mm": 4.5,
+    "reached_pitch": 41.8,
+    "result": "넘어짐"
+   },
+   {
+    "gap_mm": 80.0,
+    "mu": 0.8,
+    "touched": true,
+    "tilt_deg": 25.0,
+    "slide_mm": 3.7,
+    "reached_pitch": 72.3,
+    "result": "넘어짐"
+   },
+   {
+    "gap_mm": 150.0,
+    "mu": 0.8,
+    "touched": false,
+    "tilt_deg": 0.03,
+    "slide_mm": 0.0,
+    "reached_pitch": 85.0,
+    "result": "벽에 닿지 않음"
+   }
+  ]
+ },
+ "받침 L, 배터리 있음": {
+  "scan": {
+   "tilt_deg": 0.019,
+   "slide_mm": 3.48,
+   "sim_s": 83.8,
+   "joint_err_deg": 0.02
+  },
+  "zmp": {
+   "scan": {
+    "zmp_max_mm": 11.9,
+    "margin_mm": 81.6,
+    "mu_need": 0.0075,
+    "twist_Nm": 0.0093,
+    "twist_hold_Nm": 0.27
+   },
+   "abrupt": {
+    "zmp_max_mm": 16.8,
+    "margin_mm": 76.7,
+    "mu_need": 0.029,
+    "twist_Nm": 0.0367
+   }
+  },
+  "abrupt": {
+   "실제 속도": {
+    "tilt_deg": 0.0208,
+    "slide_mm": 1.093
+   },
+   "3배 속도": {
+    "tilt_deg": 0.0218,
+    "slide_mm": 0.967
+   }
+  },
+  "slope_tip": {
+   "angle_deg": 47.0,
+   "kind": "넘어감"
+  },
+  "slope_slide": {
+   "angle_deg": 19.7,
+   "kind": "미끄러짐"
+  },
+  "push": {
+   "force_N": 3.63,
+   "top_h": 279
+  },
+  "push_axis": {
+   "force_N": 3.66,
+   "top_h": 279
+  },
+  "wall": [
+   {
+    "gap_mm": 40.0,
+    "mu": 0.35,
+    "touched": true,
+    "tilt_deg": 25.0,
+    "slide_mm": 5.4,
+    "reached_pitch": 65.7,
+    "result": "넘어짐"
+   },
+   {
+    "gap_mm": 80.0,
+    "mu": 0.35,
+    "touched": true,
+    "tilt_deg": 8.93,
+    "slide_mm": 23.6,
+    "reached_pitch": 84.9,
+    "result": "받침이 들림 (8.9도)"
+   },
+   {
+    "gap_mm": 125.0,
+    "mu": 0.35,
+    "touched": false,
+    "tilt_deg": 0.02,
+    "slide_mm": 0.0,
+    "reached_pitch": 84.9,
+    "result": "벽에 닿지 않음"
+   },
+   {
+    "gap_mm": 40.0,
+    "mu": 0.8,
+    "touched": true,
+    "tilt_deg": 25.0,
+    "slide_mm": 1.4,
+    "reached_pitch": 61.1,
+    "result": "넘어짐"
+   },
+   {
+    "gap_mm": 80.0,
+    "mu": 0.8,
+    "touched": true,
+    "tilt_deg": 13.11,
+    "slide_mm": 6.4,
+    "reached_pitch": 85.0,
+    "result": "받침이 들림 (13.1도)"
+   },
+   {
+    "gap_mm": 125.0,
+    "mu": 0.8,
+    "touched": false,
+    "tilt_deg": 0.02,
+    "slide_mm": 0.0,
+    "reached_pitch": 84.9,
+    "result": "벽에 닿지 않음"
+   }
+  ]
+ }
+}

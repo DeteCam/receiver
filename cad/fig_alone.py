@@ -41,7 +41,7 @@ TEAL = "#1F9E8F"
 A["dongle2"] = (A["dongle2"][0], "H", TEAL, False)
 hp = lambda p: HP(p, yaw, pitch)
 pts = {"dongle": hp((BX0 + DONGLE["x"], -PI_T / 2 - DONGLE["up"], BZ0 - 14)), "dongle2": hp((BX0 + DONGLE2["x"], -PI_T / 2 - DONGLE2["up"], BZ0 - 14)), "ant": hp((0, -2.5, 0)), "pi": hp((-20, -3, -45))}
-ghost = ("head_shell", "head_lid", "crown", "sector", "blade", "rotor_bar", "foil", "yoke", "pin_r", "pin_l")
+ghost = ("head_shell", "head_lid", "crown", "sector", "plate", "rotor_bar", "rotor_hw", "coins", "coin_cap", "marker_frame", "yoke", "pin_r", "pin_l", "keeper_r", "keeper_l")
 pix = render.render(A, TMP + 'alone_a.png', cam_az=152, cam_el=14, dist=520, focus=(-5, 0, 118), size=(900, 760), label_pts=pts, ground=False, ghost=ghost, ghost_opacity=0.2)
 pa = tags(Image.open(TMP + 'alone_a.png').convert("RGB"), pix, [("dongle", "무선 동글 (주황)\n폰과 통신", 150, 120), ("dongle2", "탐지 동글 (청록)\n둘레 기기를 엿듣는다. 없어도 된다", 60, 230), ("ant", "내장 Wi-Fi 안테나\nCSI 를 받는 데만 쓴다", -90, -130), ("pi", "라즈베리파이\n캡처 · 계산 · 모터", -230, 60)], fs=22)
 
@@ -85,7 +85,7 @@ def arrow(x0, y0, x1, y1, col, text=None, dash=False, both=True):
 
 X0 = m + 900 + 50; Y0 = 190
 box(X0, Y0, 640, 560, "수신기 (라즈베리파이 3B+)", ["· 탐지 동글: 둘레 기기 엿듣기", "· 내장 Wi-Fi: 카메라 신호(CSI) 받기", "· 모터 3개로 판을 돌려 방향을 잰다", "· 여러 자리의 결과를 합쳐", "  추정 구간을 구한다", "· 켜면 저절로 시작한다 (node.py)", "· 전원: 받침 속 보조배터리", "· 버튼 하나, 초록 불 하나"])
-box(X0 + 900, Y0, 430, 330, "폰", ["· 브라우저 (지금)", "· AR 앱 (만들 것)", "· 자리 알려 주기, 재기,", "  구간 보기"], col=BLUE)
+box(X0 + 900, Y0, 430, 330, "폰", ["· 브라우저 (지금)", "· AR 앱 (만들 것)", "· 찾기, 재기, 모터 조종,", "  끄기까지 전부 여기서"], col=BLUE)
 box(X0 + 900, Y0 + 400, 430, 160, "노트북", ["· 개발할 때만 (SSH)"], col=SUB)
 arrow(X0 + 640 + 14, Y0 + 165, X0 + 900 - 14, Y0 + 165, BLUE, "무선 동글의 Wi-Fi\nhttp://192.168.4.1")
 arrow(X0 + 640 + 14, Y0 + 480, X0 + 900 - 14, Y0 + 480, SUB, "랜선", dash=True)

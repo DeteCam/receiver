@@ -45,21 +45,21 @@ def main():
     mb, mc = v1.motor_body_dummy(); pb, pc = v1.pi_dummy(); db, dc = v1.driver_dummy()
     shell, lid, crown = P.head_shell(), P.head_lid(), P.crown()
     headp = shell + lid + crown
-    lidflat = box(-HX, HX, HY0, HYL, HZ0, HZ1)                 # 뚜껑의 평평한 판 (파이를 누르는 기둥은 뺀 것)
+    lidflat = box(-HX, HX, HY0, HYL, HZ0, HZ1)                 # 뚜껑의 평평한 판 (버튼 기판을 누르는 살은 뺀 것)
 
     # ---------- 머리 안 ----------
     pi = pb + pc
     drv = [(db + dc).transform(P.driver_T(k)) for k in range(3)]
     keep = [P.driver_keepout(k) for k in range(3)]
-    rows.append(("파이 3B+", "머리 안 (뒷벽의 기둥 4개에 꽂음)", bb(pi), "뚜껑 안쪽 면까지 %.1f, 모터 자리 바닥까지 %.1f" % (gap(pc, lidflat), gap(pi, crown))))
+    rows.append(("파이 3B+", "머리 안 (뒷벽의 기둥 4개에 M2.5 나사)", bb(pi), "뚜껑 안쪽 면까지 %.1f, 모터 자리 바닥까지 %.1f" % (gap(pc, lidflat), gap(pi, crown))))
     rows.append(("GPIO에 꽂은 점퍼선", "파이 오른쪽 변 (선이 꺾이는 높이 23)", bb(P.gpio_keepout()), "뚜껑 안쪽 면까지 %.1f" % gap(P.gpio_keepout(), lidflat)))
     for k in range(3):
         others = [pi] + [drv[j] for j in range(3) if j != k]
-        rows.append(("드라이버 %d" % (3 - k), "머리 안 오른쪽 (뒷벽에 폼테이프)", bb(drv[k]),
+        rows.append(("드라이버 %d" % (3 - k), "머리 안 오른쪽 (뒷벽의 기둥 4개에 M2.5 나사)", bb(drv[k]),
                      "몸통까지 %.1f, 옆 부품까지 %.1f, 점퍼선 꽂고 뚜껑 안쪽 면까지 %.1f" % (gap(drv[k], shell), min(gap(drv[k], o) for o in others), gap(keep[k], lidflat))))
     rows.append(("전원 플러그 (ㄱ자)", "파이 왼쪽 변, 선은 아래로", bb(P.usb_plug_dummy()), "옆벽까지 %.1f" % gap(P.usb_plug_dummy(), shell)))
     bp, bs = P.button_dummy()
-    rows.append(("전원 버튼 모듈 (KY-004)", "머리 안 왼쪽, 버튼은 앞을 본다", bb(bp + bs), "버튼 몸통에서 뚜껑 안쪽 면까지 %.1f, 버튼 머리는 뚜껑 겉면보다 %.1f 안쪽, 파이 부품까지 %.1f" % (
+    rows.append(("전원 버튼 모듈 (KY-004)", "머리 안 왼쪽, 버튼은 앞을 본다 (뚜껑의 살이 눌러 고정)", bb(bp + bs), "버튼 몸통에서 뚜껑 안쪽 면까지 %.1f, 버튼 머리는 뚜껑 겉면보다 %.1f 안쪽, 파이 부품까지 %.1f" % (
         (BTN_PCB_Y - 3.5) - HYL, (BTN_PCB_Y - 5.0) - HY0, gap(bp + bs, pi))))
     rows.append(("랜선 플러그", "파이 아래 단자, 아래로 나온다", bb(P.lan_plug_dummy()), "머리 치마 밖으로 %.0f mm" % (HZ0 - (BZ0 - 27.0))))
     m3 = v1._m1(mb) + v1._m1(mc)
@@ -71,7 +71,7 @@ def main():
     # ---------- 요크 위 ----------
     m1 = (mb + mc).transform(P.motor1_T()); m2 = (mb + mc).transform(P.motor2_T())
     HEAD = union([headp, P.sector_head(), pi] + drv + keep + [P.usb_plug_dummy(), P.lan_plug_dummy(), m3] + list(P.button_dummy()))
-    ROT = union([P.rotor_bar(), P.blade(200.0), P.trim_plate()])
+    ROT = P.rotor_set(200.0, low_cap=True)
     g1h = g2h = g1r = g2r = 1e9
     for pitch in list(np.arange(PITCH_MIN, PITCH_MAX + 0.1, 5.0)) + [TILT3]:
         H = P.pose_head(HEAD, 0, pitch)
@@ -86,7 +86,7 @@ def main():
     for size in ("S", "L"):
         bat = P.battery_dummy(size); tub = P.tub(size); cov = P.cover(size)
         b = BASE[size]
-        rows.append(("배터리 (받침 %s)" % size, "받침 통 바닥, 옆 창으로 넣음", [b["bw"], b["bl"], BATT_T],
+        rows.append(("배터리 (받침 %s)" % size, "받침 통 바닥, 옆 창으로 넣음 (문턱 2개가 앞을 막는다)", [b["bw"], b["bl"], BATT_T],
                      "통까지 %.1f, 덮개까지 %.1f (선이 지나는 자리)" % (gap(bat, tub), gap(bat, cov))))
         ua = P.usb_a_dummy(size); R_ = b["R"]
         out_ = max(0.0, max(np.hypot(x, y) for x in (-14.0, 14.0) for y in (ua.bounding_box()[1],)) - R_)

@@ -19,17 +19,22 @@ rows = sorted(rows, key=lambda r: r[mk]); show = rows[:14]; rest = rows[14:]
 part = lambda r: r.get("part") or r.get("부품"); case = lambda r: r.get("case") or r.get("경우"); what = lambda r: r.get("what") or r.get("무엇")
 fig = plt.figure(figsize=(13.2, 7.6), dpi=160, facecolor=SURF)
 fig.text(0.035, 0.965, "출력물이 부러지지 않나: 힘이 걸리는 자리 %d곳의 여유" % len(J["rows"]), fontsize=20, fontweight="bold", color=INK, va="top")
-fig.text(0.035, 0.905, "여유 = 재료가 버티는 힘 ÷ 실제로 걸리는 힘. 2배보다 작으면 조심할 곳이다. 무광 PLA 의 약한 쪽 값으로 계산했다 (층 사이는 층 안의 1/3 남짓).\n여유가 작은 순서로 14곳만 그렸다. 나머지 %d곳은 모두 %.0f배 이상이다. 실물로 부러뜨려 본 것이 아니라 단면과 힘으로 계산한 값이다." % (len(rest), min(r[mk] for r in rest)),
+fig.text(0.035, 0.905, "여유 = 재료가 버티는 힘 ÷ 실제로 걸리는 힘. 2배보다 작으면 조심할 곳이다. 출력물은 무광 PLA 의 약한 쪽 값(층 사이는 층 안의 1/3 남짓), 알루미늄 판은 무른 판(1050) 값으로 계산했다.\n여유가 작은 순서로 14곳만 그렸다. 나머지 %d곳은 모두 %.0f배 이상이다. 실물로 부러뜨려 본 것이 아니라 단면과 힘으로 계산한 값이다." % (len(rest), min(r[mk] for r in rest)),
          fontsize=11.5, color=SUB, va="top", linespacing=1.5)
 ax = fig.add_axes([0.40, 0.09, 0.56, 0.69]); ax.set_facecolor(SURF)
 for s in ("top", "right", "left"):
     ax.spines[s].set_visible(False)
 ax.spines["bottom"].set_color(GRID); ax.tick_params(colors=SUB, labelsize=11, length=0); ax.grid(True, axis="x", color=GRID, lw=1.0); ax.set_axisbelow(True)
 y = np.arange(len(show))[::-1]; v = [r[mk] for r in show]
-ax.barh(y, v, height=0.56, color=[WARN if x < 2 else C1 for x in v], zorder=3)
+ax.hlines(y, 0.5, v, color=GRID, lw=2.0, zorder=2)                         # 로그 눈금이라 막대 길이에는 뜻이 없다: 값의 자리만 점으로 찍는다
+ax.scatter(v, y, s=120, color=[WARN if x < 2 else C1 for x in v], zorder=4, edgecolors=SURF, linewidths=2.0)
+first_low = True
 for yy, r in zip(y, show):
-    ax.text(r[mk] * 1.07, yy, "%.1f배" % r[mk] + ("  ← 조심: 파이는 똑바로 눌러 꽂는다" if r[mk] < 2 else ""), va="center", ha="left", fontsize=11, color=INK)
-ax.set_xscale("log"); ax.set_xlim(1, 60); ax.set_xticks([1, 2, 5, 10, 20, 50]); ax.set_xticklabels(["1배", "2배", "5배", "10배", "20배", "50배"])
+    note = ""
+    if r[mk] < 2 and first_low:
+        note = "   0.5T 판은 손으로 밀면 휜다 (1T 를 권한다)" if "0.5T" in part(r) else "   조심"; first_low = False
+    ax.text(r[mk] * 1.09, yy, "%.1f배" % r[mk] + note, va="center", ha="left", fontsize=11, color=INK, zorder=5, bbox=dict(facecolor=SURF, edgecolor="none", pad=1.2))
+ax.set_xscale("log"); ax.set_xlim(0.5, 60); ax.set_xticks([0.5, 1, 2, 5, 10, 20, 50]); ax.set_xticklabels(["0.5배", "1배", "2배", "5배", "10배", "20배", "50배"])
 ax.axvline(2, color=WARN, lw=1.2, ls=(0, (4, 3)), zorder=2); ax.text(2.05, len(show) - 0.35, "2배 선", fontsize=10.5, color=SUB, va="bottom")
 ax.set_ylim(-0.7, len(show) - 0.1); ax.set_yticks(y)
 ax.set_yticklabels(["%s · %s\n%s" % (part(r), what(r), case(r)) for r in show], fontsize=10.5, color=INK, linespacing=1.25)

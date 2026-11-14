@@ -1,4 +1,4 @@
-"""AR 마커 그림 (14_AR_마커.png): 마커 띠를 붙이는 자리와, 폰이 그것으로 수신기의 자리를 아는 순서.   xvfb-run -a python3 fig_marker.py"""
+"""AR 마커 그림 (14_AR_마커.png): 마커 종이를 다는 자리와, 폰이 그것으로 수신기의 자리를 아는 순서.   xvfb-run -a python3 fig_marker.py"""
 import os, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE); sys.path.insert(0, os.path.dirname(HERE))
 import numpy as np
@@ -46,7 +46,7 @@ A["mk_paper"] = (P.pose_head(box(-MK.STRIP_W / 2, MK.STRIP_W / 2, HY1, HY1 + 0.3
 A["mk_cells"] = (P.pose_head(union(cells), yaw, pitch), "H", "#111111", False)
 pts = {"mk": HP((0, HY1, MK.ZC + MK.SIZE / 2 + 3), yaw, pitch), "vent": HP((-14, HY1, -36), yaw, pitch), "blade": HP((80, -20, 20), yaw, pitch), "front": np.array([60.0, 0.0, 6.0])}
 pix = render.render(A, TMP + 'marker_a.png', cam_az=205, cam_el=44, dist=600, focus=tuple(HP((0, 0, -55), yaw, pitch)), size=(1150, 1100), label_pts=pts, ground=False)
-pa = tags(Image.open(TMP + 'marker_a.png').convert("RGB"), pix, [("mk", "AR 마커 띠 (종이 108 × 44mm)\n등판 아래쪽에 붙인다", 110, 265), ("vent", "통풍 틈은 가리지 않는다", 170, -150), ("blade", "판은 옆(0도)에 둔다", 150, -120)], fs=24)
+pa = tags(Image.open(TMP + 'marker_a.png').convert("RGB"), pix, [("mk", "AR 마커 종이 (108 × 44mm)\n틀로 덮고 M3 나사 4개로 조인다", 110, 265), ("vent", "통풍 틈은 가리지 않는다", 170, -150), ("blade", "판은 옆(0도)에 둔다", 150, -120)], fs=24)
 
 W, H = 2360, 1560; m = 40
 im = Image.new('RGB', (W, H), BG); d = ImageDraw.Draw(im)
@@ -57,7 +57,7 @@ d.text((m + 10, 180 + 1100 + 16), "재는 자세(끄덕임 54.7°)에서 뒤쪽 
 
 X0 = m + 1150 + 60
 d.text((X0, 190), "마커 띠 (실제 크기로 인쇄: 마커/AR_마커.pdf)", font=font(34, True), fill=INK)
-strip = Image.open(os.path.join(paths.RES, "marker", "AR_마커.png")).convert("RGB"); sw = 900; sh = int(strip.size[1] * sw / strip.size[0])
+strip = Image.open(os.path.join(paths.MARKER, "AR_마커.png")).convert("RGB"); sw = 900; sh = int(strip.size[1] * sw / strip.size[0])
 strip = strip.resize((sw, sh), Image.LANCZOS); sx, sy = X0 + 40, 270; im.paste(strip, (sx, sy)); d.rectangle([sx, sy, sx + sw, sy + sh], outline=LINE, width=2)
 d.line([(sx, sy + sh + 26), (sx + sw, sy + sh + 26)], fill=SUB, width=3)
 for xx in (sx, sx + sw):

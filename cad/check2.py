@@ -11,7 +11,8 @@ import paths
 OUT = paths.RES + '/'
 # 일부러 닿거나 맞물리는 쌍 (겹침 허용 부피 mm3)
 ALLOW = {("cover", "pinion1"): 60, ("sector", "pinion2"): 60, ("yoke", "motor1"): 5, ("yoke", "motor2"): 5,
-         ("pinion1", "motor1"): 200, ("pinion2", "motor2"): 200, ("rotor_bar", "motor3"): 200, ("crown", "motor3"): 5}
+         ("pinion1", "motor1"): 200, ("pinion2", "motor2"): 200, ("rotor_bar", "motor3"): 200, ("crown", "motor3"): 5,
+         ("rotor_bar", "rotor_hw"): 2, ("plate", "rotor_hw"): 2, ("coin_cap", "rotor_hw"): 2}
 
 
 def allowed(a, b):
@@ -45,10 +46,10 @@ if __name__ == "__main__":
     # 머리 좌표에서 한 번만 만든다
     mb, mc = v1.motor_body_dummy()
     b, cc = v1.pi_dummy(); db, dc = v1.driver_dummy()
-    HEADP = union([P.head_shell(), P.head_lid(), P.crown(), v1._m1(mb), v1._m1(mc), b, cc, P.usb_plug_dummy(), P.lan_plug_dummy(), P.dongle_dummy(), P.dongle_dummy(DONGLE2)] + list(P.button_dummy())
+    HEADP = union([P.head_shell(), P.head_lid(), P.crown(), P.marker_frame(), P.head_hw(), v1._m1(mb), v1._m1(mc), b, cc, P.usb_plug_dummy(), P.lan_plug_dummy(), P.dongle_dummy(), P.dongle_dummy(DONGLE2)] + list(P.button_dummy())
                   + [db.transform(P.driver_T(k)) for k in range(3)] + [P.driver_keepout(k) for k in range(3)] + [P.gpio_keepout()])
     SEC = P.sector_head()
-    YOKE = union([P.yoke(), P.pin(1), P.pin(-1), mb.transform(P.motor1_T()), mc.transform(P.motor1_T()),
+    YOKE = union([P.yoke(), P.pin(1), P.pin(-1), P.pin_keeper(1), P.pin_keeper(-1), mb.transform(P.motor1_T()), mc.transform(P.motor1_T()),
                   mb.transform(P.motor2_T()), mc.transform(P.motor2_T()), P.pinion1(), P.m2_ring()])
     P2 = P.pinion2()
     worst = {}; bad = []
@@ -63,8 +64,8 @@ if __name__ == "__main__":
             bad.append((name, tag, round(v, 1)))
 
     for size, length in (("S", 150.0), ("L", 200.0)):
-        BASE = union([P.tub(size), P.cover(size), P.battery_dummy(size), P.usb_a_dummy(size)] + ([P.lan_cap()] if size == "S" else []) + [P.clip().rotate([0, 0, a]) for a in (0.0, 90.0, 180.0, 270.0)])   # 고리는 네 방향 다
-        ROT = union([P.rotor_bar(), P.blade(length), P.foil(length), P.trim_plate()])
+        BASE = union([P.tub(size), P.cover(size), P.battery_dummy(size), P.usb_a_dummy(size)] + [P.lan_cap(size)] + [P.clip().rotate([0, 0, a]) for a in (0.0, 90.0, 180.0, 270.0)])   # 고리는 네 방향 다
+        ROT = P.rotor_set(length, low_cap=True)
         # 1) 판 회전부 vs 머리 (끄덕임과 상관없다)
         for spin in np.arange(0, 360, 5.0):
             note("회전부-머리 %s" % size, ROT.rotate([0, 0, spin]), HEADP + SEC, "spin %d" % spin)

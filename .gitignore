@@ -1,5 +1,18 @@
 __pycache__/
 *.pyc
-cad/_tmp/
-cad/slicing/shim/*.so
 .DS_Store
+# 다시 만들 수 있는 큰 중간 파일
+cad/_tmp/
+cad/fem/
+cad/slicing/shim/*.so
+슬라이스/_tmp/
+sim/cache/
+sim/em/cache/
+sim/em/fdtd/*.h5
+sim/em/fdtd/*.log
+firmware/core/cache/
+firmware/data/
+console/src/node_modules/
+# 옵시디언이 문서 폴더에 만드는 것
+docs/.obsidian/
+docs/.trash/

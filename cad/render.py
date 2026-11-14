@@ -21,7 +21,7 @@ def render(A, fname, cam_az=35.0, cam_el=18.0, dist=640.0, focus=(0, 0, -30), si
     p.set_background(bg)
     def add(name, m, col, opacity=None):
         kw = dict(color=col, smooth_shading=True, specular=0.25, specular_power=18, ambient=0.28, diffuse=0.82)
-        if name in ("foil",):
+        if name in ("foil", "plate", "coins", "rotor_hw"):
             kw.update(MAT["plate"])
         if name.startswith("motor") and not name.endswith("cap"):
             kw.update(MAT["metal"])

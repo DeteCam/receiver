@@ -1,55 +1,55 @@
 <div align="center">
 
-# receiver-cad
+# DeteCam 수신기
 
-**DeteCam 수신기의 3D 모델링**
+**숨은 Wi-Fi 카메라의 방향과 위치를 찾는 수신기**
 
-판을 돌려 숨은 Wi-Fi 카메라의 방향을 찾는 수신기(관절 3개)의 CAD 소스, 출력 파일, 슬라이스 결과, 조립 문서입니다.
+설계(3D 모델), 수신기 코드, 시뮬레이션, 문서를 이 저장소 하나에서 관리합니다.
 
 </div>
 
-![전체 모습](그림/01_전체_모습.png)
+![전체 모습](docs/그림/01_전체_모습.png)
 
-## 구성
+라즈베리파이의 안테나 둘레로 알루미늄 판을 돌리면, 판이 카메라와 안테나 사이를 지날 때 Wi-Fi 신호(CSI)가 꺼집니다. 그 각도가 카메라 쪽입니다 (DiffLoc). 관절 3개로 방위와 높이를 재고, 두세 자리에서 잰 결과를 합쳐 카메라가 있을 만한 구간을 구합니다. 노트북 없이 혼자 동작하고, 모든 동작을 폰 화면에서 조종합니다.
 
-| 폴더·파일 | 내용 |
+## 폴더
+
+| 폴더 | 내용 |
 |---|---|
-| [`조립_안내.md`](조립_안내.md) | 살 것, 출력, 조립, 배선, 처음 켜기 |
-| [`설계_검토.md`](설계_검토.md) | 검사 결과와 시뮬레이션, 실물에서 확인할 것 |
-| [`네_단계_검토.md`](네_단계_검토.md) | 탐지 → 판별 → 위치 측정 → 표시. 곳별 결과, 튼튼함, 출력 파일 검증 |
-| [`부품표.csv`](부품표.csv) | 출력 부품과 구매 부품 |
-| `stl/` | 출력 파일 27개 (판에 놓는 방향 그대로) |
+| [`docs/`](docs/) | 문서와 그림. 옵시디언 볼트의 `DeteCam` 폴더가 바로 이 폴더입니다 |
+| [`cad/`](cad/) | 3D 모델을 만드는 파이썬 코드와 검사 (겹침, 나사, 조립, 강도, 넘어짐). 치수는 `cad/p2.py` 한 곳에 있습니다 |
+| `stl/` | 출력 파일 29개 (판에 놓는 방향 그대로) |
 | `슬라이스/` | Bambu Studio 결과. `바로출력/` 은 프린터로 바로 보내는 파일, `프로젝트/` 는 고칠 수 있는 파일 |
-| `그림/` | 조립 그림과 움직이는 그림 |
-| `마커/` | 머리 등판에 붙이는 AR 마커 띠 (`AR_마커.pdf` 를 실제 크기로 인쇄), 마커 귀의 좌표 (`marker.json`) |
-| `cad/` | 모델을 만드는 파이썬 코드와 검사 코드. 치수는 `cad/p2.py` 한 곳에 있습니다 |
+| `마커/` | 머리 등판에 다는 AR 마커 (`AR_마커.pdf` 를 실제 크기로 인쇄) |
+| [`firmware/`](firmware/) | 수신기 코드. `pi/` 는 파이에 넣는 것, `core/` 는 계산, `host/` 는 개발용, `tests/` 는 장치 없이 하는 검사 |
+| [`sim/`](sim/) | 시뮬레이션: 방 모형, 위치 추정, 탐지·판별, `em/` 은 전파 계산(NEC2) |
+| [`console/`](console/) | 3축 시뮬레이션 화면 (브라우저에서 여는 HTML 한 장) |
 
-## 출력
+## 처음이면 이 순서로
 
-- 프린터: Bambu X1 Carbon, 0.4mm 노즐, PLA
-- 다섯 판, 13시간 56분, 필라멘트 457g, 서포트 없음
-- `슬라이스/바로출력/0판_시험조각.gcode.3mf` 부터 뽑아 맞춤을 고릅니다
+1. [조립 안내](docs/조립%20안내.md) — 살 것, 출력, 조립, 배선, 처음 켜기, 폰으로 재기
+2. [설계 검토](docs/설계%20검토.md) — 왜 이렇게 만들었나: 오차, 넘어짐, 볼트 고정, 자기 부품의 영향, 실물에서 확인할 것
+3. [네 단계 검토](docs/네%20단계%20검토.md) — 탐지 → 판별 → 위치 측정 → 표시, 곳별 결과
+4. [혼자 동작](docs/혼자%20동작.md) — 파이에 설치하기, 폰 화면, 주소(API)
 
-## 모델 고치기
+## 지금 상태 (2026-11-14)
+
+- **출력 전**입니다. 계산과 시뮬레이션, 슬라이싱, 슬라이싱한 파일의 검증까지 했고 실물은 아직 없습니다.
+- 다섯 판, 14시간 05분, 필라멘트 441g, 서포트 없음 (Bambu X1 Carbon, PLA). `슬라이스/바로출력/0판_시험조각.gcode.3mf` 부터 뽑아 맞춤을 고릅니다.
+- 테이프와 풀을 쓰지 않습니다. 알루미늄 판(100 × 150 × 1T)까지 나사 53개로 조입니다.
+- 쓸 때는 수신기 둘레 22cm 를 비웁니다.
+
+## 받기와 올리기
 
 ```
-cd cad
-pip install manifold3d trimesh numpy shapely
-python3 export2.py      # stl/ 다시 만들기
-python3 check2.py       # 겹침 검사
-python3 audit_sweep.py  # 판을 돌리며 걸리는 곳이 없는지 촘촘히 (20분쯤)
-python3 strength.py     # 힘이 걸리는 자리의 여유
-python3 marker.py       # AR 마커 (opencv-python, pillow 필요)
-python3 slicing/print_check.py ../stl ../슬라이스     # 슬라이싱한 파일을 다시 읽어 검사
+git clone https://github.com/DeteCam/receiver-cad.git receiver
+cd receiver
+git pull                                   # 최신으로
+git add -A && git commit -m "무엇을 바꿨나" && git push     # 올리기
 ```
 
-그 밖의 검사와 슬라이싱은 [`조립_안내.md`](조립_안내.md) 11절에 있습니다.
+옵시디언에서 고친 문서도 `docs/` 안의 파일이라 같은 명령으로 올라갑니다. 지난 판의 파일은 따로 두지 않습니다 (깃 기록에서 찾습니다).
 
-## 바꾼 기록
+## 바탕이 된 연구
 
-모델을 바꿀 때는 이 저장소에 커밋으로 남깁니다. 지난 판의 파일은 따로 두지 않습니다 (깃 기록에서 찾습니다).
-
-## 관련
-
-- 수신기 코드: [receiver-firmware](https://github.com/DeteCam/receiver-firmware) · 시뮬레이션: [receiver-sim](https://github.com/DeteCam/receiver-sim) · 3축 화면: [receiver-console](https://github.com/DeteCam/receiver-console) · 문서: [docs](https://github.com/DeteCam/docs)
-- `cad/marker.py` 가 만드는 `마커/marker.json` 은 receiver-firmware 의 `pi/marker.json` 과 같은 파일입니다. 등판이나 마커 자리를 바꾸면 그쪽에도 넣어 줍니다.
+- DiffLoc (USENIX Security 2025), DiffLoc+ (IEEE JSAC 2026): 전자기파 회절을 이용한 Wi-Fi 숨은 카메라 위치 추정

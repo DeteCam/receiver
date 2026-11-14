@@ -3,9 +3,9 @@
 #   BAMBU_STUDIO_DIR = Bambu Studio AppImage 를 푼 폴더 (./Bambu_Studio.AppImage --appimage-extract 하면 생기는 squashfs-root)
 # 화면이 있는 컴퓨터에서는 이 파일 없이:  BAMBU_STUDIO=/경로/bambu-studio python3 slice_bambu.py ...
 # 미리보기 그림(썸네일)을 만들려면 Wayland 화면과 OSMesa 가 있어야 해서, 화면 없는 weston 을 하나 띄워 둔다 (apt: weston libosmesa6).
-D=${BAMBU_STUDIO_DIR:-$HOME/dl/bambu_2.5.1/squashfs-root}
+D=${BAMBU_STUDIO_DIR:?BAMBU_STUDIO_DIR 에 Bambu Studio AppImage 를 푼 폴더(squashfs-root)를 적는다}
 HERE="$(cd "$(dirname "$0")" && pwd)"
-export XDG_RUNTIME_DIR=${BS_RUNTIME_DIR:-/tmp/detecam/xdg}
+export XDG_RUNTIME_DIR=${BS_RUNTIME_DIR:-${TMPDIR:-/tmp}/bs-xdg}
 mkdir -p "$XDG_RUNTIME_DIR"; chmod 700 "$XDG_RUNTIME_DIR"
 if [ ! -S "$XDG_RUNTIME_DIR/wl-bs" ] || ! pgrep -x weston > /dev/null; then
   rm -f "$XDG_RUNTIME_DIR/wl-bs" "$XDG_RUNTIME_DIR/wl-bs.lock"

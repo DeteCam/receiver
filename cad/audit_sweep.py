@@ -18,12 +18,9 @@ from p2 import *
 
 STOP_LO, STOP_HI = -5.3, 86.9
 mb, mc = v1.motor_body_dummy(); b, cc = v1.pi_dummy(); db, dc = v1.driver_dummy()
-zt = (POD_Z0 + BAR_Z0) / 2
-YOKE = union([P.yoke(), P.pin(1), P.pin(-1), mb.transform(P.motor1_T()), mc.transform(P.motor1_T()), mb.transform(P.motor2_T()), mc.transform(P.motor2_T()), P.pinion1(), P.pinion2(), P.m2_ring()])
-rot_screw = cz(3.0, (BAR_Z0 + BAR_Z1) / 2 + 7.0, (BAR_Z0 + BAR_Z1) / 2 + 9.6, COLLAR_X0 + 3.6, 0)
-ROTS = {150.0: union([P.rotor_bar(), P.blade(150.0), P.foil(150.0), rot_screw, P.trim_plate()]),
-        200.0: union([P.rotor_bar(), P.blade(200.0), P.foil(200.0), rot_screw, P.balance_200(), cx(3.0, -POD_R1 - 11.6, -POD_R1 - 9.0, 0, zt)])}
-HEADP = union([P.head_shell(), P.head_lid(), P.crown(), v1._m1(mb), v1._m1(mc), P.sector_head()])
+YOKE = union([P.yoke(), P.pin(1), P.pin(-1), P.pin_keeper(1), P.pin_keeper(-1), mb.transform(P.motor1_T()), mc.transform(P.motor1_T()), mb.transform(P.motor2_T()), mc.transform(P.motor2_T()), P.pinion1(), P.pinion2(), P.m2_ring()])
+ROTS = {150.0: P.rotor_set(150.0, low_cap=True), 200.0: P.rotor_set(200.0, low_cap=True)}      # 알루미늄 판, 볼트·너트·나사 머리, 마개(가장 내려온 경우)까지
+HEADP = union([P.head_shell(), P.head_lid(), P.crown(), P.marker_frame(), P.head_hw(), v1._m1(mb), v1._m1(mc), P.sector_head()])
 HUB = np.array([0.0, 0.0, M1_ZT + 5.0])                       # 축이 흔들릴 때의 중심 (모터 앞 베어링 근처)
 
 
@@ -34,7 +31,7 @@ def wobble(m, ax, deg):
 
 
 def base(size):
-    return union([P.tub(size), P.cover(size), P.battery_dummy(size), P.usb_a_dummy(size)] + ([P.lan_cap()] if size == "S" else []) + [P.clip().rotate([0, 0, a]) for a in (0.0, 90.0, 180.0, 270.0)])
+    return union([P.tub(size), P.cover(size), P.battery_dummy(size), P.usb_a_dummy(size)] + [P.lan_cap(size)] + [P.clip().rotate([0, 0, a]) for a in (0.0, 90.0, 180.0, 270.0)])
 
 
 res = {}; t0 = time.time()
@@ -89,7 +86,7 @@ for length in ROTS:
 # 머리 - 요크 - 받침 (판 없이): 1도 간격, 머리 속 부품까지
 HEADALL = union([HEADP, b, cc, P.usb_plug_dummy(), P.lan_plug_dummy(), P.dongle_dummy(), P.dongle_dummy(DONGLE2)] + list(P.button_dummy()))
 lug = P.extrude_z(P.poly([(-HX + 0.1, Y_T - 3.0), (-HX - 4.5, Y_T - 3.0), (-HX - 4.5, Y_T - 1.5), (-HX + 0.1, Y_T + 3.1)]), S_T - LUG_R - 2.5, S_T - LUG_R + 2.5)
-YK = union([P.yoke(), mb.transform(P.motor1_T()), mc.transform(P.motor1_T()), mb.transform(P.motor2_T()), mc.transform(P.motor2_T())])
+YK = union([P.yoke(), P.pin_keeper(1), P.pin_keeper(-1), mb.transform(P.motor1_T()), mc.transform(P.motor1_T()), mb.transform(P.motor2_T()), mc.transform(P.motor2_T())])
 worst = (1e9, None)
 for p in np.arange(-5.0, 86.01, 1.0):
     H = P.pose_head(HEADALL - lug, 0, float(p))

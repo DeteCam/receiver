@@ -1,0 +1,273 @@
+{
+ "data/scan_20261111_225427": {
+  "meta": {
+   "mac": "c6:26:06:68:85:83",
+   "ch": 11,
+   "truth": 100,
+   "note": "run2: Pi upright, plate centered on angle, 10cm from wifi module, 1m room"
+  },
+  "rows": [
+   {
+    "angle": "base",
+    "n": 815,
+    "rate": 81.5,
+    "rssi": -52.0,
+    "rssi_std": 0.5,
+    "lvl": -51.78,
+    "pstd": 0.7
+   },
+   {
+    "angle": "0",
+    "n": 228,
+    "rate": 76.0,
+    "rssi": -52.0,
+    "rssi_std": 0.25,
+    "lvl": -51.79,
+    "pstd": 0.46
+   },
+   {
+    "angle": "45",
+    "n": 266,
+    "rate": 88.7,
+    "rssi": -52.0,
+    "rssi_std": 0.52,
+    "lvl": -51.59,
+    "pstd": 0.82
+   },
+   {
+    "angle": "60",
+    "n": 259,
+    "rate": 86.3,
+    "rssi": -51.0,
+    "rssi_std": 0.0,
+    "lvl": -50.76,
+    "pstd": 0.43
+   },
+   {
+    "angle": "75",
+    "n": 239,
+    "rate": 79.7,
+    "rssi": -53.0,
+    "rssi_std": 0.48,
+    "lvl": -52.59,
+    "pstd": 0.51
+   },
+   {
+    "angle": "90",
+    "n": 220,
+    "rate": 73.3,
+    "rssi": -57.0,
+    "rssi_std": 0.24,
+    "lvl": -56.45,
+    "pstd": 0.39
+   },
+   {
+    "angle": "105",
+    "n": 233,
+    "rate": 77.7,
+    "rssi": -62.0,
+    "rssi_std": 0.43,
+    "lvl": -61.4,
+    "pstd": 0.51
+   },
+   {
+    "angle": "120",
+    "n": 230,
+    "rate": 76.7,
+    "rssi": -59.0,
+    "rssi_std": 0.47,
+    "lvl": -58.94,
+    "pstd": 0.68
+   },
+   {
+    "angle": "135",
+    "n": 236,
+    "rate": 78.7,
+    "rssi": -54.0,
+    "rssi_std": 0.19,
+    "lvl": -53.77,
+    "pstd": 0.23
+   },
+   {
+    "angle": "180",
+    "n": 248,
+    "rate": 82.7,
+    "rssi": -53.0,
+    "rssi_std": 0.4,
+    "lvl": -52.87,
+    "pstd": 0.79
+   },
+   {
+    "angle": "270",
+    "n": 240,
+    "rate": 80.0,
+    "rssi": -48.0,
+    "rssi_std": 0.09,
+    "lvl": -47.8,
+    "pstd": 0.62
+   }
+  ]
+ },
+ "data/scan_20261111_230202_blind": {
+  "meta": {
+   "mac": "c6:26:06:68:85:83",
+   "ch": 11,
+   "note": "run3 blind: camera moved, truth unknown to the analyst; Pi upright; hands not removed"
+  },
+  "rows": [
+   {
+    "angle": "0",
+    "n": 231,
+    "rate": 77.0,
+    "rssi": -49.0,
+    "rssi_std": 0.56,
+    "lvl": -48.67,
+    "pstd": 0.6
+   },
+   {
+    "angle": "30",
+    "n": 228,
+    "rate": 76.0,
+    "rssi": -52.0,
+    "rssi_std": 0.33,
+    "lvl": -51.78,
+    "pstd": 0.63
+   },
+   {
+    "angle": "60",
+    "n": 200,
+    "rate": 66.7,
+    "rssi": -52.0,
+    "rssi_std": 0.31,
+    "lvl": -51.86,
+    "pstd": 0.58
+   },
+   {
+    "angle": "90",
+    "n": 204,
+    "rate": 68.0,
+    "rssi": -54.0,
+    "rssi_std": 0.58,
+    "lvl": -53.59,
+    "pstd": 0.77
+   },
+   {
+    "angle": "120",
+    "n": 236,
+    "rate": 78.7,
+    "rssi": -51.0,
+    "rssi_std": 0.34,
+    "lvl": -50.74,
+    "pstd": 0.58
+   },
+   {
+    "angle": "150",
+    "n": 233,
+    "rate": 77.7,
+    "rssi": -52.0,
+    "rssi_std": 0.27,
+    "lvl": -51.87,
+    "pstd": 0.59
+   },
+   {
+    "angle": "180",
+    "n": 239,
+    "rate": 79.7,
+    "rssi": -62.0,
+    "rssi_std": 0.42,
+    "lvl": -62.14,
+    "pstd": 0.77
+   },
+   {
+    "angle": "210",
+    "n": 236,
+    "rate": 78.7,
+    "rssi": -60.0,
+    "rssi_std": 0.65,
+    "lvl": -60.6,
+    "pstd": 0.98
+   },
+   {
+    "angle": "240",
+    "n": 235,
+    "rate": 78.3,
+    "rssi": -57.0,
+    "rssi_std": 0.18,
+    "lvl": -56.82,
+    "pstd": 1.1
+   },
+   {
+    "angle": "270",
+    "n": 257,
+    "rate": 85.7,
+    "rssi": -52.0,
+    "rssi_std": 0.62,
+    "lvl": -52.04,
+    "pstd": 0.8
+   },
+   {
+    "angle": "300",
+    "n": 250,
+    "rate": 83.3,
+    "rssi": -50.0,
+    "rssi_std": 0.34,
+    "lvl": -49.82,
+    "pstd": 0.39
+   },
+   {
+    "angle": "330",
+    "n": 257,
+    "rate": 85.7,
+    "rssi": -48.0,
+    "rssi_std": 0.26,
+    "lvl": -47.81,
+    "pstd": 0.29
+   },
+   {
+    "angle": "165",
+    "n": 227,
+    "rate": 75.7,
+    "rssi": -58.0,
+    "rssi_std": 0.51,
+    "lvl": -58.34,
+    "pstd": 0.62
+   },
+   {
+    "angle": "180",
+    "n": 194,
+    "rate": 64.7,
+    "rssi": -65.5,
+    "rssi_std": 0.56,
+    "lvl": -65.66,
+    "pstd": 0.81
+   },
+   {
+    "angle": "195",
+    "n": 216,
+    "rate": 72.0,
+    "rssi": -62.0,
+    "rssi_std": 0.52,
+    "lvl": -62.87,
+    "pstd": 0.75
+   },
+   {
+    "angle": "210",
+    "n": 220,
+    "rate": 73.3,
+    "rssi": -59.0,
+    "rssi_std": 0.75,
+    "lvl": -58.99,
+    "pstd": 0.9
+   },
+   {
+    "angle": "225",
+    "n": 160,
+    "rate": 53.3,
+    "rssi": -57.0,
+    "rssi_std": 0.47,
+    "lvl": -56.97,
+    "pstd": 0.73
+   }
+  ]
+ }
+}

@@ -10,9 +10,9 @@
    140.0,
    30.0
   ],
-  "volume_cm3": 66.8,
+  "volume_cm3": 67.2,
   "watertight": true,
-  "faces": 3010,
+  "faces": 3072,
   "bodies": 1,
   "overhang_mm2": 28,
   "flat_overhang_mm2": 13,
@@ -29,9 +29,9 @@
    190.0,
    30.0
   ],
-  "volume_cm3": 105.7,
+  "volume_cm3": 106.1,
   "watertight": true,
-  "faces": 3022,
+  "faces": 3080,
   "bodies": 1,
   "overhang_mm2": 28,
   "flat_overhang_mm2": 13,
@@ -103,13 +103,13 @@
   "size": [
    136.0,
    134.0,
-   92.3
+   95.6
   ],
-  "volume_cm3": 159.6,
+  "volume_cm3": 160.2,
   "watertight": true,
-  "faces": 4216,
+  "faces": 4384,
   "bodies": 1,
-  "overhang_mm2": 138,
+  "overhang_mm2": 159,
   "flat_overhang_mm2": 58,
   "ok": true
  },
@@ -200,9 +200,9 @@
    108.0,
    35.2
   ],
-  "volume_cm3": 42.0,
+  "volume_cm3": 42.8,
   "watertight": true,
-  "faces": 3254,
+  "faces": 6098,
   "bodies": 1,
   "overhang_mm2": 167,
   "flat_overhang_mm2": 94,
@@ -217,14 +217,14 @@
   "size": [
    111.7,
    108.0,
-   29.3
+   6.8
   ],
-  "volume_cm3": 20.1,
+  "volume_cm3": 17.7,
   "watertight": true,
-  "faces": 2836,
+  "faces": 2008,
   "bodies": 1,
-  "overhang_mm2": 767,
-  "flat_overhang_mm2": 767,
+  "overhang_mm2": 765,
+  "flat_overhang_mm2": 765,
   "ok": true
  },
  {
@@ -248,97 +248,97 @@
  },
  {
   "file": "10_rotor_bar_fit1.stl",
-  "ko": "회전 막대 + 균형추 (맞춤 1)",
+  "ko": "회전 막대 (판 받이 + 균형추 통, 맞춤 1)",
   "qty": 1,
   "pick": "시험 조각 1번 구멍이 맞을 때. 채움 100%",
   "infill": 100,
   "size": [
-   153.5,
-   46.0,
-   25.0
+   172.4,
+   54.0,
+   38.0
   ],
-  "volume_cm3": 40.4,
+  "volume_cm3": 27.9,
   "watertight": true,
-  "faces": 1140,
+  "faces": 3118,
   "bodies": 1,
-  "overhang_mm2": 2,
-  "flat_overhang_mm2": 2,
+  "overhang_mm2": 77,
+  "flat_overhang_mm2": 58,
   "ok": true
  },
  {
   "file": "10_rotor_bar_fit2.stl",
-  "ko": "회전 막대 + 균형추 (맞춤 2)",
+  "ko": "회전 막대 (판 받이 + 균형추 통, 맞춤 2)",
   "qty": 1,
   "pick": "시험 조각 2번 구멍이 맞을 때. 채움 100%",
   "infill": 100,
   "size": [
-   153.5,
-   46.0,
-   25.0
+   172.4,
+   54.0,
+   38.0
   ],
-  "volume_cm3": 40.4,
+  "volume_cm3": 27.9,
   "watertight": true,
-  "faces": 1140,
+  "faces": 3118,
   "bodies": 1,
-  "overhang_mm2": 2,
-  "flat_overhang_mm2": 2,
+  "overhang_mm2": 77,
+  "flat_overhang_mm2": 58,
   "ok": true
  },
  {
   "file": "10_rotor_bar_fit3.stl",
-  "ko": "회전 막대 + 균형추 (맞춤 3)",
+  "ko": "회전 막대 (판 받이 + 균형추 통, 맞춤 3)",
   "qty": 1,
   "pick": "시험 조각 3번 구멍이 맞을 때. 채움 100%",
   "infill": 100,
   "size": [
-   153.5,
-   46.0,
-   25.0
+   172.4,
+   54.0,
+   38.0
   ],
-  "volume_cm3": 40.4,
+  "volume_cm3": 27.9,
   "watertight": true,
-  "faces": 1140,
+  "faces": 3118,
   "bodies": 1,
-  "overhang_mm2": 2,
-  "flat_overhang_mm2": 2,
+  "overhang_mm2": 77,
+  "flat_overhang_mm2": 58,
   "ok": true
  },
  {
-  "file": "11_blade_100x150.stl",
-  "ko": "판 100×150",
+  "file": "11_coin_cap.stl",
+  "ko": "균형추 통 마개",
   "qty": 1,
   "pick": "회전 막대와 같은 판에서 채움 100%로",
   "infill": 100,
   "size": [
-   150.0,
-   100.0,
-   8.8
+   27.8,
+   38.8,
+   5.4
   ],
-  "volume_cm3": 19.8,
+  "volume_cm3": 2.2,
   "watertight": true,
-  "faces": 534,
+  "faces": 1492,
   "bodies": 1,
-  "overhang_mm2": 8,
-  "flat_overhang_mm2": 3,
+  "overhang_mm2": 0,
+  "flat_overhang_mm2": 0,
   "ok": true
  },
  {
-  "file": "12_blade_100x200.stl",
-  "ko": "판 100×200 (비교용)",
-  "qty": 1,
-  "pick": "15번 덩어리와 같이 쓴다. 채움 100%",
+  "file": "12_coin_spacer.stl",
+  "ko": "채움 조각 (동전 1개 자리)",
+  "qty": 9,
+  "pick": "동전과 합쳐 12장이 되게 넣는다. 9개 뽑아 둔다",
   "infill": 100,
   "size": [
-   200.0,
-   100.0,
-   8.8
+   23.6,
+   23.6,
+   1.6
   ],
-  "volume_cm3": 25.7,
+  "volume_cm3": 0.7,
   "watertight": true,
-  "faces": 622,
+  "faces": 640,
   "bodies": 1,
-  "overhang_mm2": 8,
-  "flat_overhang_mm2": 3,
+  "overhang_mm2": 0,
+  "flat_overhang_mm2": 0,
   "ok": true
  },
  {
@@ -399,38 +399,38 @@
   "ok": true
  },
  {
-  "file": "14_trim_plate.stl",
-  "ko": "균형 조각",
+  "file": "14_pin_keeper.stl",
+  "ko": "핀 막이",
   "qty": 2,
-  "pick": "회전부 균형이 안 맞을 때",
-  "infill": 100,
+  "pick": "핀을 꽂은 뒤 팔 바깥면에 M3 나사로. 좌우 같은 것",
+  "infill": 15,
   "size": [
-   16.0,
-   36.0,
-   3.0
+   17.3,
+   12.2,
+   3.9
   ],
-  "volume_cm3": 1.7,
+  "volume_cm3": 0.4,
   "watertight": true,
-  "faces": 144,
+  "faces": 548,
   "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
+  "overhang_mm2": 21,
+  "flat_overhang_mm2": 21,
   "ok": true
  },
  {
-  "file": "15_balance_200.stl",
-  "ko": "판 200용 균형 덩어리",
+  "file": "15_marker_frame.stl",
+  "ko": "마커 틀",
   "qty": 1,
-  "pick": "판 100×200을 쓸 때. 채움 100%",
-  "infill": 100,
+  "pick": "AR 마커 종이를 등판에 대고 덮어 M3 나사 4개로",
+  "infill": 15,
   "size": [
-   17.0,
-   36.0,
-   9.0
+   109.0,
+   47.5,
+   2.0
   ],
-  "volume_cm3": 5.3,
+  "volume_cm3": 3.2,
   "watertight": true,
-  "faces": 144,
+  "faces": 464,
   "bodies": 1,
   "overhang_mm2": 0,
   "flat_overhang_mm2": 0,
@@ -457,7 +457,7 @@
  },
  {
   "file": "17_lan_cap.stl",
-  "ko": "랜선 홈 마개",
+  "ko": "랜선 홈 마개 (작은 받침용)",
   "qty": 1,
   "pick": "랜선을 받침 안으로 넣지 않을 때, 덮개를 덮기 전에 받침 뒤 홈에 끼운다",
   "infill": 15,
@@ -475,6 +475,44 @@
   "ok": true
  },
  {
+  "file": "17_lan_cap_L.stl",
+  "ko": "랜선 홈 마개 (큰 받침용)",
+  "qty": 1,
+  "pick": "큰 받침(L)을 쓸 때 17 대신. 큰 받침 덮개와 같은 판에서 뽑는다",
+  "infill": 15,
+  "size": [
+   6.3,
+   18.0,
+   12.3
+  ],
+  "volume_cm3": 0.9,
+  "watertight": true,
+  "faces": 118,
+  "bodies": 1,
+  "overhang_mm2": 42,
+  "flat_overhang_mm2": 42,
+  "ok": true
+ },
+ {
+  "file": "18_drill_jig.stl",
+  "ko": "구멍 뚫기 틀",
+  "qty": 1,
+  "pick": "알루미늄 판에 볼트 구멍 4개의 자리를 찍을 때",
+  "infill": 15,
+  "size": [
+   77.0,
+   93.0,
+   3.8
+  ],
+  "volume_cm3": 14.1,
+  "watertight": true,
+  "faces": 1146,
+  "bodies": 1,
+  "overhang_mm2": 0,
+  "flat_overhang_mm2": 0,
+  "ok": true
+ },
+ {
   "file": "90_test_coupon.stl",
   "ko": "맞춤 시험 조각",
   "qty": 1,
@@ -485,28 +523,28 @@
    34.0,
    24.0
   ],
-  "volume_cm3": 13.9,
+  "volume_cm3": 14.3,
   "watertight": true,
-  "faces": 1606,
+  "faces": 1710,
   "bodies": 1,
   "overhang_mm2": 0,
   "flat_overhang_mm2": 0,
   "ok": true
  },
  {
-  "file": "91_tenon_gauge.stl",
-  "ko": "시험용 돌기",
+  "file": "91_driver_check.stl",
+  "ko": "보드 구멍 맞춤 판",
   "qty": 1,
-  "pick": "",
+  "pick": "드라이버 보드를 얹어 구멍 4개가 맞는지 본다",
   "infill": 15,
   "size": [
-   18.0,
-   12.0,
-   10.0
+   37.0,
+   34.0,
+   5.0
   ],
-  "volume_cm3": 1.1,
+  "volume_cm3": 1.6,
   "watertight": true,
-  "faces": 28,
+  "faces": 872,
   "bodies": 1,
   "overhang_mm2": 0,
   "flat_overhang_mm2": 0,

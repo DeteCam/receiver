@@ -41,8 +41,18 @@ stop = cz(1.5, DECK_Z1 - 10.0, DECK_Z1, *YAW_STOP_XY) + cz(3.0, DECK_Z1, DECK_Z1
 cap = P.lan_cap()
 sweep("1", "랜선 홈 마개 -> 통 (덮개 덮기 전)", cap, tub, (0, 0, 1), 16, "위에서 벽에 끼워 내린다", note="랜선을 받침 안으로 넣어 쓸 때는 끼우지 않는다")
 sweep("1", "받침 덮개 -> 통", cov, tub + cap, (0, 0, 1), 30, "위에서 내린다")
-sweep("1", "배터리 -> 통 (덮개 닫은 채)", P.battery_dummy("S"), tub + cov, (0, -1, 0), 130, "옆 창으로 민다")
-sweep("1", "배터리 L -> 통 L", P.battery_dummy("L"), P.tub("L") + P.cover("L"), (0, -1, 0), 170, "옆 창으로 민다")
+LIFT = 3.2                                                                     # 배터리는 문턱(높이 3)을 타고 넘어 들어가서 제자리에서 내려앉는다
+sweep("1", "배터리 -> 통 (덮개 닫은 채): 문턱 위로 밀기", P.battery_dummy("S").translate([0, 0, LIFT]), tub + cov, (0, -1, 0), 130, "옆 창으로, 앞을 3mm 들고 민다", step=1.0, allow_seat=0.5,
+      note="문턱 높이 3.0, 배터리 윗면에서 덮개까지 %.1f mm 남는다" % (TUB_H - (2.3 + BATT_T + LIFT)))
+rows[-1]["at_mm"] = None
+v0 = max((P.battery_dummy("S").translate([0, 0, z]) ^ (tub + cov)).volume() for z in np.arange(LIFT, -0.01, -0.4))
+rows.append(dict(group="1", step="배터리 -> 통: 문턱 안쪽에 내려앉기", how="끝까지 밀면 내려앉는다", path_overlap_mm3=round(v0, 2), seat_overlap_mm3=round((P.battery_dummy("S") ^ (tub + cov)).volume(), 2), ok=bool(v0 < 0.5),
+                 note="내려앉은 뒤에는 문턱 2개가 앞을 막는다 (받침을 기울여도 빠지지 않는다)"))
+print("1 %-30s 가는 길 겹침 %.2f mm3 %s" % ("배터리: 문턱 안쪽에 내려앉기", v0, "" if v0 < 0.5 else " <== 확인"))
+sweep("1", "배터리 L -> 통 L: 문턱 위로 밀기", P.battery_dummy("L").translate([0, 0, LIFT]), P.tub("L") + P.cover("L"), (0, -1, 0), 170, "옆 창으로, 앞을 3mm 들고 민다", allow_seat=0.5)
+v0 = max((P.battery_dummy("L").translate([0, 0, z]) ^ (P.tub("L") + P.cover("L"))).volume() for z in np.arange(LIFT, -0.01, -0.4))
+rows.append(dict(group="1", step="배터리 L -> 통 L: 문턱 안쪽에 내려앉기", how="끝까지 밀면 내려앉는다", path_overlap_mm3=round(v0, 2), seat_overlap_mm3=0.0, ok=bool(v0 < 0.5), note=""))
+print("1 %-30s 가는 길 겹침 %.2f mm3 %s" % ("배터리 L: 문턱 안쪽에 내려앉기", v0, "" if v0 < 0.5 else " <== 확인"))
 usb_micro = box(-5.75, 5.75, -3.75, 3.75, 0, 20)                               # 마이크로 5핀 플러그의 손잡이(11.5 x 7.5)
 sweep("1", "전원선 플러그 -> 가운데 통", usb_micro.translate([0, 0, TUB_H - 25]), cov, (0, 0, -1), 0, "아래에서 위로", note="통 구멍 지름 %.0f, 플러그 대각선 %.1f" % (2 * TUBE_RI, np.hypot(11.5, 7.5)))
 v = max((usb_micro.translate([0, 0, z]) ^ cov).volume() for z in np.arange(TUB_H - 25, TUBE_Z1 + 5, 1.0))
@@ -82,14 +92,16 @@ drv = union(drvs)
 keep = union([P.driver_keepout(k) for k in range(3)] + [P.gpio_keepout()])
 m3 = v1._m1(motor)
 plug = P.usb_plug_dummy() ^ box(-100, 100, -100, 100, BZ1 - 16, 100)
-sweep("3", "파이 -> 몸통 못", pi, shell, (0, -1, 0), 28, "앞에서 뒤로 민다", allow_seat=0.5)
+sweep("3", "파이 -> 몸통 기둥 4개", pi, shell, (0, -1, 0), 28, "앞에서 뒤로 얹고 M2.5 나사 4개", allow_seat=0.5)
 for k in range(3):
-    sweep("3", "드라이버 %d -> 뒷벽 (파이가 있는 채)" % (3 - k), drvs[k], shell + pi, (0, -1, 0), 30, "앞에서 뒤로 곧게")
+    sweep("3", "드라이버 %d -> 뒷벽 기둥 4개 (파이가 있는 채)" % (3 - k), drvs[k], shell + pi, (0, -1, 0), 30, "앞에서 뒤로 곧게 얹고 M2.5 나사 4개")
     side = min(drvs[k].translate([0, -t, 0]).min_gap(shell + pi, 5.0) for t in (26.0, 20.0, 14.0))
     rows[-1]["note"] = "들어가는 길의 옆 틈 %.2f mm" % side; print("     옆 틈 %.2f mm" % side)
 sweep("3", "ㄱ자 젠더 -> 파이 전원 단자", plug, shell + pi, (-1, 0, 0), 12, "왼쪽 창으로 옆에서", allow_seat=0.5)
 bpcb, bsw = P.button_dummy(); btn = bpcb + bsw
-sweep("3", "버튼 모듈 -> 받침 살 (파이가 있는 채)", btn, union([shell, pi, plug]), (0, -1, 0), 20, "앞에서 뒤로 댄다", allow_seat=0.5)
+sweep("3", "버튼 모듈 -> 받침 살 (파이가 있는 채)", btn, union([shell, pi, plug]), (0, -1, 0), 20, "앞에서 뒤로 얹는다 (뚜껑이 눌러 고정)", allow_seat=0.5)
+frame = P.marker_frame()
+sweep("3", "마커 틀 -> 등판 (종이를 사이에 두고)", frame, shell, (0, 1, 0), 15, "뒤에서 대고 M3 나사 4개", allow_seat=0.5)
 
 # ---- 4 머리 겉
 jst = box(-7.45, 7.45, -2.9, 2.9, 0, 7.0).translate([(CABLE_HOLE[0] + CABLE_HOLE[1]) / 2, (CABLE_HOLE[2] + CABLE_HOLE[3]) / 2, HZ1 + 12.0])
@@ -135,14 +147,21 @@ HEADY = P.pose_head(HEADALL, 0, 0)
 sweep("5", "오른쪽 핀 -> 축 구멍", P.pin(1), union([yoke, HEADY, m2]), (0, 1, 0), 25, "바깥에서 민다", allow_seat=3.0)
 sweep("5", "왼쪽 핀 -> 축 구멍", P.pin(-1), union([yoke, HEADY]), (0, -1, 0), 25, "바깥에서 민다", allow_seat=3.0)
 YH = P.yoke_to_head(union([YSET, P.pin(1), P.pin(-1)]))                            # 요크 쪽 부품을 머리 좌표로 (끄덕임 0도)
-sweep("5", "뚜껑 -> 몸통 (머리가 요크에 앉은 채)", lid, union([shell, pi, drv, keep, plug, btn, crown, m3, sec, YH]), (0, -1, 0), 40, "앞에서 뒤로 민다", allow_seat=0.5)
+for s_, nm in ((1, "오른쪽"), (-1, "왼쪽")):
+    sweep("5", "핀 막이 -> %s 팔 (핀을 꽂은 뒤)" % nm, P.pin_keeper(s_), union([yoke, P.pin(1), P.pin(-1), m2]), (0, s_, 0), 15, "바깥에서 대고 M3 나사 1개", allow_seat=0.5)
+sweep("5", "뚜껑 -> 몸통 (머리가 요크에 앉은 채)", lid, union([shell, pi, drv, keep, plug, btn, crown, m3, sec, YH]), (0, -1, 0), 40, "앞에서 뒤로 민다", allow_seat=0.5,
+      note="뚜껑 안쪽의 누름 살이 버튼 기판 앞면에 닿는다 (틈 0)")
 
 # ---- 6 판
-bar = P.rotor_bar()
-sweep("6", "회전 막대 -> 모터 3 축", bar, union([crown, m3, shell, lid]), (0, 0, 1), 25, "위에서 누른다", allow_seat=1.0)
-sweep("6", "판 -> 막대 끝", P.blade(150.0), union([bar, crown, shell, lid]), (1, 0, 0), 14, "바깥에서 안으로 민다", allow_seat=0.5)
-sweep("6", "판 200 -> 막대 끝", P.blade(200.0), union([bar, crown, shell, lid]), (1, 0, 0), 14, "바깥에서 안으로 민다", allow_seat=0.5)
-sweep("6", "균형 조각 -> 균형추", P.trim_plate(), bar, (-1, 0, 0), 10, "바깥에서 댄다", allow_seat=0.5)
+bar = P.rotor_bar(); n8 = P.COINS[(150.0, AL_T)]
+sweep("6", "알루미늄 판 -> 판 받이", P.al_plate(150.0), bar, (1, 0, 0), 14, "바깥에서 대고 M3 볼트 4개 + 너트", allow_seat=0.5)
+sweep("6", "알루미늄 판 200 -> 판 받이", P.al_plate(200.0), bar, (1, 0, 0), 14, "바깥에서 대고 M3 볼트 4개 + 너트", allow_seat=0.5)
+sweep("6", "동전 %d개 -> 균형추 통" % n8, P.coins(n8), bar, (0, 0, -1), 30, "아래에서 넣는다 (막대를 뒤집어 놓고)", allow_seat=0.5)
+sweep("6", "마개 -> 균형추 통", P.coin_cap(n8), union([bar, P.coins(n8)]), (0, 0, -1), 20, "아래에서 밀어 넣고 M3 나사 2개", allow_seat=0.5,
+      note="동전 %d개 + 채움 %d개일 때 마개 턱과 통 입구 사이 틈 %.1f mm" % (n8, COIN_SLOTS - n8, P.coin_gap(n8)))
+rset = P.rotor_set(150.0)
+sweep("6", "회전부(판·균형추를 단 채) -> 모터 3 축", rset, union([crown, m3, shell, lid, P.marker_frame()]), (0, 0, 1), 25, "위에서 누르고 M3 나사 1개로 축을 조인다", allow_seat=1.0)
+sweep("6", "회전부(판 200) -> 모터 3 축", P.rotor_set(200.0), union([crown, m3, shell, lid, P.marker_frame()]), (0, 0, 1), 25, "위에서 누른다", allow_seat=1.0)
 bad = [r["step"] for r in rows if not r["ok"]]
 print("\n조립 단계 %d개 가운데 확인할 것 %d개: %s" % (len(rows), len(bad), bad))
 json.dump(rows, open(os.path.join(paths.RES, "audit_assembly.json"), "w"), ensure_ascii=False, indent=1)

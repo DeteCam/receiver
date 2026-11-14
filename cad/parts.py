@@ -430,6 +430,7 @@ def usb_plug_dummy():
 def driver_dummy():
     """ULN2003 보드: 35 x 32, 부품은 +Z 쪽. 원점 = 보드 중심"""
     board = box(-17.5, 17.5, -16, 16, 0, 1.6)
+    board = board - union([cz(1.5, -1, 3, sx * 15.0, sy * 13.25) for sx in (-1, 1) for sy in (-1, 1)])     # 구멍 4개 (간격 30 x 26.5, 지름 3) [실측]
     comps = union([box(-9, 1, -5, 5, 1.6, 9.6), box(4, 16.5, -6.5, 6.5, 1.6, 8.6),
                    box(-16.5, -11, -5, 5, 1.6, 10)])
     return board, comps

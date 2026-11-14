@@ -66,49 +66,55 @@ def section(m, axis, at):
 res = {}
 zc = (BAR_Z0 + BAR_Z1) / 2
 
-# ================================================================ 1. 판 (얇은 판 0.8mm + 살)
-for length in (150.0, 200.0):
-    b = P.blade(length)
-    for tag, zcut, arm in (("아래쪽", zc - 6.5, zc - 6.5 - BL_Z0), ("위쪽", zc + 6.5, BL_Z0 + length - (zc + 6.5))):
-        A, c, I, (lo, hi) = section(b, 2, zcut)
-        # 단면은 (x, y). 판 두께 방향 = x. 꺾이는 축 = y 축 둘레 -> I2
-        cmax = max(hi[0] - c[0], c[0] - lo[0])
-        Mb = F_BUMP * arm
-        sig = Mb * cmax / I[1]
-        defl = 1.0 * arm ** 3 / (3 * E_MOD * I[1])
-        add("판 %d" % length, "판 %s 끝을 5N 으로 밂" % tag, "판 꺾임 (꽂는 자리 옆)", sig, S_XY, "1N 에 끝이 %.1fmm 휜다" % defl)
-        res["blade_%d_%s" % (length, tag)] = dict(I=round(I[1], 1), c=round(cmax, 2), arm=round(arm, 1), defl_per_N=round(defl, 2))
-    # 제 무게로 처지는 양 (누운 자세: 판이 수평)
-    A, c, I, _ = section(b, 2, zc - 6.5)
-    w = b.volume() * 1.24e-3 * G9 / length                                         # N/mm
-    L = zc - 6.5 - BL_Z0
-    res["blade_%d_self_sag" % length] = round(w * L ** 4 / (8 * E_MOD * I[1]), 3)
-
-# 판을 꽂는 자리: 막대 끝 돌기(10 x 6)가 7.3mm 들어가고 나사 1개가 누른다
-eng = TENON_X1 - COLLAR_X0
-arm_lo = zc - BL_Z0                                                                # 판 아래끝까지
-Mt = F_BUMP * arm_lo
-# 돌기를 비트는 쪽 (판 아래 모서리를 옆으로 밂): 사각 단면 비틀림
-bw, th = TENON_W, BAR_Z1 - BAR_Z0
-beta = 0.208 + (0.231 - 0.208) * ((bw / th) - 1.5) / 0.25 if bw / th < 1.75 else 0.239
-tau = Mt / (beta * bw * th * th)
-add("회전 막대", "판 아래 모서리를 옆으로 5N", "막대 끝 돌기 비틀림", tau, T_Z, "돌기 %g x %g, 층 사이 전단으로 봄" % (bw, th))
-# 돌기를 꺾는 쪽 (판 아래끝을 머리 쪽으로 밂): 나사 구멍 자리의 남은 단면
-In = (bw - 2.6) * th ** 3 / 12
-add("회전 막대", "판 아래끝을 머리 쪽으로 5N", "막대 끝 돌기 꺾임", Mt * (th / 2) / In, S_XY, "나사 구멍을 뺀 단면 %.1f x %g" % (bw - 2.6, th))
-# 꽂는 자리 벽: 돌기가 지렛대처럼 눌러서 생기는 힘
-Fc = Mt / (eng * 2 / 3)
-add("판", "판 아래끝을 머리 쪽으로 5N", "꽂는 자리 벽 눌림", Fc / (bw * eng / 3), S_BEAR, "돌기가 %.1fmm 들어감, 누르는 힘 %.0fN" % (eng, Fc))
-wall = 6.0 - (th + 0.3) / 2                                                         # 꽂는 자리 위·아래 벽 두께 (collar 높이 12)
-add("판", "판 아래끝을 머리 쪽으로 5N", "꽂는 자리 벽 찢김", Fc / (bw * wall), T_Z, "벽 두께 %.2fmm" % wall)
-# 막대 팔 (가운데 근처): 판 끝을 위아래로 밂
-A, c, I, (lo, hi) = section(P.rotor_bar(), 0, 14.0)
+# ================================================================ 1. 회전부: 알루미늄 판 + 판 받이(플랜지) + 볼트 4개 + 축 고정 나사
+AL_YIELD = {"1050-H14 (무른 것)": 95.0, "5052-H32 (단단한 것)": 190.0}                # 알루미늄 판이 휘어서 안 돌아오기 시작하는 응력 (MPa)
+E_AL = 69000.0
+zb_lo = min(z for y, z in PLATE_BOLTS); zb_hi = max(z for y, z in PLATE_BOLTS); yb = max(y for y, z in PLATE_BOLTS)
+for t in (1.0, 0.5):
+    for length in (150.0, 200.0):
+        for tag, arm in (("아래", zb_lo - BL_Z0), ("위", BL_Z0 + length - zb_hi)):
+            Zs = (PLATE_W - 2 * 3.4) * t ** 2 / 6; I = PLATE_W * t ** 3 / 12
+            sig = F_BUMP * arm / Zs; defl = arm ** 3 / (3 * E_AL * I)
+            if length == 150.0 or tag == "위":
+                add("알루미늄 판 %gT" % t, "판 %d의 %s 끝을 5N 으로 밂" % (length, tag), "판 꺾임 (볼트 줄 옆)", sig, AL_YIELD["1050-H14 (무른 것)"],
+                    "1N 에 끝이 %.1fmm 휜다. 무른 판(1050) 기준. 단단한 판(5052)이면 여유 %.1f배" % (defl, AL_YIELD["5052-H32 (단단한 것)"] / sig))
+            res["plate_%d_%g_%s" % (length, t, tag)] = dict(arm=round(arm, 1), stress=round(sig, 1), defl_per_N=round(defl, 2))
+    # 누운 자세(끄덕임 85도)에서 판이 제 무게로 처지는 양: 볼트 줄에서 아래끝까지를 한쪽 고정 보로
+    L = zb_lo - BL_Z0; w = PLATE_W * t * AL_RHO * G9; I = PLATE_W * t ** 3 / 12
+    res["plate_%g_self_sag" % t] = round(w * L ** 4 / (8 * E_AL * I), 3)
+# 볼트 4개: 판 아래끝을 머리 쪽으로 5N -> 볼트 줄 사이(18mm)가 지렛대. 위 줄 볼트 2개가 당겨진다
+arm_lo = zb_lo - BL_Z0
+F_bolt = F_BUMP * arm_lo / (zb_hi - zb_lo) / 2
+add("판 받이", "판 아래끝을 머리 쪽으로 5N", "너트 밑 플라스틱 눌림", F_bolt / (np.pi * (2.75 ** 2 - 1.7 ** 2)), S_BEAR, "볼트 하나에 %.1fN (너트 자리 밑 두께 %.1f)" % (F_bolt, FL_T - 2.2))
+add("판 받이", "판 아래끝을 머리 쪽으로 5N", "너트가 뽑혀 나오는 쪽 (너트 밑 살 잘림)", F_bolt / (2 * np.pi * 3.0 * (FL_T - 2.2)), T_Z)
+# 판 받이가 막대에 붙은 뿌리: 막대 윗면 아래 34mm 높이의 벽(두께 3.6, 폭 54)이 세워진 채 출력된다 = 층 사이로 당겨진다. 세모 살 2개가 같이 받는다
+Mroot = F_BUMP * (BAR_Z0 - BL_Z0)
+rb = P.rotor_bar()
+A, c, I, (lo, hi) = section(rb ^ box(60.0, FL_X1 + 1, -FL_HW - 1, FL_HW + 1, BAR_Z0 - 2.0, BAR_Z0 + 2.0), 2, BAR_Z0 - 0.5)        # 막대 바로 아래에서 자른 단면 (판 받이 + 세모 살)
+cmax = max(hi[0] - c[0], c[0] - lo[0])
+add("판 받이", "판 아래끝을 머리 쪽으로 5N", "판 받이 뿌리 꺾임 (층 사이)", Mroot * cmax / I[1], S_Z, "막대 바로 아래 단면: 넓이 %.0f mm2 (세모 살 2개 포함)" % A)
+res["flange_root"] = dict(A=round(A, 1), I=round(I[1], 1), c=round(cmax, 2), M=round(Mroot, 1))
+# 판 옆 모서리를 5N 으로 밂 (판을 돌리는 쪽): 볼트 4개가 비틀림을 받고, 막대 팔이 옆으로 꺾인다
+Mt = F_BUMP * (PLATE_W / 2)
+rbolt = np.hypot(yb, (zb_hi - zb_lo) / 2)
+add("판 받이", "판 옆 모서리를 5N 으로 밂", "볼트 구멍 눌림", (Mt / (4 * rbolt)) / (3.0 * (FL_T - 2.2)), S_BEAR, "볼트 하나에 %.1fN" % (Mt / (4 * rbolt)))
+# 막대 팔 (가운데 근처): 판 끝을 위아래로 밂 / 옆으로 밂
+A, c, I, (lo, hi) = section(rb, 0, 14.0)
 add("회전 막대", "판을 위에서 5N 으로 누름", "막대 팔 꺾임 (가운데 옆)", F_BUMP * (R_FOIL - 14.0) * ((hi[1] - lo[1]) / 2) / I[0], S_XY, "단면 %.0f x %.0f" % (hi[0] - lo[0], hi[1] - lo[1]))
-# 축 구멍 (D 모양): 꺼진 모터를 판으로 억지로 돌릴 때
+add("회전 막대", "판 옆 모서리를 5N 으로 밂", "막대 팔 옆으로 꺾임", F_BUMP * (R_FOIL - 14.0) * ((hi[0] - lo[0]) / 2) / I[1], S_XY)
+# 균형추 쪽 팔: 동전 12개(65g) + 통의 무게가 누운 자세에서 옆으로 걸린다
+A2, c2, I2, (lo2, hi2) = section(rb, 0, -14.0)
+Wp = (COIN_G * COIN_SLOTS + 8.0) * G9
+add("회전 막대", "동전 12개를 넣고 누운 자세", "균형추 쪽 팔 꺾임", Wp * (abs(POD_XC) - 14.0) * ((hi2[0] - lo2[0]) / 2) / I2[1], S_XY, "동전·통 무게 %.2fN" % Wp)
+# 마개 나사 2개: 동전 무게를 아래에서 받친다
+add("회전 막대", "동전 12개 + 떨어뜨림(3배)", "마개 나사산 뽑힘 (M3, 4.7mm 물림)", 3 * Wp / (2 * np.pi * 3.0 * 4.7 * 0.5), T_XY, "나사 2개")
+# 축 구멍 (D 모양): 꺼진 모터를 판으로 억지로 돌릴 때. 축 고정 나사(M3)가 납작한 면을 누른다
 flat = D_BORE_FLAT; dia = D_BORE_D; Lf = 6.0
 lever = (dia / 2 + flat / 2) / 2 * 0.9                                              # 납작한 면에서 힘이 걸리는 팔 길이 어림
 Ff = T_BACK / (2 * lever)
 add("회전 막대", "꺼진 판을 손으로 돌림", "축 구멍 납작한 면 눌림", Ff / (Lf * 1.0), S_BEAR, "모터가 버티는 힘 %.0f mN·m 까지" % T_BACK)
+A_nut = 0.866 * 5.5 ** 2 - np.pi * 1.7 ** 2                                         # 너트 한 면의 넓이에서 구멍을 뺀 것 (17 mm2)
+add("회전 막대", "축 고정 나사를 조임 (0.2 N·m)", "너트 자리 벽 눌림", (200.0 / (0.2 * 3.0)) / A_nut, S_BEAR, "나사가 미는 힘 약 330N. 손끝으로 멈추는 데까지만 조인다 (세게 조이면 너트 자리가 눌린다)")
 res["blade_bump_torque_mNm"] = F_BUMP * R_FOIL
 res["note_motor3"] = "판 가장자리를 5N 으로 치면 축에 %.0f mN·m 가 걸린다: 모터가 버티는 힘(%.0f)보다 커서 모터가 따라 돈다 (출력물보다 모터 기어가 먼저 받는다)" % (F_BUMP * R_FOIL, T_BACK)
 
@@ -166,39 +172,26 @@ Rm = ro + 2.0; Iclip = CLIP_T * 4.0 ** 3 / 12
 P_open = (2 * np.pi * (TUBE_RO - ro)) * E_MOD * Iclip / (3 * np.pi * Rm ** 3)        # 틈을 벌리는 힘 어림
 F_lift = P_open * 2.5 * (1 + 0.3) / (1 - 0.3)                                        # 마찰 0.3, 45도 벽
 res["clip_release_N"] = round(F_lift, 0)
-res["tip_over"] = {}
 
-# ================================================================ 7. 넘어짐: 무게중심이 받침 밖으로 나가는지, 얼마나 밀면 넘어가는지
-def tip(size, batt_g, length, pitch):
-    my, mz = M["com_back"], M["com_up"]; p = np.radians(pitch)
-    hx = -my * np.cos(p) + mz * np.sin(p); hz = H_T + my * np.sin(p) + mz * np.cos(p)
-    head = M["head_g"] + (16.0 if length > 150 else 0.0)
-    yoke = M["yoke_g"] + 34 * 2 + 10
-    basep = (60.0 if size == "S" else 95.0) + 45.0 + batt_g                           # 통 + 덮개 + 배터리
-    tot = head + yoke + basep
-    cgx = (head * hx + yoke * (-12.0)) / tot                                          # 요크는 전선 상자 때문에 뒤로 조금
-    cgz = (head * hz + yoke * 70.0 + basep * 14.0) / tot
-    R = BASE[size]["R"]
-    F_tip = tot * G9 * (R - abs(cgx)) / 235.0                                         # 머리 꼭대기(높이 235)를 넘어가는 쪽으로 미는 힘
-    return dict(total_g=round(tot), cg_off=round(cgx, 1), cg_h=round(cgz, 1), margin_mm=round(R - abs(cgx), 1), push_N=round(F_tip, 2))
-for size, batt in (("S", 200.0), ("S", 0.0), ("L", 380.0)):
-    for length in (150.0, 200.0):
-        for pitch in (TILT3, 85.0):
-            res["tip_over"]["%s 배터리 %dg 판 %d 끄덕임 %.0f" % (size, batt, length, pitch)] = tip(size, batt, length, pitch)
+# 넘어짐(무게중심, 기울기, 미는 힘)은 tipover.py 와 tip_mujoco.py 가 따로 본다
 
 # ================================================================ 8. 작은 것들
-d = 2.5
-F_peg = S_Z * (np.pi * d ** 3 / 32) / 3.0
-res["pi_peg_break_N"] = round(F_peg, 1)
-add("머리 몸통", "파이를 꽂을 때 옆으로 5N", "파이 기둥 못 꺾임 (지름 2.5)", 5.0 * 3.0 / (np.pi * d ** 3 / 32), S_Z, "못 하나가 옆 힘 %.0fN 에서 부러진다: 파이는 똑바로 눌러 꽂는다" % F_peg)
+# 파이·드라이버 기둥 (M2.5 나사가 4.3mm 물린다): 나사산이 뽑히는 힘, 기둥이 옆으로 꺾이는 힘
+pull = T_Z * np.pi * 2.5 * 4.3 * 0.5                                                 # 나사산의 절반이 힘을 받는다고 본다
+res["m25_pullout_N"] = round(pull, 0)
+add("머리 몸통", "파이를 앞으로 20N 으로 당김", "M2.5 나사산 뽑힘 (기둥 하나)", (20.0 / 4) / (np.pi * 2.5 * 4.3 * 0.5), T_Z, "기둥 하나가 약 %.0fN 까지 버틴다" % pull)
+Zp = np.pi * ((2 * PI_POST_R) ** 4 - (2 * PILOT25) ** 4) / (32 * 2 * PI_POST_R)
+add("머리 몸통", "파이를 옆으로 10N 으로 밂", "파이 기둥 꺾임 (지름 6, 높이 4)", (10.0 / 4) * 4.0 / Zp, S_Z)
+Zd = np.pi * ((2 * DRV_POST_R) ** 4 - (2 * PILOT25) ** 4) / (32 * 2 * DRV_POST_R)
+add("머리 몸통", "드라이버 보드를 옆으로 10N 으로 밂", "드라이버 기둥 꺾임 (지름 5.4, 높이 3.4)", (10.0 / 4) * DRV_POST_H / Zd, S_Z)
+add("마커 틀", "틀 가운데를 5N 으로 당김", "틀 꺾임 (나사 사이 103mm, 두께 2)", 5.0 * 103.0 / 4 / (2 * 6.5 * MK_FRAME["t"] ** 2 / 6), S_XY, "옆 띠 2개(폭 6.5)가 받는다")
+add("핀 막이", "핀이 5N 으로 밀려 나옴", "막이 턱 꺾임", 5.0 * 3.0 / (9.0 * 1.65 ** 2 / 6), S_XY, "턱 두께 1.65, 폭 9")
 add("머리 뚜껑", "버튼을 5N 으로 누름", "버튼 받침 살 눌림", 5.0 / (1.8 * 6.0), S_BEAR)
 add("모터 자리", "판 모터가 가장 세게 돌 때", "모터 귀 기둥 꺾임", (T_MOTOR / (2 * M_EAR)) * 14.0 / (np.pi * 6.0 ** 3 / 32), S_Z)
 
 bad = [r_ for r_ in rows if not r_["ok"]]
 print("\n검사 %d개 가운데 여유 2배 아래 %d개" % (len(rows), len(bad)))
-for k, v in res["tip_over"].items():
-    print("   넘어짐 %-28s 전체 %4dg, 무게중심이 축에서 %5.1fmm, 받침 끝까지 %5.1fmm, 꼭대기를 %.1fN 으로 밀면 넘어감" % (k, v["total_g"], v["cg_off"], v["margin_mm"], v["push_N"]))
-print("   판이 제 무게로 처지는 양: 150 = %.2fmm, 200 = %.2fmm.  고리가 벌어져 빠지는 힘 약 %dN.  %s" % (res["blade_150_self_sag"], res["blade_200_self_sag"], res["clip_release_N"], res["note_motor3"]))
+print("   누운 자세에서 알루미늄 판이 제 무게로 처지는 양: 1T = %.3fmm, 0.5T = %.3fmm.  고리가 벌어져 빠지는 힘 약 %dN.  %s" % (res["plate_1_self_sag"], res["plate_0.5_self_sag"], res["clip_release_N"], res["note_motor3"]))
 res["rows"] = rows; res["n"] = len(rows); res["n_low"] = len(bad)
 res["material"] = dict(S_XY=S_XY, S_Z=S_Z, T_XY=T_XY, T_Z=T_Z, S_BEAR=S_BEAR, E=E_MOD)
 res["loads"] = dict(T_MOTOR=T_MOTOR, T_BACK=T_BACK, F_BUMP=F_BUMP, F_HAND=F_HAND, W_HEAD=round(W_HEAD, 2), W_DEV=round(W_DEV, 2))

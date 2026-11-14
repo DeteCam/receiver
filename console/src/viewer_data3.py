@@ -18,10 +18,10 @@ def _find(cands, name):
 
 
 # 저장소(console/src)에서는 옆 폴더들을 찾는다: cad, firmware/core, sim
-CAD = _find(["../../cad", "../rx2"], "parts2.py")
-CORE = _find(["../../firmware/core", "../rx2/sim"], "model.py")                                  # 회절 표를 만드는 계산
-SIM = _find(["../../sim", "../rx2/sim"], "result.json")                                          # 미리 돌려 둔 시뮬레이션 결과
-for d in (os.path.dirname(CAD), CORE, CAD):         # 작업용 배치에서는 parts.py, cadlib.py 가 한 칸 위에 있다
+CAD = _find(["../../cad/model"], "parts2.py")
+CORE = _find(["../../firmware/core"], "model.py")                                  # 회절 표를 만드는 계산
+SIM = _find(["../../sim/direction"], "result.json")                                          # 미리 돌려 둔 시뮬레이션 결과
+for d in (CORE, CAD):
     sys.path.insert(0, d)
 import numpy as np
 import manifold3d as m3
@@ -66,8 +66,10 @@ def build_meshes():
         ("sector", P.sector_head(), "H", C["accent"], "부채꼴 기어", 0.3),
         ("motor3", v1._m1(mb), "H", C["metal"], "모터 3", 0), ("motor3_cap", v1._m1(mc), "H", C["cap"], "모터 3", 0),
         ("pi_board", pb, "H", C["pcb"], "라즈베리파이", 0), ("pi_parts", pc, "H", C["metal"], "라즈베리파이", 0), ("usb_plug", P.usb_plug_dummy(), "H", C["dark"], "전원선", 0),
-        ("rotor_bar", P.rotor_bar(), "R", C["accent"], "회전 막대", 0), ("plate", P.al_plate(150.0), "R", C["foil"], "알루미늄 판 (100 × 150 × 1T)", 0),
-        ("rotor_hw", P.rotor_hw(150.0), "R", C["screw"], "판 볼트와 너트, 축 고정 나사", 0), ("coins", P.coins(), "R", C["metal"], "균형추 (100원 동전 8개)", 0), ("coin_cap", P.coin_cap(), "R", C["accent"], "균형추 마개", 0),
+        ("rotor_bar", P.rotor_bar(), "R", C["accent"], "회전 막대", 0), ("plate", P.al_plate(150.0), "R", C["foil"], "알루미늄 판 (100 × 150 × %gT)" % P.AL_T, 0),
+        ("frame_back", P.frame_back(), "R", C["accent"], "판 틀 (뒤)", 0), ("frame_front", P.frame_front_seated(), "R", C["accent"], "판 틀 (앞)", 0),
+        ("rotor_hw", P.rotor_hw(150.0, P.COINS[(150.0, P.AL_T)]), "R", C["screw"], "판 틀 나사와 너트, 축 고정 나사", 0), ("coins", P.coins(P.COINS[(150.0, P.AL_T)]), "R", C["metal"], "균형추 (100원 동전 %d개)" % P.COINS[(150.0, P.AL_T)], 0),
+        ("coin_cap", P.coin_cap(P.COINS[(150.0, P.AL_T)]), "R", C["accent"], "균형추 마개", 0),
         ("marker_frame", P.marker_frame(), "H", C["accent"], "AR 마커 틀", 0), ("keeper_r", P.pin_keeper(1), "Y", C["accent"], "핀 막이", 0), ("keeper_l", P.pin_keeper(-1), "Y", C["accent"], "핀 막이", 0),
     ]
     for k in range(3):

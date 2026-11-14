@@ -58,7 +58,7 @@ def _find(cands, must):
     sys.exit("%s 를 찾지 못했습니다 (%s)" % (must, ", ".join(cands)))
 
 
-for _d in (_find([".", "../core", "../host"], "analyze3.py"), _find([".", "../core", "../sim", "../../rx2/sim"], "locate.py")):
+for _d in (_find([".", "../core", "../host"], "analyze3.py"), _find([".", "../core"], "locate.py")):
     if _d not in sys.path:
         sys.path.insert(0, _d)
 import csi as CSI                      # noqa: E402

@@ -15,9 +15,9 @@ def _find(cands, name):
 
 
 # 저장소(console/src)에서는 옆 폴더들을 찾는다: sim (montecarlo), firmware (core, pi, host)
-sys.path.insert(0, _find(["../../firmware/core", "../rx2/sim"], "estimator.py"))
-sys.path.insert(0, _find(["../../sim", "../rx2/sim"], "montecarlo.py")); sys.path.insert(0, _find(["../../firmware/pi", "../code/pi"], "rx3.py"))
-sys.path.insert(0, _find(["../../firmware/host", "../code/host"], "scan3.py"))
+sys.path.insert(0, _find(["../../firmware/core"], "estimator.py"))
+sys.path.insert(0, _find(["../../sim/direction"], "montecarlo.py")); sys.path.insert(0, _find(["../../firmware/pi"], "rx3.py"))
+sys.path.insert(0, _find(["../../firmware/host"], "scan3.py"))
 import montecarlo as mc
 from estimator import unit, azel, frame, to_scan, sphere
 from fusion import Fusion, trough, consistency, next_scan, p_seen

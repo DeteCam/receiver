@@ -1,11 +1,11 @@
 /* DeteCam 3축 화면의 계산 부분 (화면과 무관). 브라우저에서는 window.DC3, node 에서는 module.exports.
-   파이썬 원본을 그대로 옮긴 것이다. 고칠 때는 원본과 같이 고치고 console3/test_core3.js 를 돌린다.
-     rx2/sim/estimator.py   방향 약속 (frame, to_scan, sphere)
-     rx2/sim/model.py       판 뒤 신호 표 (Plate.look)
-     rx2/sim/montecarlo.py  방 모형 (World)
-     rx2/sim/fusion.py      골 찾기와 방향 합치기 (trough, Fusion, consistency, next_scan)
-     code/pi/rx3.py         모터 시간 모형 (step, move_to, scan, home)
-     code/host/scan3.py     재는 순서
+   파이썬 원본을 그대로 옮긴 것이다. 고칠 때는 원본과 같이 고치고 console/src/test_core3.js 를 돌린다.
+     firmware/core/estimator.py   방향 약속 (frame, to_scan, sphere)
+     firmware/core/model.py       판 뒤 신호 표 (Plate.look)
+     sim/direction/montecarlo.py  방 모형 (World)
+     firmware/core/fusion.py      골 찾기와 방향 합치기 (trough, Fusion, consistency, next_scan)
+     firmware/pi/rx3.py           모터 시간 모형 (step, move_to, scan, home)
+     firmware/host/scan3.py       재는 순서
    각도는 도. yaw = 받침(J1), pitch = 끄덕임(J2), spin = 판(J3). */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory();

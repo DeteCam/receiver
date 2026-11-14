@@ -1,6 +1,6 @@
 """3축 화면을 만든다: 이 폴더의 template.html 에 계산 코드(core3.js)와 데이터(data.json)를 넣어 HTML 한 장으로.
     python3 build3.py                   ->  ../dist/DeteCam_3축_화면.html   혼자 열리는 파일 (three.js 도 안에 넣는다. 인터넷 없이 열린다)
-                                            저장소에서는 ../../docs/화면/ 에도 같은 파일을 둔다
+                                            저장소에서는 ../../docs/simulator/index.html 에도 같은 파일을 둔다 (깃허브 Pages 주소로 열린다)
     python3 build3.py --out 경로         ->  혼자 열리는 파일을 다른 곳에
     python3 build3.py --fragment 경로    ->  머리말 없는 조각 (three.js 는 CDN 에서 받는다). 웹에 올릴 때 쓴다
 파이썬만 있으면 된다. 데이터(data.json)는 viewer_data3.py 가, 화면의 글과 그림은 template.html 이, 계산은 core3.js 가 맡는다."""
@@ -45,6 +45,6 @@ if __name__ == "__main__":
     if not did:
         s = standalone(frag); open(out, "w", encoding="utf-8").write(s)
         print("화면 %.2f MB -> %s" % (len(s.encode()) / 1e6, out))
-        note = os.path.join(os.path.dirname(up), "docs", "화면")                 # 저장소에서는 문서 폴더에도 같은 파일을 둔다 (옵시디언 노트가 이 파일을 보여 준다)
+        note = os.path.join(os.path.dirname(up), "docs", "simulator")            # 저장소에서는 문서 폴더에도 같은 파일을 둔다 (옵시디언 노트와 깃허브 Pages 가 이 파일을 보여 준다)
         if "--out" not in a and os.path.isdir(note):
-            open(os.path.join(note, "DeteCam 3축 화면.html"), "w", encoding="utf-8").write(s); print("문서 폴더에도 ->", note)
+            open(os.path.join(note, "index.html"), "w", encoding="utf-8").write(s); print("문서 폴더에도 ->", note)

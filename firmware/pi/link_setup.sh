@@ -4,7 +4,8 @@
 #   ② 둘레 기기를 엿듣는 탐지 동글 (모니터 모드가 되는 것. 예: RT5370, MT7601U, AR9271 칩) -> 이름 wmon0. 없어도 수신기는 돈다 (탐지가 덜 정확할 뿐)
 #
 #   sudo ./link_setup.sh check                  동글이 잡혔는지, 어느 것을 어디에 쓸지 본다 (아무것도 바꾸지 않는다)
-#   sudo ./link_setup.sh ap [이름] [비밀번호]     수신기가 자기 Wi-Fi 를 만든다 (기본 DeteCam-RX / detecam1234). 폰은 여기에 붙어 http://192.168.4.1
+#   sudo ./link_setup.sh ap [이름] [비밀번호]     수신기가 자기 Wi-Fi 를 만든다 (이름 기본 DeteCam-RX). 폰은 여기에 붙어 http://192.168.4.1
+#                                                비밀번호를 안 주면 처음 한 번 무작위로 만들어 /etc/detecam/ap_password 에 두고 화면에 보여 준다 (다시 보기: sudo cat 그 파일)
 #   sudo ./link_setup.sh client 이름 비밀번호     폰 핫스팟이나 공유기에 붙는다 (AP 가 안 될 때)
 #   sudo ./link_setup.sh mon                    탐지 동글을 준비한다: 이름을 고정하고, 다른 프로그램이 건드리지 않게 하고, 모니터 모드를 시험한다
 #   sudo ./link_setup.sh off                    위 설정을 모두 되돌린다
@@ -68,7 +69,7 @@ undo_mon() {
 }
 
 link_file() {                                 # 동글의 MAC 주소로 이름을 고정한다 (다음에 켤 때부터 적용)
-  local ifc=$1 mac; mac=$(cat /sys/class/net/$ifc/address)
+  local ifc=$1 mac; mac=$(cat "/sys/class/net/$ifc/address")
   say "동글 $ifc (MAC $mac) 의 이름을 $NAME 으로 고정합니다"
   printf '[Match]\nMACAddress=%s\n\n[Link]\nName=%s\n' "$mac" "$NAME" > /etc/systemd/network/10-detecam-link.link
 }
@@ -82,7 +83,7 @@ check)
     echo "   $(basename "$d")  드라이버 $(basename "$(readlink -f "$d/device/driver")")  ($(basename "$(readlink -f "$d/device/subsystem")"))"
   done
   if IFC=$(find_dongle); then
-    PHY=$(basename "$(readlink -f /sys/class/net/$IFC/phy80211)")
+    PHY=$(basename "$(readlink -f "/sys/class/net/$IFC/phy80211")")
     say "폰과 통신할 동글: $IFC ($PHY). 지원하는 방식"; iw phy "$PHY" info | sed -n '/Supported interface modes/,/Band/p' | grep '\*' | sed 's/^/   /'
     if iw phy "$PHY" info | sed -n '/Supported interface modes/,/Band/p' | grep -q '\* AP$'; then
       echo "   -> AP 가 목록에 있습니다:  sudo ./link_setup.sh ap  를 해 보세요."
@@ -93,7 +94,7 @@ check)
     echo "   USB 무선 동글을 찾지 못했습니다."
   fi
   if M=$(find_mon); then
-    DRV=$(basename "$(readlink -f /sys/class/net/$M/device/driver)")
+    DRV=$(basename "$(readlink -f "/sys/class/net/$M/device/driver")")
     say "탐지 동글: $M (드라이버 $DRV)"
     echo "   -> 준비:  sudo ./link_setup.sh mon   (이름 고정 + 모니터 모드 시험)"
     dmesg 2>/dev/null | grep -i -E "$DRV|firmware" | grep -i -E "fail|error|not found" | tail -3 | sed 's/^/   주의(dmesg): /' || true
@@ -106,8 +107,13 @@ check)
   say "전원"; vcgencmd get_throttled 2>/dev/null | sed 's/^/   /' || true; echo "   (throttled=0x0 이 아니면 전압이 모자랐던 적이 있는 것: 굵은 USB 선, 2A 넘게 나오는 배터리를 쓴다)"
   ;;
 ap)
-  need_root; SSID=${2:-DeteCam-RX}; PASS=${3:-detecam1234}
+  need_root; SSID=${2:-DeteCam-RX}
+  mkdir -p /etc/detecam; PF=/etc/detecam/ap_password                  # 비밀번호는 장치마다 따로: 저장소에 적힌 기본값을 쓰지 않는다
+  if [ -n "${3:-}" ]; then PASS=$3
+  elif [ -s "$PF" ]; then PASS=$(cat "$PF")
+  else PASS=$(head -c 512 /dev/urandom | tr -dc 'a-z0-9' | cut -c1-10); fi
   [ ${#PASS} -ge 8 ] || { echo "비밀번호는 8자 이상이어야 합니다."; exit 1; }
+  printf '%s\n' "$PASS" > "$PF"; chmod 600 "$PF"
   IFC=$(find_dongle) || { echo "USB 무선 동글을 찾지 못했습니다."; exit 1; }
   dpkg -s hostapd dnsmasq >/dev/null 2>&1 || { say "hostapd, dnsmasq 를 설치합니다 (인터넷이 필요합니다. apt upgrade 는 하지 않습니다)"; apt-get install -y hostapd dnsmasq; }
   undo; link_file "$IFC"
@@ -136,6 +142,7 @@ CONF
   systemctl unmask hostapd >/dev/null 2>&1 || true; systemctl enable hostapd dnsmasq >/dev/null 2>&1
   say "끝. 다시 켜면 적용됩니다:  sudo reboot"
   echo "   켠 뒤 폰에서 Wi-Fi '$SSID' (비밀번호 $PASS) 에 붙고, 브라우저에서 http://192.168.4.1 을 엽니다."
+  echo "   비밀번호는 $PF 에 있다 (다시 보기: sudo cat $PF). 바꾸려면: sudo ./link_setup.sh ap $SSID 새비밀번호"
   echo "   Wi-Fi 가 안 보이면 랜선으로 들어와서:  sudo systemctl status hostapd ;  sudo journalctl -u hostapd -n 30"
   ;;
 client)
@@ -152,7 +159,7 @@ client)
 mon)
   need_root
   IFC=$(find_mon) || { echo "탐지 동글을 찾지 못했습니다. 모니터 모드가 되는 동글(드라이버 $MON_OK)을 꽂고 'sudo ./link_setup.sh check' 로 확인하세요."; exit 1; }
-  ADDR=$(cat /sys/class/net/$IFC/address); undo_mon
+  ADDR=$(cat "/sys/class/net/$IFC/address"); undo_mon
   say "탐지 동글 $IFC (MAC $ADDR) 의 이름을 $MON 으로 고정합니다 (다음에 켤 때부터 적용)"
   printf '[Match]\nMACAddress=%s\n\n[Link]\nName=%s\n' "$ADDR" "$MON" > /etc/systemd/network/10-detecam-mon.link
   say "이 동글은 주소를 받거나 Wi-Fi 에 붙지 않게 합니다 (/etc/dhcpcd.conf 맨 위에 denyinterfaces. 원본은 dhcpcd.conf.detecam.bak)"

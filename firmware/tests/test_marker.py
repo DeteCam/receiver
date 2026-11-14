@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """마커 좌표 파일이 설계와 같은지 본다.   python3 tests/test_marker.py
-수신기가 폰에 알려 주는 마커 귀의 좌표는 pi/marker.json 에서 나온다. 이 파일은 CAD(cad/marker.py)가 만드는 마커/marker.json 의 복사본이다.
+수신기가 폰에 알려 주는 마커 귀의 좌표는 pi/marker.json 에서 나온다. 이 파일은 CAD(cad/export/marker.py)가 만드는 marker/marker.json 의 복사본이다.
 등판이나 마커 자리를 바꾸고 한쪽만 고치면 AR 표시가 틀어지므로, 두 파일이 같은지와 수신기 코드가 같은 값을 내는지 확인한다."""
 import json, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); PI = os.path.normpath(os.path.join(HERE, "..", "pi"))
@@ -10,10 +10,10 @@ mine = os.path.join(PI, "marker.json")
 J = json.load(open(mine, encoding="utf-8"))
 assert J["ids"] == [0, 1] and len(J["corners_head_mm"]) == 2 and all(len(v) == 4 for v in J["corners_head_mm"].values()), "marker.json 의 모양이 다르다"
 
-for c in ("../../마커/marker.json", "../../out2/marker/marker.json"):          # 저장소 배치, 작업용 배치
+for c in ("../../marker/marker.json", "../../../out2/marker/marker.json"):     # 저장소 배치, 작업용 배치 (src/ 옆의 out2)
     cad = os.path.normpath(os.path.join(HERE, c))
     if os.path.exists(cad):
-        assert open(cad, "rb").read() == open(mine, "rb").read(), "pi/marker.json 이 %s 와 다르다. cad/marker.py 를 돌린 뒤 복사한다" % cad
+        assert open(cad, "rb").read() == open(mine, "rb").read(), "pi/marker.json 이 %s 와 다르다. cad/export/marker.py 를 돌린 뒤 복사한다" % cad
         print("설계의 마커 파일과 같다:", cad)
         break
 else:

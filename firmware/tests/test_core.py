@@ -6,7 +6,7 @@
 import json, os, sys
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
-for d in (".", "../pi", "../core", "../host", "../../rx2/sim"):
+for d in (".", "../pi", "../core", "../host"):
     p = os.path.normpath(os.path.join(HERE, d))
     if os.path.isdir(p) and p not in sys.path:
         sys.path.insert(0, p)

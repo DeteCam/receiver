@@ -3,9 +3,9 @@
     python3 slice_bambu.py <STL 폴더> <결과 폴더> [--only 이름조각] [--parts | --parts-only]
 
 판마다 Bambu Studio 를 두 번 돌린다. 둘 다 같은 STL, 같은 자리, 같은 설정을 쓴다.
-  1) 프로젝트 파일(.3mf): 부품 + 놓는 자리 + 설정. Bambu Studio 에서 열어 고칠 수 있다.     -> 결과/프로젝트/
-  2) 바로 출력 파일(.gcode.3mf): 슬라이싱까지 끝낸 것. 프린터로 바로 보낼 수 있다.           -> 결과/바로출력/
-미리보기 그림은 Bambu Studio 가 그린 것을 꺼낸다.                                           -> 결과/미리보기/
+  1) 프로젝트 파일(.3mf): 부품 + 놓는 자리 + 설정. Bambu Studio 에서 열어 고칠 수 있다.     -> 결과/project/
+  2) 바로 출력 파일(.gcode.3mf): 슬라이싱까지 끝낸 것. 프린터로 바로 보낼 수 있다.           -> 결과/gcode/
+미리보기 그림은 Bambu Studio 가 그린 것을 꺼낸다.                                           -> 결과/preview/
 --parts 를 주면 부품을 하나씩 따로 슬라이싱해서 부품별 시간·무게도 구한다 (부품표용).
 
 놓는 자리는 자동 배치에 맡기지 않고 아래 PLATES 에 직접 적었다 (판 가장자리와 앞쪽 금지 구역을 피하려고).
@@ -35,21 +35,24 @@ XS6 = (73.0, 95.0, 117.0, 139.0, 161.0, 183.0)
 FIT6 = (1, 1, 2, 2, 3, 3)
 PLATES = {
     "0판_시험조각": ("맨 먼저 뽑는다: 시험 조각, 보드 구멍 맞춤 판, 모터 2 맞춤 링, 핀 3종 × 2개, 작은 기어 3종 × 2개 (핀·기어는 왼쪽부터 맞춤 1, 1, 2, 2, 3, 3). "
-                "받침 크기와 상관없이 쓰는 작은 것들도 여기서 같이 뽑는다: 구멍 뚫기 틀, 마커 틀, 핀 막이 2개, 고리", 15,
-                [("90_test_coupon", 105.0, 152.0, 0), ("91_driver_check", 162.0, 152.0, 0), ("16_m2_ring", 198.0, 152.0, 0)]
+                "받침 크기와 상관없이 쓰는 작은 것들도 여기서 같이 뽑는다: 마커 틀, 핀 막이 2개, 고리", 15,
+                [("90_test_coupon", 105.0, 157.0, 0), ("91_driver_check", 162.0, 152.0, 0), ("16_m2_ring", 198.0, 152.0, 0)]
                 + [("13_pin_fit%d" % f, x, 116.0, 0) for f, x in zip(FIT6, XS6)] + [("05_pinion_fit%d" % f, x, 87.0, 0) for f, x in zip(FIT6, XS6)]
-                + [("18_drill_jig", 128.0, 214.5, 90), ("15_marker_frame", 128.0, 47.0, 0), ("14_pin_keeper", 45.0, 47.0, 0), ("14_pin_keeper", 45.0, 65.0, 0), ("03_clip", 215.0, 47.0, 0)]),
-    "1판_받침_S": ("받침 통(작은 것), 받침 덮개, 랜선 홈 마개", 15, [("02_base_cover_S", 71.5, 90.5, 0), ("01_base_tub_S", 182.5, 182.5, 0), ("17_lan_cap", 176.0, 62.0, 0)]),
+                + [("15_marker_frame", 128.0, 47.0, 0), ("14_pin_keeper", 45.0, 47.0, 0), ("14_pin_keeper", 45.0, 65.0, 0), ("03_clip", 215.0, 47.0, 0)]),
+    "1판_받침_S": ("받침 통(작은 것), 받침 덮개, 랜선 홈 마개, 배터리 채움 조각 6개 (큰 받침에도 같은 것을 쓴다)", 15,
+                  [("02_base_cover_S", 71.5, 90.5, 0), ("01_base_tub_S", 182.5, 182.5, 0), ("17_lan_cap", 176.0, 62.0, 0)]
+                  + [("20_batt_fill", x, y, 0) for y in (178.0, 198.0, 218.0) for x in (40.0, 86.0)]),
     "2판_요크": ("요크 (회전판 + 팔 + 전선 상자)", 15, [("04_yoke", 128.0, 130.0, 0)]),
     "3판_머리": ("머리 몸통, 머리 뚜껑, 모터 자리, 부채꼴 기어", 15, [("07_head_shell", 66.5, 86.0, 0), ("08_head_lid", 187.0, 86.0, 0), ("09_crown", 66.5, 184.0, 0), ("06_sector_gear", 187.0, 195.0, 0)]),
+    "5판_판틀": ("판 틀 앞뒤: 알루미늄 판을 구멍 없이 감싼다. 뒤 틀은 판 쪽 면, 앞 틀은 바깥면을 바닥에", 15, [("18_frame_back", 128.0, 74.0, 0), ("19_frame_front", 128.0, 190.0, 0)]),
     "선택_받침통_L": ("큰 배터리용 받침 통 (지름 190)", 15, [("01_base_tub_L", 128.0, 132.0, 0)]),
     "선택_받침덮개_L": ("큰 받침의 덮개 (지름 186), 큰 받침용 랜선 홈 마개", 15, [("02_base_cover_L", 128.0, 132.0, 0), ("17_lan_cap_L", 232.0, 232.0, 0)]),
 }
 SP9 = [(70.0 + 30.0 * i, 62.0) for i in range(5)] + [(85.0 + 30.0 * i, 92.0) for i in range(4)]
 for n in (1, 2, 3):
-    PLATES["4판_회전부_맞춤%d" % n] = ("회전 막대(맞춤 %d) + 균형추 통 마개 + 채움 조각 9개. 채움 100%%" % n, 100,
+    PLATES["4판_회전부_맞춤%d" % n] = ("회전 막대(맞춤 %d) + 균형추 통 마개 + 동전 채움 조각 9개. 채움 100%%" % n, 100,
                                  [("10_rotor_bar_fit%d" % n, 128.0, 160.0, 0), ("11_coin_cap", 225.0, 78.0, 0)] + [("12_coin_spacer", x, y, 0) for x, y in SP9])
-ORDER = ["0판_시험조각", "1판_받침_S", "2판_요크", "3판_머리", "4판_회전부_맞춤1", "4판_회전부_맞춤2", "4판_회전부_맞춤3", "선택_받침통_L", "선택_받침덮개_L"]
+ORDER = ["0판_시험조각", "1판_받침_S", "2판_요크", "3판_머리", "4판_회전부_맞춤1", "4판_회전부_맞춤2", "4판_회전부_맞춤3", "5판_판틀", "선택_받침통_L", "선택_받침덮개_L"]
 FULL = ("10_rotor_bar", "11_coin_cap", "12_coin_spacer")          # 따로 슬라이싱할 때 채움 100% 로 하는 부품 (판에 올릴 때와 같게)
 
 
@@ -203,10 +206,10 @@ def slice_plate(name, infill, items, stl_dir, out, keep=True):
                g=round(sum(x["total_used_g"] for x in sp["filaments"]), 2), m=round((f["length_mm"] or 0) / 1000.0, 2), layers=f["layers"], max_z=f["max_z"],
                features=f["features"], settings=st, placed=placed, extent=f["extent"], gap_min=gap_min, edge_min=edge_min, notices=[w[0] for w in warns], printer_model_id=model_id, problems=probs)
     if keep:
-        shutil.copy(proj, os.path.join(out, "프로젝트", name + ".3mf")); shutil.copy(gc, os.path.join(out, "바로출력", name + ".gcode.3mf"))
-        open(os.path.join(out, "미리보기", name + ".png"), "wb").write(z.read("Metadata/plate_%d.png" % i))
+        shutil.copy(proj, os.path.join(out, "project", name + ".3mf")); shutil.copy(gc, os.path.join(out, "gcode", name + ".gcode.3mf"))
+        open(os.path.join(out, "preview", name + ".png"), "wb").write(z.read("Metadata/plate_%d.png" % i))
         try:
-            open(os.path.join(out, "미리보기", name + "_위에서.png"), "wb").write(z.read("Metadata/top_%d.png" % i))
+            open(os.path.join(out, "preview", name + "_위에서.png"), "wb").write(z.read("Metadata/top_%d.png" % i))
         except KeyError:
             pass
     shutil.rmtree(tmp, ignore_errors=True)
@@ -220,9 +223,9 @@ def hm(s):
 if __name__ == "__main__":
     stl_dir, out = sys.argv[1], sys.argv[2]
     only = sys.argv[sys.argv.index("--only") + 1] if "--only" in sys.argv else None
-    for d in ("프로젝트", "바로출력", "미리보기", "_tmp"):
+    for d in ("project", "gcode", "preview", "_tmp"):
         os.makedirs(os.path.join(out, d), exist_ok=True)
-    path = os.path.join(out, "요약.json")
+    path = os.path.join(out, "summary.json")
     summary = json.load(open(path, encoding="utf-8")) if os.path.exists(path) else dict(plates={}, parts={})
     bad = 0
     for name in ORDER:
@@ -230,9 +233,11 @@ if __name__ == "__main__":
         if (only and only not in name) or "--parts-only" in sys.argv:
             continue
         row = slice_plate(name, infill, items, stl_dir, out); row["desc"] = desc
-        summary["plates"][name] = row
-        if not row["ok"]:
+        if not row["ok"]:                                   # 실패하면 전에 잘 된 결과를 지우지 않는다 (실패는 따로 적는다)
+            summary.setdefault("failed", {})[name] = row.get("error", "")
+            json.dump(summary, open(path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
             bad += 1; print("%-18s 실패: %s\n%s" % (name, row["error"], row.get("log", "")), flush=True); continue
+        summary["plates"][name] = row; summary.get("failed", {}).pop(name, None)
         bad += bool(row["problems"])
         print("%-18s %s  %6.1f g  개체 %2d  층 %3d  부품 사이 %s  가장자리 %s  %s" % (name, hm(row["sec"]), row["g"], len(row["placed"]), row["layers"], row["gap_min"], row["edge_min"],
               ("<== " + "; ".join(row["problems"])) if row["problems"] else "문제 없음"), flush=True)
@@ -249,8 +254,11 @@ if __name__ == "__main__":
             summary["parts"][n] = dict(sec=row["sec"], model_sec=row["model_sec"], g=row["g"], m=row["m"], infill=infill, layers=row["layers"], features=row["features"], problems=row["problems"])
             print("%-22s %s (준비 빼고 %s)  %6.1f g  %s" % (n, hm(row["sec"]), hm(row["model_sec"]), row["g"], ("<== " + "; ".join(row["problems"])) if row["problems"] else ""), flush=True)
             json.dump(summary, open(path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    for name, row in summary["plates"].items():               # 설명은 늘 지금 것으로 (다시 슬라이싱하지 않은 판도)
+        if name in PLATES:
+            row["desc"] = PLATES[name][0]
     json.dump(summary, open(path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    with open(os.path.join(out, "요약.csv"), "w", newline="", encoding="utf-8-sig") as f:
+    with open(os.path.join(out, "summary.csv"), "w", newline="", encoding="utf-8-sig") as f:
         w = csv.writer(f); w.writerow(["판", "올리는 것", "채움 %", "출력 시간", "시간 (초)", "필라멘트 g", "필라멘트 m", "층 수", "서포트", "확인할 것"])
         for name in ORDER:
             row = summary["plates"].get(name)

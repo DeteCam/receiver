@@ -10,7 +10,7 @@ mkdir -p "$XDG_RUNTIME_DIR"; chmod 700 "$XDG_RUNTIME_DIR"
 if [ ! -S "$XDG_RUNTIME_DIR/wl-bs" ] || ! pgrep -x weston > /dev/null; then
   rm -f "$XDG_RUNTIME_DIR/wl-bs" "$XDG_RUNTIME_DIR/wl-bs.lock"
   (weston --backend=headless --renderer=gl --socket=wl-bs --width=1280 --height=800 --idle-time=0 > "$XDG_RUNTIME_DIR/weston.log" 2>&1 &)
-  for i in $(seq 1 40); do [ -S "$XDG_RUNTIME_DIR/wl-bs" ] && break; python3 -c "import time; time.sleep(0.25)"; done
+  for _ in $(seq 1 40); do [ -S "$XDG_RUNTIME_DIR/wl-bs" ] && break; python3 -c "import time; time.sleep(0.25)"; done
 fi
 export WAYLAND_DISPLAY=wl-bs LD_LIBRARY_PATH="$D/bin" LC_ALL=C
 # OpenGL 호출을 OSMesa 로 보낸다. shim/glshim.so 는  gcc -shared -fPIC -o shim/glshim.so shim/glshim.c  로 만든다

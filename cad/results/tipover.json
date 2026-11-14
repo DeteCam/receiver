@@ -1,0 +1,255 @@
+{
+ "reach": {
+  "150": {
+   "max_mm": 193,
+   "at_pitch": 86.0,
+   "measure_mm": 181,
+   "clear_cm": 23
+  }
+ },
+ "받침 S, 배터리 있음(200g), 판 100×150×0.5T": {
+  "size": "S",
+  "battery": true,
+  "plate_t": 0.5,
+  "length": 150.0,
+  "total_g": 997,
+  "masses": {
+   "base": 346.3,
+   "yoke": 225.1,
+   "head": 288.0,
+   "rotor": 137.4
+  },
+  "support_R": 68.5,
+  "worst": {
+   "pose": [
+    -87.0,
+    86.0,
+    180.0
+   ],
+   "off": 17.1,
+   "margin": 51.4,
+   "com_h": 79.3,
+   "tip_deg": 32.9,
+   "push_top_N": 2.45,
+   "top_h": 205
+  },
+  "measure": {
+   "off": 9.6,
+   "margin": 58.9,
+   "tip_deg": 33.1,
+   "push_top_N": 2.09,
+   "top_h": 276
+  },
+  "best_margin": 64.4,
+  "self_push": {
+   "spin": {
+    "force_N": 0.36,
+    "pct": 15.0
+   },
+   "nod": {
+    "force_N": 1.99,
+    "pct": 81.0
+   },
+   "yaw": {
+    "force_N": 1.06,
+    "pct": 43.0
+   }
+  }
+ },
+ "받침 S, 배터리 있음(200g), 판 100×150×0.3T": {
+  "size": "S",
+  "battery": true,
+  "plate_t": 0.3,
+  "length": 150.0,
+  "total_g": 980,
+  "masses": {
+   "base": 346.3,
+   "yoke": 225.1,
+   "head": 288.0,
+   "rotor": 120.1
+  },
+  "support_R": 68.5,
+  "worst": {
+   "pose": [
+    116.0,
+    -5.0,
+    270.0
+   ],
+   "off": 16.7,
+   "margin": 51.8,
+   "com_h": 92.7,
+   "tip_deg": 29.2,
+   "push_top_N": 1.67,
+   "top_h": 298
+  },
+  "measure": {
+   "off": 8.7,
+   "margin": 59.8,
+   "tip_deg": 34.0,
+   "push_top_N": 2.08,
+   "top_h": 276
+  },
+  "best_margin": 64.3,
+  "self_push": {
+   "spin": {
+    "force_N": 0.36,
+    "pct": 21.0
+   },
+   "nod": {
+    "force_N": 1.99,
+    "pct": 119.0
+   },
+   "yaw": {
+    "force_N": 1.06,
+    "pct": 64.0
+   }
+  }
+ },
+ "받침 S, 배터리 없음, 판 100×150×0.5T": {
+  "size": "S",
+  "battery": false,
+  "plate_t": 0.5,
+  "length": 150.0,
+  "total_g": 782,
+  "masses": {
+   "base": 131.3,
+   "yoke": 225.1,
+   "head": 288.0,
+   "rotor": 137.4
+  },
+  "support_R": 68.5,
+  "worst": {
+   "pose": [
+    58.0,
+    86.0,
+    180.0
+   ],
+   "off": 22.2,
+   "margin": 46.3,
+   "com_h": 97.4,
+   "tip_deg": 25.4,
+   "push_top_N": 1.73,
+   "top_h": 205
+  },
+  "measure": {
+   "off": 12.6,
+   "margin": 55.9,
+   "tip_deg": 26.6,
+   "push_top_N": 1.55,
+   "top_h": 276
+  },
+  "best_margin": 63.7,
+  "self_push": {
+   "spin": {
+    "force_N": 0.36,
+    "pct": 21.0
+   },
+   "nod": {
+    "force_N": 1.99,
+    "pct": 115.0
+   },
+   "yaw": {
+    "force_N": 1.06,
+    "pct": 61.0
+   }
+  }
+ },
+ "받침 L, 배터리 있음(400g), 판 100×150×0.5T": {
+  "size": "L",
+  "battery": true,
+  "plate_t": 0.5,
+  "length": 150.0,
+  "total_g": 1269,
+  "masses": {
+   "base": 618.6,
+   "yoke": 225.1,
+   "head": 288.0,
+   "rotor": 137.4
+  },
+  "support_R": 93.5,
+  "worst": {
+   "pose": [
+    -116.0,
+    86.0,
+    180.0
+   ],
+   "off": 14.0,
+   "margin": 79.5,
+   "com_h": 65.3,
+   "tip_deg": 50.6,
+   "push_top_N": 4.83,
+   "top_h": 205
+  },
+  "measure": {
+   "off": 7.3,
+   "margin": 86.2,
+   "tip_deg": 49.3,
+   "push_top_N": 3.89,
+   "top_h": 276
+  },
+  "best_margin": 90.9,
+  "self_push": {
+   "spin": {
+    "force_N": 0.36,
+    "pct": 7.0
+   },
+   "nod": {
+    "force_N": 1.99,
+    "pct": 41.0
+   },
+   "yaw": {
+    "force_N": 1.06,
+    "pct": 22.0
+   }
+  }
+ },
+ "받침 L, 배터리 없음, 판 100×150×0.5T": {
+  "size": "L",
+  "battery": false,
+  "plate_t": 0.5,
+  "length": 150.0,
+  "total_g": 854,
+  "masses": {
+   "base": 203.6,
+   "yoke": 225.1,
+   "head": 288.0,
+   "rotor": 137.4
+  },
+  "support_R": 93.5,
+  "worst": {
+   "pose": [
+    58.0,
+    86.0,
+    180.0
+   ],
+   "off": 20.5,
+   "margin": 73.0,
+   "com_h": 90.5,
+   "tip_deg": 38.9,
+   "push_top_N": 2.98,
+   "top_h": 205
+  },
+  "measure": {
+   "off": 11.6,
+   "margin": 81.9,
+   "tip_deg": 38.3,
+   "push_top_N": 2.48,
+   "top_h": 276
+  },
+  "best_margin": 89.3,
+  "self_push": {
+   "spin": {
+    "force_N": 0.36,
+    "pct": 12.0
+   },
+   "nod": {
+    "force_N": 1.99,
+    "pct": 67.0
+   },
+   "yaw": {
+    "force_N": 1.06,
+    "pct": 36.0
+   }
+  }
+ }
+}

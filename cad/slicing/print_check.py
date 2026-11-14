@@ -1,6 +1,6 @@
 """출력 검증: 슬라이싱한 파일(.gcode.3mf)을 다시 읽어서, 프린터에 넣었을 때 문제없이 뽑힐지 본다.
 
-    python3 print_check.py <STL 폴더> <슬라이스 결과 폴더> [--only 이름조각]      ->  결과 폴더의 출력검증.json
+    python3 print_check.py <STL 폴더> <슬라이스 결과 폴더> [--only 이름조각]      ->  결과 폴더의 print_check.json
 
 Bambu Studio 가 만든 G코드를 한 줄씩 읽어 '실제로 노즐이 지나가며 찍는 자리'를 층마다 0.2mm 칸 그림으로 만들고, 모델(STL)의 단면과 견준다.
   1) 파일   프린터가 읽는 것이 다 들어 있는지, G코드가 깨지지 않았는지(md5), 기종·노즐·필라멘트·판 종류
@@ -306,13 +306,13 @@ def check_plate(path, stl_dir, items, quick=False):
 if __name__ == "__main__":
     stl_dir, out = sys.argv[1], sys.argv[2]
     only = sys.argv[sys.argv.index("--only") + 1] if "--only" in sys.argv else None
-    summ = json.load(open(os.path.join(out, "요약.json"), encoding="utf-8"))
-    path = os.path.join(out, "출력검증.json")
+    summ = json.load(open(os.path.join(out, "summary.json"), encoding="utf-8"))
+    path = os.path.join(out, "print_check.json")
     allr = json.load(open(path, encoding="utf-8")) if os.path.exists(path) else {}
     for name, pl in summ["plates"].items():
         if only and only not in name:
             continue
-        r = check_plate(os.path.join(out, "바로출력", name + ".gcode.3mf"), stl_dir, [tuple(i) for i in pl["items"]])
+        r = check_plate(os.path.join(out, "gcode", name + ".gcode.3mf"), stl_dir, [tuple(i) for i in pl["items"]])
         allr[name] = r
         u = r["unsupported"]; fc = r["file_check"]
         print("== %s  (%d초)  문제 %d개 %s" % (name, r["sec"], len(r["problems"]), r["problems"]))

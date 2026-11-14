@@ -110,7 +110,7 @@ def main():
             assert post("/api/measure", {"plan": "tilt3", "pose": {"x": nx["x"], "y": nx["y"], "z": 0.0, "heading": 0.0}}).get("ok"); wait("재기")
             z3, e3, in3 = zone("세 자리"); assert z3["positions"] == 3 and in3 and z3["length_m"] < z2["length_m"] and e3 < 0.5, (e3, z3["length_m"])
 
-        # 4 마커: 재고 난 뒤의 자세(끄덕임 54.7도)에서, 설계 쪽(receiver-cad)이 계산해 둔 좌표와 같은가
+        # 4 마커: 재고 난 뒤의 자세(끄덕임 54.7도)에서, 설계 쪽(cad/)이 계산해 둔 좌표와 같은가
         m = get("/api/marker"); g = json.load(open(os.path.join(PI, "marker.json"), encoding="utf-8"))
         assert abs(m["pitch"] - 54.7356) < 0.01 and m["dictionary"] == "DICT_4X4_50" and len(m["markers"]) == 2 and not m["moving"], m
         import math

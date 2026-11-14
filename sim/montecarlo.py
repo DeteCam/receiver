@@ -1,7 +1,7 @@
 """여러 방향에 카메라를 두고 재는 과정을 흉내 내어, 방향을 얼마나 잘 찾는지 본다.
     python3 montecarlo.py [횟수]        결과: result.json, result_raw.npz
 
-흉내에 넣은 것과 넣지 않은 것은 모형 파일(receiver-firmware/core/world.py)의 머리말에 적혀 있다. 수신기의 가짜 모드도 같은 모형을 쓴다.
+흉내에 넣은 것과 넣지 않은 것은 모형 파일(firmware/core/world.py)의 머리말에 적혀 있다. 수신기의 가짜 모드도 같은 모형을 쓴다.
 """
 import sys, os, json, time
 import numpy as np

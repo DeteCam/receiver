@@ -81,7 +81,7 @@ SESSION = os.path.join(HOME, "session.json")         # 잰 자리와 방 크기:
 MANIFEST = dict(name="DeteCam 수신기", short_name="DeteCam", start_url="/", display="standalone", background_color="#0f1218", theme_color="#1b2a57", lang="ko",
                 icons=[dict(src="/icon-192.png", sizes="192x192", type="image/png"), dict(src="/icon-512.png", sizes="512x512", type="image/png", purpose="any maskable")])
 LED = "/sys/class/leds/led0"
-MARKER = os.path.join(HERE, "marker.json")           # 등판 마커의 자리 (receiver-cad 의 marker.py 가 만든다)
+MARKER = os.path.join(HERE, "marker.json")           # 등판 마커의 자리 (cad/marker.py 가 만든다)
 BTN_PIN = 3                                          # 전원 버튼 (GPIO3, 5번 핀)
 
 
@@ -387,9 +387,9 @@ class Node(object):
     def marker(self):
         g = self.marker_geo
         if g is None:
-            raise RuntimeError("marker.json 이 없습니다 (receiver-cad 의 marker.py 가 만든 파일을 node.py 옆에 둔다).")
+            raise RuntimeError("marker.json 이 없습니다 (cad/marker.py 가 만든 파일을 node.py 옆에 둔다).")
         j = self.joints_now(); k = g["kinematics"]; t, a = np.radians(j["pitch"]), np.radians(j["yaw"])
-        def base(p):                                    # 머리 좌표(mm) -> 받침 좌표(m). receiver-cad 의 parts2.pose_head 와 같은 계산
+        def base(p):                                    # 머리 좌표(mm) -> 받침 좌표(m). cad/parts2.py 의 pose_head 와 같은 계산
             x, y, z = p
             f = -(y - k["Y_T"]) * np.cos(t) + (z - k["S_T"]) * np.sin(t); up = k["H_T"] + (y - k["Y_T"]) * np.sin(t) + (z - k["S_T"]) * np.cos(t)
             return [round(float(v) / 1000.0, 5) for v in (f * np.cos(a) - x * np.sin(a), f * np.sin(a) + x * np.cos(a), up)]

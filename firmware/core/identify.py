@@ -19,7 +19,7 @@ LAG = 1.0               # 카메라가 반응하는 데 걸리는 시간 (초)
 GUARD = 1.5             # 박자가 바뀐 직후 버리는 시간 (초)
 P_LIM, RATIO_LIM = 0.03, 1.12
 # 확인하는 방법 셋. still, move = 멈춤과 움직임의 길이(초), n = 되풀이, lead = 처음에 기다리는 시간, guard = 바뀐 직후 버리는 시간
-# 숫자는 receiver-sim 의 identify_sim.py 로 고른 것이다 (8초씩 3번이 '1분 안에, 잘못 잡는 일은 적게'의 타협점).
+# 숫자는 sim/ 의 identify_sim.py 로 고른 것이다 (8초씩 3번이 '1분 안에, 잘못 잡는 일은 적게'의 타협점).
 PLANS = {
     "walk": dict(still=8.0, move=8.0, n=3, lead=4.0, guard=1.5, name="걸으며 확인", say=("가만히 서 있기", "팔을 크게 흔들며 걷기")),
     "light": dict(still=8.0, move=8.0, n=3, lead=4.0, guard=1.5, name="불을 껐다 켜며 확인", say=("불을 켠 채로 가만히 있기", "불을 1초에 한 번씩 껐다 켜기")),

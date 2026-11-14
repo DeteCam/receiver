@@ -1,4 +1,4 @@
-"""파이썬 원본(receiver-firmware 의 core/, pi/rx3.py)의 계산 결과를 뽑아 둔다 -> 이 폴더의 testvec.json.
+"""파이썬 원본(firmware/core/, firmware/pi/rx3.py)의 계산 결과를 뽑아 둔다 -> 이 폴더의 testvec.json.
 core3.js 가 같은 값을 내는지는 test_core3.js 가 확인한다.
     python3 make_testvec.py && node test_core3.js        (numpy 만 있으면 된다)"""
 import os, sys, json

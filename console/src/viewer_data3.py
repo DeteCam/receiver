@@ -1,6 +1,6 @@
 """3축 화면에 넣을 데이터를 만든다: 3D 메시(좌표 0.01mm 정수, 법선 8비트), 회절 표, 시뮬레이션 요약.
     xvfb-run -a python3 viewer_data3.py        ->  이 폴더의 data.json   (pip install manifold3d pyvista numpy)
-모델(receiver-cad 의 cad/p2.py, parts2.py)이나 시뮬레이션 결과(receiver-sim 의 result.json)가 바뀌었을 때만 다시 돌리면 된다. 그 뒤 build3.py 로 화면을 다시 만든다.
+모델(../../cad 의 p2.py, parts2.py)이나 시뮬레이션 결과(../../sim 의 result.json)가 바뀌었을 때만 다시 돌리면 된다. 그 뒤 build3.py 로 화면을 다시 만든다.
 메시는 무리별 자기 좌표로 둔다 (화면에서 관절 각도대로 돌린다).
   B 받침(세계)  Y 요크  P1 작은 기어 1(모터 1 축 중심)  P2 작은 기어 2(모터 2 축 중심)  H 머리  R 회전부(머리 좌표, 판 0도)"""
 import os, sys, json, base64

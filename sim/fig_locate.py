@@ -88,6 +88,6 @@ if __name__ == "__main__":
     ax.spines["bottom"].set_color(GRID); ax.tick_params(colors=SUB, labelsize=10.5, length=0); ax.grid(True, axis="x", color=GRID, lw=1.0); ax.set_axisbelow(True)
     ax.set_xlabel("위치 오차의 가운데값 (cm) · 짧을수록 좋다", color=SUB, fontsize=11.5)
     ax.text(0, len(data) - 0.28, "위치 오차", fontsize=12, color=SUB, fontweight="bold"); ax.text(68, len(data) - 0.28, "50cm 안에 든 비율", fontsize=12, color=SUB, fontweight="bold")
-    fig.text(0.03, 0.045, "오른쪽 막대: 숫자 범위는 신호가 가려지는 모양(골)을 좋게 / 나쁘게 가정한 두 경우 (진한 색 = 좋게). 방법 비교는 200번, 4자리는 120번 돌린 값. 결과 파일: receiver-sim 의 locate3d_result.json, locate3d_var2.json", fontsize=11, color=SUB)
+    fig.text(0.03, 0.045, "오른쪽 막대: 숫자 범위는 신호가 가려지는 모양(골)을 좋게 / 나쁘게 가정한 두 경우 (진한 색 = 좋게). 방법 비교는 200번, 4자리는 120번 돌린 값. 결과 파일: sim/locate3d_result.json, locate3d_var2.json", fontsize=11, color=SUB)
     fig.savefig(OUT + "26_위치_추정_방법.png", dpi=150, facecolor=SURF)
     print("saved", OUT + "26_위치_추정_방법.png", [(round(r["length"], 2), round(r["e"], 2)) for r in rows])

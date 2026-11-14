@@ -42,7 +42,7 @@
 ## 받기와 올리기
 
 ```
-git clone https://github.com/DeteCam/receiver-cad.git receiver
+git clone https://github.com/DeteCam/receiver.git receiver
 cd receiver
 git pull                                   # 최신으로
 git add -A && git commit -m "무엇을 바꿨나" && git push     # 올리기

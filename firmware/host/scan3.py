@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 """자동 스캔: 파이의 모터를 움직이며 CSI 를 받고, 끝나면 카메라 방향을 계산한다. 노트북에서 실행.
 
-  .venv/bin/python receiver-firmware/host/scan3.py --ch 11 --mac c6:26:06:68:85:83
-  .venv/bin/python receiver-firmware/host/scan3.py --ch 11 --mac .. --plan up+tilt3 --truth 35 -40
-  .venv/bin/python receiver-firmware/host/scan3.py --dry --truth 35 -40       장치 없이 흐름만 (가짜 데이터)
+  .venv/bin/python firmware/host/scan3.py --ch 11 --mac c6:26:06:68:85:83
+  .venv/bin/python firmware/host/scan3.py --ch 11 --mac .. --plan up+tilt3 --truth 35 -40
+  .venv/bin/python firmware/host/scan3.py --dry --truth 35 -40       장치 없이 흐름만 (가짜 데이터)
 
 계획(--plan)
   tilt3      54.7도 기울여 받침 -120, 0, +120 도에서 세 번. 한 스캔에서만 골이 보이면 한 번 더 잰다 (기본)
@@ -15,7 +15,7 @@
              반사 때문에 크게 틀리는 일이 절반으로 줄고, 틀렸을 때는 거의 다 경고가 뜬다 (sim/room_extra.py)
   up         세워서 한 번만 (논문 방식, 높이는 못 잰다)
 
-준비: 파이에 rx3.py 를 복사해 둔다   scp receiver-firmware/pi/rx3.py pi@raspberrypi.local:~/detecam/rx3.py
+준비: 파이에 rx3.py 를 복사해 둔다   scp firmware/pi/rx3.py pi@raspberrypi.local:~/detecam/rx3.py
       처음 한 번   ssh pi@raspberrypi.local "python3 ~/detecam/rx3.py home"
 환경 변수: PI (기본 pi@raspberrypi.local), RX3 (기본 "python3 ~/detecam/rx3.py")
 시각은 패킷도 모터도 파이의 시계로 찍히므로 노트북과 시계를 맞출 필요가 없다.

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """손으로 잰 스캔(tools/manual_scan.py 가 만든 폴더)에 자동 스캔과 같은 계산을 돌려 본다.
 
-  .venv/bin/python receiver-firmware/host/hand_check.py data/scan_20261111_225427 [폴더 ...]
+  .venv/bin/python firmware/host/hand_check.py data/scan_20261111_225427 [폴더 ...]
 
 자동 스캔 코드의 두 부분, 곧 패킷에서 세기를 뽑는 계산(analyze3.packet_levels)과 골 가운데를 찾는 계산(sim/fusion.trough)이
 실제 데이터에서 제대로 도는지 보는 용도다. 손 스캔은 각도가 듬성듬성해서, 잰 각도 사이를 직선으로 이어 5도 칸으로 만든 뒤 넣는다.

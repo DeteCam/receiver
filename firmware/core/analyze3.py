@@ -29,7 +29,7 @@ def _find(rel_candidates, what, must=None):
     sys.exit("%s 를 찾지 못했습니다. 찾아본 곳: %s" % (what, ", ".join(rel_candidates)))
 
 
-# 파이에서는 모든 파일이 한 폴더(~/detecam)에 있고, 저장소(receiver-firmware)에서는 core / pi / host 폴더로 나뉘어 있다
+# 파이에서는 모든 파일이 한 폴더(~/detecam)에 있고, 저장소(firmware/)에서는 core / pi / host 폴더로 나뉘어 있다
 SIM = os.environ.get("DETECAM_SIM") or _find([".", "../core", "../sim", "../../sim", "../../rx2/sim"], "estimator.py 가 있는 폴더 (core)", "estimator.py")
 PI = _find([".", "../pi"], "csi.py 가 있는 폴더 (pi)", "csi.py")
 for _p in (SIM, PI):

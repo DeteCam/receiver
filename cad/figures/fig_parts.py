@@ -419,7 +419,7 @@ def plug_lr(d, x, y, kind, left):
 
 
 def misc():
-    H = 1150; im = Image.new("RGB", (W, H), BG); d = ImageDraw.Draw(im)
+    H = 1330; im = Image.new("RGB", (W, H), BG); d = ImageDraw.Draw(im)
     head(im, "전선과 작은 소모품", "길이는 그림의 비율과 다르다 (전선은 줄여 그렸다). 숫자는 mm, 전선 길이는 cm")
     fb, fr = font(28, True), font(24)
     # 1) 전원 케이블
@@ -448,24 +448,34 @@ def misc():
     d.text((150, y - 70), "점퍼선 (암-암, 끝이 2.54 mm 간격 소켓)", font=fb, fill=INK)
     jumper(y, 300, "#C2410C", "10 cm", "20가닥: 드라이버 3장에 18가닥")
     jumper(y + 60, 600, "#2B6CB0", "20 cm", "2가닥: 전원 버튼 → 파이 5번·6번 핀")
+    # Y 분배 케이블 (암 1 -> 암 2)
+    y = BAND + 535
+    d.text((150, y - 108), "Y 분배 케이블 1개 (듀폰, 암 1개 → 암 2개, 납땜 필요 없음)", font=fb, fill=INK)
+    d.rectangle([150, y - 8, 180, y + 8], fill=DARK); d.line([(180, y), (330, y)], fill="#C53030", width=6)
+    for dy in (-38, 38):
+        d.line([(330, y), (420, y + dy)], fill="#C53030", width=6); d.line([(420, y + dy), (500, y + dy)], fill="#C53030", width=6)
+        d.rectangle([500, y + dy - 8, 530, y + dy + 8], fill=DARK)
+    d.text((560, y - 52), "→ 드라이버 1의 +", font=fr, fill=SUB); d.text((560, y + 24), "→ 드라이버 2의 +", font=fr, fill=SUB)
+    d.text((150, y + 52), "파이 4번 핀(5V) 쪽", font=fr, fill=SUB)
     # 3) 케이블 타이
-    y = BAND + 560
+    y = BAND + 700
     d.text((150, y - 70), "케이블 타이 3~4개", font=fb, fill=INK)
     d.rectangle([150, y - 4, 150 + 100 * 6, y + 4], fill="#E8E4DC", outline=INK, width=2)
     d.rectangle([150 - 30, y - 13, 150, y + 13], fill="#E8E4DC", outline=INK, width=2)
     d.text((150 + 100 * 6 + 24, y - 18), "폭 2.5, 길이 100", font=fb, fill=INK)
     d.text((150, y + 26), "머리 아래에서 전선 셋(모터 1, 모터 2, 전원)을 한데 묶는다", font=fr, fill=SUB)
     # 4) 비비탄
-    y = BAND + 770
+    y = BAND + 910
     d.text((150, y - 80), "6 mm 비비탄 45개쯤 (없으면 양초)", font=fb, fill=INK)
     for i in range(9):
         cx = 170 + i * 66
         d.ellipse([cx - 24, y - 24, cx + 24, y + 24], fill="#F3F1EC", outline=INK, width=2)
         d.ellipse([cx - 13, y - 15, cx - 3, y - 6], fill="#FFFFFF")
     d.line([(146, y + 44), (194, y + 44)], fill=DIM, width=3); d.text((204, y + 28), "지름 6", font=fb, fill=INK)
-    d.text((150, y + 80), "받침 덮개의 둥근 테 홈에 넣어 요크가 미끄러지듯 돌게 한다 (두세 개 빈자리를 둔다)", font=fr, fill=SUB)
+    for i, l in enumerate(wrap(d, "받침 덮개의 둥근 테 홈에 한 줄로 깔고 그 위에 요크를 얹는다: 구슬 위로 굴러 돈다 (베어링과 같다). 두세 개 빈자리를 두고, 기름은 넣지 않는다", fr, W - 190)):
+        d.text((150, y + 72 + 32 * i), l, font=fr, fill=SUB)
     # 5) 선택
-    y = BAND + 940
+    y = BAND + 1090
     d.text((150, y), "선택: 얇은 랜선 1개 (개발할 때 장치 안에 넣어 둘 때만) · 고무줄 1개 (85° 가까이 깊이 숙이는 자세를 자주 쓸 때)", font=fr, fill=SUB)
     im.save(os.path.join(OUT, "전선_소모품.png")); print("전선_소모품.png")
 

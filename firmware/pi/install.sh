@@ -7,7 +7,7 @@ set -euo pipefail
 PI=${1:-${PI:-pi@raspberrypi.local}}
 HERE="$(cd "$(dirname "$0")" && pwd)"; ROOT="$(dirname "$HERE")"
 FILES=("$HERE/rx3.py" "$HERE/node.py" "$HERE/csi.py" "$HERE/detect.py" "$HERE/web.html" "$HERE/icon-192.png" "$HERE/icon-512.png" "$HERE/marker.json" "$HERE/detecam.service" "$HERE/link_setup.sh"
-       "$ROOT/core/analyze3.py" "$ROOT/core/estimator.py" "$ROOT/core/model.py" "$ROOT/core/fusion.py" "$ROOT/core/locate.py" "$ROOT/core/identify.py" "$ROOT/core/world.py"
+       "$ROOT/core/analyze3.py" "$ROOT/core/estimator.py" "$ROOT/core/model.py" "$ROOT/core/fusion.py" "$ROOT/core/locate.py" "$ROOT/core/identify.py" "$ROOT/core/score.py" "$ROOT/core/world.py"
        "$ROOT/tests/test_core.py" "$ROOT/tests/fixture.json" "$ROOT/tests/fixture.npz" "$ROOT/tests/fixture_mon.json" "$ROOT/tests/fixture_mon.pcap")
 for f in "${FILES[@]}"; do [ -f "$f" ] || { echo "파일이 없습니다: $f"; exit 1; }; done
 echo "== 파이: $PI"

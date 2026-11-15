@@ -25,6 +25,9 @@
   POST /api/room     {lo:[x,y,z], hi:[x,y,z]}      찾을 범위 (방의 두 구석). 안 주면 잰 자리 둘레 4m
   POST /api/reset                 잰 자리들을 지우고 새로 시작
   POST /api/detect   {channels}                    탐지: 둘레 기기 찾기 (약 30초). 결과는 /api/status 의 survey
+  POST /api/watch    {minutes, walk, channels}     점검: 기준선을 잡고 '멈춤'을 누를 때까지 (또는 minutes 분) 감시하며 기기마다 의심 점수와 이유를 낸다 (core/score.py).
+                                                   의심 기기가 둘 넘게 애매하면 그때만 '걸으며 확인'을 한다 (walk=false 면 안 한다). 결과는 /api/status 의 watch
+  POST /api/mine     {mac, on}                     점검 중에 그 기기를 '내 기기'로 표시 (점수를 매기지 않는다)
   POST /api/identify {mode}                        판별: mode = walk(걸으며, 약 55초) · light(불을 껐다 켜며) · leave(방을 나갔다 들어오며, 약 1분 25초)
                                                    하는 동안 /api/status 의 status.prompt 에 '지금 할 일'과 남은 시간이 나온다. 결과는 ident
   GET  /api/marker                 등판 마커 귀의 좌표 (받침 좌표, m). 지금 관절 각도로 계산한다. 폰이 수신기의 자리를 알아낼 때 쓴다
@@ -66,6 +69,7 @@ import detect as D                     # noqa: E402
 import analyze3 as A                   # noqa: E402
 import locate as K                     # noqa: E402
 import identify as I                   # noqa: E402
+import score as SC                     # noqa: E402  (의심 점수: 증거 -> 점수와 이유)
 import rx3 as RX                       # noqa: E402  (설정값과 상태 파일의 자리만 쓴다)
 from estimator import unit, azel      # noqa: E402
 from fusion import origin             # noqa: E402
@@ -114,6 +118,7 @@ class Node(object):
         self.positions = []                           # 잰 자리들
         self.room = None; self.zone_cache = None
         self.survey = []; self.detect = dict(method=None, time=None); self.ident = {}; self.ident_last = None
+        self.tracker = None; self.watch = None              # 점검(감시): 기기마다 의심 점수 (core/score.py)
         self.homed_this_boot = False; self.dry_clock = 0.0; self.joints = dict(yaw=0.0, pitch=0.0)
         self.marker_geo = json.load(open(MARKER, encoding="utf-8")) if os.path.exists(MARKER) else None
         self.proc = None; self.stopping = False          # 지금 도는 모터 명령, '멈춤'이 눌렸는가
@@ -323,20 +328,23 @@ class Node(object):
         return "기기 %d개를 찾았습니다. 카메라 후보 %d개%s" % (len(rows), n, "" if method == "monitor" else " (탐지 동글이 없어 초당 개수만 보았습니다)")
 
     # ---- 2 판별: 움직임에 전송량이 반응하는가
-    def do_identify(self, mode="walk"):
+    def do_identify(self, mode="walk", macs=None, ch=None):
+        """macs 를 주면 (점검 중 확인 요청) 같은 채널의 여러 기기를 한 번 걸어서 함께 판별한다"""
         if mode not in I.PLANS:
             raise ValueError("모르는 방법입니다: %s" % mode)
         P = I.PLANS[mode]; stim = I.plan_stimulus(mode); n = len(stim)
-        ch, mac = int(self.conf["ch"]), (self.conf["mac"] or "").strip().lower()
-        if not mac:
+        ch = int(ch if ch is not None else self.conf["ch"])
+        macs = [m.strip().lower() for m in (macs or [self.conf["mac"] or ""]) if m and m.strip()]
+        if not macs:
             raise RuntimeError("먼저 확인할 기기를 고르세요 ('기기 찾기' 표에서 줄을 누른다).")
+        mac = macs[0]
         use_mon = (not self.dry) and self.mon.refresh()
         if self.dry:
             pass
         elif use_mon:
             D.listen(self.mon, ch)
         else:
-            self.cap.start(ch, mac, "/tmp/detecam_ident.pcap")
+            self.cap.start(ch, mac if len(macs) == 1 else None, "/tmp/detecam_ident.pcap")
         t0 = time.time(); ph = I.phases(stim)
         try:
             for k, (a, b, mv) in enumerate(ph):
@@ -354,18 +362,95 @@ class Node(object):
                     time.sleep(min(0.2, left))
         finally:
             self.cap.stop(); self.mon.stop(); self.set(prompt=None, step="계산 중")
-        pk = None; unit = "packets"
-        if self.dry:
-            x = self.fake_counts(stim, mac)
-        elif use_mon:
-            tt, nn = D.sent_by(D.read_frames(D.PCAP), mac); x = I.bins(tt, t0, n, nn); pk = I.bins(tt, t0, n); unit = "bytes"
-        else:
-            tt = [p[0] for p in self.cap.packets() if p[1] == mac]; x = I.bins(tt, t0, n)
-        r = I.decide(x, stim, pkts=pk, guard=P["guard"])
-        r.update(mac=mac, ch=ch, mode=mode, name=P["name"], source="monitor" if use_mon else "csi", unit=unit, time=time.strftime("%Y%m%d_%H%M%S"), dt=I.DT,
-                 series=[float(v) for v in x], stim=[int(v) for v in stim])
-        self.ident[mac] = r; self.ident_last = mac
-        return r["message"]
+        frames = D.read_frames(D.PCAP) if (use_mon and not self.dry) else None
+        pkts = self.cap.packets() if (not use_mon and not self.dry) else None
+        msgs = []
+        for mac in macs:
+            pk = None; unit = "packets"
+            if self.dry:
+                x = self.fake_counts(stim, mac)
+            elif use_mon:
+                tt, nn = D.sent_by(frames, mac); x = I.bins(tt, t0, n, nn); pk = I.bins(tt, t0, n); unit = "bytes"
+            else:
+                tt = [p[0] for p in pkts if p[1] == mac]; x = I.bins(tt, t0, n)
+            r = I.decide(x, stim, pkts=pk, guard=P["guard"])
+            r.update(mac=mac, ch=ch, mode=mode, name=P["name"], source="monitor" if use_mon else "csi", unit=unit, time=time.strftime("%Y%m%d_%H%M%S"), dt=I.DT,
+                     series=[float(v) for v in x], stim=[int(v) for v in stim])
+            self.ident[mac] = r; self.ident_last = mac; msgs.append(r["message"] if len(macs) == 1 else "%s: %s" % (mac, r["message"]))
+            if self.tracker is not None:
+                self.tracker.walked(mac, r["verdict"])
+        return " / ".join(msgs)
+
+    # ---- 점검: 버튼 하나로 감시하며 기기마다 의심 점수를 매긴다 (core/score.py, docs/의심 점수.md)
+    def do_watch(self, channels=None, minutes=None, walk=True, cycle=None):
+        """처음 한 바퀴가 기준선. 그 뒤 '멈춤'을 누를 때까지 (또는 minutes 분) 채널을 돌며 듣고 점수를 고친다.
+        의심 기기가 둘 이상 애매하면 그때만 '걸으며 확인'을 한다 (walk=False 면 하지 않는다: 시험장처럼 사람이 걸을 수 없는 곳).
+        의심 기기와 그 허브가 있는 채널은 바퀴마다 자세히 듣는다 (몇 초마다 몰아서 보내는 카메라를 놓치지 않으려고)."""
+        T = self.tracker = SC.Tracker(); t_end = time.time() + 60.0 * float(minutes) if minutes else None
+        chans = tuple(channels or D.CH24); extra = []; asked = set()
+        logf = None
+        if not self.dry:                                   # 바퀴마다의 표를 남긴다 (실험 S1~S5 를 host/watch_report.py 로 다시 계산한다)
+            try:
+                os.makedirs(DATA, exist_ok=True); logf = open(os.path.join(DATA, "watch_%s.jsonl" % time.strftime("%Y%m%d_%H%M%S")), "a")
+            except Exception as e:
+                log("점검 기록을 열지 못했습니다:", e)
+
+        def check(*a):
+            if self.stopping:
+                raise Stopped()
+
+        def publish(note=""):
+            r = T.result(); r.update(time=time.time(), started=T.t0, note=note, levels=SC.LEVEL_NAME)
+            self.watch = r
+            return r
+        try:
+            while True:
+                k = T.cycles
+                self.set(step="기준선 만드는 중 (둘레 기기를 적어 둔다)" if k == 0 else "감시 %d바퀴째" % (k + 1), done=k, total=0)
+                if self.dry:
+                    rows = self.fake_watch_rows(k)
+                    for _ in range(int(3 * 4)):
+                        time.sleep(0.25 / self.speed); check()
+                elif self.mon.refresh():
+                    rows = D.scan(self.mon, chans, quick=0.5, focus=cycle or 6.0, n_focus=2, extra=extra,
+                                  progress=lambda s, a, b: (check(), self.set(step="감시 %d바퀴째 · %s" % (k + 1, s))))
+                else:
+                    raise RuntimeError("점검에는 탐지 동글이 필요합니다 (기기마다 길이와 주소 짝을 봐야 한다). 동글을 꽂고 다시 하세요.")
+                now = time.time(); T.update(rows, now); self.survey = rows
+                if logf:
+                    logf.write(json.dumps(dict(t=now, rows=rows, walk=dict(T.walk), mine=sorted(T.my)), ensure_ascii=False) + "\n"); logf.flush()
+                r = publish()
+                extra = sorted(set(d["ch"] for d in r["devices"] if d["level"] in ("camera", "suspect") and d["ch"]))[:3]
+                if walk and r["need_confirm"]:
+                    todo = [m for m in r["confirm"] if m not in asked]
+                    if todo:
+                        dev = dict((d["mac"], d) for d in r["devices"]); ch = dev[todo[0]]["ch"]
+                        same = [m for m in todo if dev[m]["ch"] == ch]; asked.update(same)
+                        publish("의심 기기 %d개를 가리려고 '걸으며 확인'을 합니다." % len(same))
+                        self.do_identify("walk", macs=same, ch=ch)
+                        publish()
+                if t_end and time.time() >= t_end:
+                    break
+        except Stopped:
+            self.stopping = False
+        finally:
+            if logf:
+                logf.close()
+        r = publish()
+        top = [d for d in r["devices"] if d["level"] in ("camera", "suspect")]
+        if not top:
+            return "점검을 마쳤습니다 (%d바퀴). 의심할 기기가 없습니다." % r["cycles"]
+        return "점검을 마쳤습니다 (%d바퀴). %s" % (r["cycles"], ", ".join("%s%s %s(%d점)" % (d["mac"], " (Wi-Fi 를 만드는 기기)" if d["role"] == "ap" else "", SC.LEVEL_NAME[d["level"]], d["score"]) for d in top[:3]))
+
+    def fake_watch_rows(self, k):
+        """가짜 모드의 점검: 처음엔 공유기뿐, 세 바퀴째부터 핫스팟과 몇 초마다 올리는 카메라가 나타난다"""
+        hall = dict(mac="fa:ke:00:00:00:a6", role="ap", bssid="fa:ke:00:00:00:a6", ssid="room-507", ch=6, n=0, per_s=0.0, mean_len=0, rssi=-60.0, candidate=False, beacon_only=True, series=[])
+        rows = [hall]
+        if k >= 2:
+            rows.append(dict(mac="fe:ke:00:00:00:b2", role="ap", bssid="fe:ke:00:00:00:b2", ssid="", ch=11, n=0, per_s=0.0, mean_len=0, rssi=-54.0, candidate=False, beacon_only=True, series=[]))
+            rows.append(dict(mac="fa:ke:00:00:00:c1", role="sta", bssid="fe:ke:00:00:00:b2", ssid="", ch=11, n=24, per_s=4.0, mean_len=880, rssi=-55.0, candidate=False, beacon_only=False,
+                             series=[10 if i % 6 == 0 else 0 for i in range(12)]))
+        return rows
 
     def fake_counts(self, stim, mac):
         """가짜 모드: 주소가 01 로 끝나는 기기만 움직임에 반응하는 카메라인 척한다"""
@@ -482,7 +567,7 @@ class Node(object):
 
     def export(self):
         return dict(version=VERSION, time=time.strftime("%Y%m%d_%H%M%S"), config=self.conf, room=self.room, positions=self.positions, zone=self.zone(),
-                    survey=self.survey, detect=self.detect, ident=self.ident)
+                    survey=self.survey, detect=self.detect, ident=self.ident, watch=self.watch)
 
     # ---- 잰 자리와 방 크기는 파일에 남긴다 (다시 켜도 이어서 한다)
     def save_session(self):
@@ -522,7 +607,7 @@ class Node(object):
         j = self.joints_now()
         return dict(version=VERSION, numpy=np.__version__, python=sys.version.split()[0], dry=self.dry, status=st, config=self.conf, room=self.room, hint=self.hint(), survey=self.survey, detect=self.detect, now=time.time(),
                     joints=dict(yaw=round(j["yaw"], 1), pitch=round(j["pitch"], 1), spin=self.spin_now(), homed=bool(self.homed_this_boot)),
-                    ident=dict((m, dict(verdict=r["verdict"], ratio=r["ratio"], mode=r["mode"])) for m, r in self.ident.items()), ident_last=last,
+                    ident=dict((m, dict(verdict=r["verdict"], ratio=r["ratio"], mode=r["mode"])) for m, r in self.ident.items()), ident_last=last, watch=self.watch,
                     plans=dict((k, dict(name=p["name"], seconds=len(I.plan_stimulus(k)) * I.DT, say=list(p["say"]))) for k, p in I.PLANS.items()),
                     csi_iface=self.cap.iface, mon_iface=self.mon.iface, mon_driver=self.mon.driver,
                     link_ifaces=[] if self.dry else [d["name"] for d in D.usb_wifi() if d["name"] != self.mon.iface],
@@ -631,6 +716,14 @@ class Handler(BaseHTTPRequestHandler):
                 n.start("다시 켜기", reboot)
             elif path in ("/api/detect", "/api/survey"):
                 n.start("기기 찾기", n.do_detect, q.get("channels"))
+            elif path == "/api/watch":
+                n.start("점검", n.do_watch, q.get("channels"), q.get("minutes"), q.get("walk", True))
+            elif path == "/api/mine":
+                if n.tracker is None:
+                    raise RuntimeError("점검을 시작한 뒤에 표시할 수 있습니다.")
+                n.tracker.mine((q.get("mac") or "").lower(), bool(q.get("on", True)))
+                r = n.tracker.result(); r.update(time=time.time(), started=n.tracker.t0, note="", levels=SC.LEVEL_NAME); n.watch = r
+                return self.send(dict(ok=True, message="내 기기 표시를 바꿨습니다."))
             elif path == "/api/identify":
                 mode = q.get("mode") or "walk"
                 if mode not in I.PLANS:

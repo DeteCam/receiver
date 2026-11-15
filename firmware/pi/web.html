@@ -32,6 +32,7 @@ table { width:100%; border-collapse:collapse; font-size:14px; } td, th { padding
 canvas { width:100%; height:auto; border:1px solid var(--line); border-radius:8px; background:var(--bg); display:block; }
 .pose input { width:64px; padding:4px; } a { color:var(--acc2); }
 .tag { display:inline-block; padding:1px 7px; border-radius:9px; font-size:12px; font-weight:600; border:1px solid currentColor; margin-right:4px; white-space:nowrap; }
+.wdev { border-top:1px solid var(--line); padding:10px 0; } .wdev ul { margin:6px 0; padding-left:18px; font-size:14px; } .wdev .row button { padding:6px 10px; font-size:14px; }
 #survey tr.sel td { background:rgba(42,120,214,.12); } #survey td { cursor:pointer; }
 #prompt { display:none; text-align:center; border-radius:12px; padding:18px 10px; margin-top:10px; border:2px solid var(--line); }
 #prompt.move { border-color:var(--hot); background:rgba(235,104,52,.12); } #prompt.still { border-color:var(--acc2); background:rgba(42,120,214,.10); }
@@ -43,6 +44,14 @@ canvas { width:100%; height:auto; border:1px solid var(--line); border-radius:8p
 <h1>DeteCam 수신기</h1>
 <div class="card"><div id="state">연결하는 중…</div><div class="sub" id="msg"></div><div id="bar"><i></i></div>
   <div id="stopbar"><button class="stop" onclick="post('/api/stop',{})">멈춤</button></div></div>
+
+<div class="card"><h2>점검 · 버튼 하나로</h2>
+  <div class="sub">숙소든 시험장이든 그대로 누른다. 처음 한 바퀴(약 30초)의 둘레 기기를 기준선으로 적고, '멈춤'을 누를 때까지 들으며 기기마다 의심 점수와 이유를 낸다. 애매한 기기가 둘 넘게 나오면 그때만 '걸으며 확인'을 하자고 한다.</div>
+  <div class="row" style="margin-top:8px"><button class="go" id="wgo" onclick="post('/api/watch',{walk:!$('wnowalk').checked})">점검 시작</button>
+    <label style="flex:2 1 220px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="wnowalk" style="width:auto"> 걸어서 확인할 수 없는 곳 (시험장 등)</label></div>
+  <div class="sub" id="wnote" style="margin-top:6px"></div>
+  <div id="watch"></div>
+</div>
 
 <div class="card"><h2>1. 탐지 · 둘레 기기 찾기</h2>
   <div class="row"><button class="go" onclick="post('/api/detect',{})">둘레 기기 찾기 (약 30초)</button></div>
@@ -169,6 +178,25 @@ function setPose(i) {
   post('/api/pose', {index: i, pose: {x: g('x'), y: g('y'), z: g('z') || 0, heading: g('h') || 0}});
 }
 function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]; }); }
+function renderWatch() {
+  var w = S.watch;
+  if (!w) { $('watch').innerHTML = ''; $('wnote').textContent = ''; return; }
+  var cls = {camera: 'bad', suspect: 'warn', ignore: 'sub', mine: 'good'};
+  var t = '기준선 기기 ' + w.baseline + '개 · ' + w.cycles + '바퀴 들음';
+  if (w.need_confirm) t += " · 애매한 기기가 여럿입니다: '걸으며 확인'을 합니다";
+  if (w.note) t += ' · ' + w.note;
+  $('wnote').textContent = t;
+  var h = '', shown = 0;
+  w.devices.forEach(function (d) {
+    if (d.level === 'ignore' && shown >= 8) return; shown++;
+    var sub = d.role === 'ap' ? 'Wi-Fi 를 만드는 기기 ' + (d.ssid ? '[' + esc(d.ssid) + ']' : '[이름 숨김]') : (d.bssid ? '붙은 곳 ' + esc(d.bssid) : '');
+    h += '<div class="wdev"><div><span class="tag ' + cls[d.level] + '">' + esc(w.levels[d.level]) + (d.level === 'mine' ? '' : ' · ' + d.score + '점') + '</span> <b>' + esc(d.mac) + '</b></div>'
+      + '<div class="sub">' + sub + (sub ? ' · ' : '') + '채널 ' + d.ch + (d.rssi !== null ? ' · ' + Math.round(d.rssi) + 'dBm' : '') + '</div>'
+      + (d.reasons.length ? '<ul>' + d.reasons.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '')
+      + '<div class="row"><button onclick="post(\'/api/config\',{ch:' + d.ch + ',mac:\'' + esc(d.mac) + '\'})">이 기기 위치 재기</button><button onclick="post(\'/api/mine\',{mac:\'' + esc(d.mac) + '\',on:' + (d.level !== 'mine') + '})">' + (d.level === 'mine' ? '내 기기 아님' : '내 기기') + '</button></div></div>';
+  });
+  $('watch').innerHTML = h;
+}
 function render() {
   var st = S.status, busy = st.state === 'busy';
   $('state').textContent = busy ? (st.task + ' · ' + st.step) : (st.state === 'error' ? '문제가 생겼습니다' : '준비됨') + (S.dry ? '  (가짜 모드)' : '');
@@ -178,7 +206,7 @@ function render() {
   $('go').disabled = busy; $('iw').disabled = busy; $('il').disabled = busy; $('iv').disabled = busy;
   $('stopbar').style.display = busy ? 'block' : 'none';
   var J = S.joints || {}; $('jy').textContent = (J.yaw > 0 ? '+' : '') + J.yaw + '°'; $('jp').textContent = J.pitch + '°'; $('js').textContent = (J.spin === null || J.spin === undefined) ? '–' : Math.round(J.spin) + '°';
-  showPrompt(busy ? st.prompt : null); renderIdent();
+  showPrompt(busy ? st.prompt : null); renderIdent(); renderWatch(); $('wgo').disabled = busy;
   $('hint').textContent = ($('plan').value === 'tilt3' && S.hint) ? S.hint : '';
   if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT') { $('ch').value = S.config.ch; $('mac').value = S.config.mac || ''; $('plan').value = S.config.plan; }
   var h = S.survey.length ? '<tr><th>채널</th><th>기기</th><th>초당</th><th>평균 길이</th><th>세기</th></tr>' : '';
@@ -249,7 +277,7 @@ function poll(now) {
     var was = S && S.status.state; S = j; render();
     if (j.status.state !== 'busy' && (was !== j.status.state || now || Z === null)) fetch('/api/zone').then(function (r) { return r.json(); }).then(function (z) { Z = z; draw(); });
     // 재는 동안에는 통신을 줄인다 (무선 동글이 CSI 안테나 바로 옆에 있다)
-    timer = setTimeout(poll, j.status.state === 'busy' ? (j.status.task === '재기' ? 5000 : (j.status.task === '판별' ? 400 : 1500)) : 3000);
+    timer = setTimeout(poll, j.status.state === 'busy' ? (j.status.task === '재기' ? 5000 : ((j.status.task === '판별' || (j.status.task === '점검' && j.status.prompt)) ? 400 : 1500)) : 3000);
   }).catch(function () { $('state').textContent = '수신기와 연결이 끊겼습니다'; timer = setTimeout(poll, 4000); });
 }
 fetch('/api/time', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({epoch: Date.now() / 1000})}).catch(function () {});

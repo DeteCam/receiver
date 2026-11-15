@@ -126,6 +126,21 @@ def main():
         assert post("/api/present", {"yaw": 30}).get("ok"); wait("마커 보여 주기"); m2 = get("/api/marker"); assert abs(m2["yaw"] - 30) < 0.03, m2["yaw"]      # 모터 한 칸(0.022도) 단위로 맞는다: 실물과 같게 적어 둔 위치에서 읽는다
         assert post("/api/park").get("ok"); wait("세우기"); m3 = get("/api/marker"); assert m3["pitch"] == 0 and abs(m3["normal"][2]) < 1e-9
         print("마커: 받침 %.0f도, 끄덕임 %.1f도에서 0번 마커 가운데 높이 %.3f m, 면이 향한 쪽 %s" % (m["yaw"], m["pitch"], sum(c[2] for c in m["markers"][0]["corners"]) / 4, m["normal"]))
+        # 점검 (의심 점수): 가짜 모드는 세 바퀴째부터 핫스팟과 몇 초마다 올리는 카메라가 나타난다. 멈춤을 누르면 결과가 남는다
+        assert post("/api/watch", {"walk": False}).get("ok")
+        t0 = time.time()
+        while time.time() - t0 < 60:
+            w = get("/api/status").get("watch")
+            if w and w["cycles"] >= 5:
+                break
+            time.sleep(0.1)
+        assert post("/api/stop").get("ok"); s, _ = wait("점검")
+        w = get("/api/status")["watch"]; lv = dict((d["mac"], d["level"]) for d in w["devices"])
+        assert lv["fa:ke:00:00:00:c1"] == "camera" and lv["fe:ke:00:00:00:b2"] == "camera" and lv["fa:ke:00:00:00:a6"] == "ignore", lv
+        assert "점검을 마쳤습니다" in s["message"] and not w["need_confirm"], s
+        assert post("/api/mine", {"mac": "fa:ke:00:00:00:c1"}).get("ok"); assert dict((d["mac"], d["level"]) for d in get("/api/status")["watch"]["devices"])["fa:ke:00:00:00:c1"] == "mine"
+        assert "watch" in get("/api/export")
+        print("점검: %d바퀴, %s" % (w["cycles"], s["message"]))
         print("node 가짜 모드 검사 통과 (%s)" % PY)
     finally:
         p.terminate()

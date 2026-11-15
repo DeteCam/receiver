@@ -172,8 +172,21 @@ def busiest(frames, hops, n_focus=3):
     return order[:n_focus], cnt
 
 
-def analyse(frames, hops=None):
-    """기기 표를 만든다. hops = [(시작, 끝, 채널, 'quick' 또는 'focus')]. 안 주면 파일 전체를 한 구간으로 본다."""
+def series_of(frames, mac, t0, t1, dt=0.5):
+    """한 기기가 t0 ~ t1 사이에 보낸 데이터 프레임 수를 dt 초 칸으로 (송출 패턴을 가리는 데 쓴다: core/score.py)"""
+    n = max(1, int((t1 - t0) / dt)); out = [0] * n
+    for fr in frames:
+        if fr[1] == 2 and not (fr[2] & 4) and fr[5] == mac and t0 <= fr[0] < t1:
+            k = int((fr[0] - t0) / dt)
+            if k < n:
+                out[k] += 1
+    return out
+
+
+def analyse(frames, hops=None, beacons=True):
+    """기기 표를 만든다. hops = [(시작, 끝, 채널, 'quick' 또는 'focus')]. 안 주면 파일 전체를 한 구간으로 본다.
+    beacons=True 면 데이터는 없고 비컨만 들린 Wi-Fi(공유기, 핫스팟, 카메라가 만든 Wi-Fi)도 줄로 넣는다 (beacon_only=True, 후보는 아님).
+    줄마다 series = 가장 잘 들은 구간의 0.5초 칸 패킷 수."""
     if not frames:
         return []
     if not hops:
@@ -184,9 +197,9 @@ def analyse(frames, hops=None):
         for key, s in tally(frames, t0, t1).items():
             rank = (kind == "focus", s[0] / dur)
             if key not in best or rank > best[key][0]:
-                best[key] = (rank, s, dur, ch, kind)
-    rows = []
-    for (mac, role), (_, s, dur, ch, kind) in best.items():
+                best[key] = (rank, s, dur, ch, kind, t0, t1)
+    rows = []; seen = set()
+    for (mac, role), (_, s, dur, ch, kind, t0, t1) in best.items():
         n, tot, rs, rn, bssid = s
         ssid, apch = aps.get(bssid, ("", None))
         per_s = n / dur; mean = tot / float(max(n, 1)); rssi = rs / rn if rn else None
@@ -203,10 +216,25 @@ def analyse(frames, hops=None):
             note.append("신호가 약함: 다른 방일 수 있다")
         if m[0] & 2:
             note.append("임의 주소 (폰·노트북에 많다)")
+        seen.add(mac)
         rows.append(dict(mac=mac_str(mac), role=role, bssid=mac_str(bssid), ssid=ssid, ch=int(apch or ch or 0), n=int(n), per_s=round(per_s, 1), kbps=round(tot * 8 / dur / 1000.0, 1),
                          mean_len=int(round(mean)), rssi=None if rssi is None else round(rssi, 1), candidate=bool(cand), weak=bool(rssi is not None and rssi < WEAK_RSSI),
-                         random=bool(m[0] & 2), heard=kind, note=" · ".join(note)))
-    rows.sort(key=lambda r: (not (r["candidate"] and r["role"] == "sta"), not r["candidate"], -r["kbps"]))
+                         random=bool(m[0] & 2), heard=kind, note=" · ".join(note), beacon_only=False, series=series_of(frames, mac, t0, t1)))
+    if beacons:
+        bs = {}
+        for fr in frames:
+            if fr[1] == 0 and fr[2] == 8 and fr[6] not in seen and not (bytearray(fr[6])[0] & 1):
+                b = bs.setdefault(fr[6], [0, 0.0, 0])
+                b[0] += 1
+                if fr[8] is not None:
+                    b[1] += fr[8]; b[2] += 1
+        for bssid, (k, rsum, rn) in bs.items():
+            ssid, apch = aps.get(bssid, ("", None)); rssi = round(rsum / rn, 1) if rn else None; m = bytearray(bssid)
+            note = ["비컨만 들림"] + (["이름을 숨김"] if ssid == "" else []) + (["임의 주소 (폰 핫스팟에 많다)"] if m[0] & 2 else [])
+            rows.append(dict(mac=mac_str(bssid), role="ap", bssid=mac_str(bssid), ssid=ssid, ch=int(apch or 0), n=0, per_s=0.0, kbps=0.0, mean_len=0, rssi=rssi,
+                             candidate=False, weak=bool(rssi is not None and rssi < WEAK_RSSI), random=bool(m[0] & 2), heard="beacon", note=" · ".join(note),
+                             beacon_only=True, series=[]))
+    rows.sort(key=lambda r: (not (r["candidate"] and r["role"] == "sta"), not r["candidate"], r["beacon_only"], -r["kbps"]))
     return rows
 
 
@@ -281,8 +309,9 @@ class Monitor(object):
             self.proc = None
 
 
-def scan(mon, channels=CH24, quick=0.6, focus=5.0, n_focus=3, path=PCAP, progress=None):
-    """채널을 한 번 훑고(채널마다 quick 초), 데이터가 많은 채널 n_focus 개를 focus 초씩 자세히 듣는다. 13채널이면 약 30초."""
+def scan(mon, channels=CH24, quick=0.6, focus=5.0, n_focus=3, path=PCAP, progress=None, extra=()):
+    """채널을 한 번 훑고(채널마다 quick 초), 데이터가 많은 채널 n_focus 개를 focus 초씩 자세히 듣는다. 13채널이면 약 30초.
+    extra = 데이터가 적어도 꼭 자세히 들을 채널 (감시할 때: 의심 기기와 그 허브가 있는 채널. 몇 초마다 몰아서 보내는 카메라를 놓치지 않으려고)"""
     say = progress or (lambda *a: None)
     mon.prepare(); mon.start(path); hops = []
     try:
@@ -294,6 +323,7 @@ def scan(mon, channels=CH24, quick=0.6, focus=5.0, n_focus=3, path=PCAP, progres
         if not hops:
             raise RuntimeError("탐지 동글의 채널을 바꾸지 못했습니다 (%s)." % mon.iface)
         best, _ = busiest(read_frames(path), hops, n_focus)
+        best = list(best) + [c for c in extra if c and c not in best]
         for k, ch in enumerate(best):
             say("채널 %d 자세히 듣는 중 (%.0f초)" % (ch, focus), len(channels) + k, len(channels) + len(best))
             if mon.channel(ch):

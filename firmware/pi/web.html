@@ -46,7 +46,7 @@ canvas { width:100%; height:auto; border:1px solid var(--line); border-radius:8p
   <div id="stopbar"><button class="stop" onclick="post('/api/stop',{})">멈춤</button></div></div>
 
 <div class="card"><h2>점검 · 버튼 하나로</h2>
-  <div class="sub">숙소든 시험장이든 그대로 누른다. 처음 한 바퀴(약 30초)의 둘레 기기를 기준선으로 적고, '멈춤'을 누를 때까지 들으며 기기마다 의심 점수와 이유를 낸다. 애매한 기기가 둘 넘게 나오면 그때만 '걸으며 확인'을 하자고 한다.</div>
+  <div class="sub">어느 장소든 그대로 누른다. 처음 한 바퀴(약 30초)의 둘레 기기를 기준선으로 적고, '멈춤'을 누를 때까지 들으며 기기마다 의심 점수와 이유를 낸다. 많이 올려 보내는 기기가 둘 넘게 나오면 그때만 '걸으며 확인'을 하자고 한다. 시험장은 사람이 들어오기 전에 누르면 더 잘 잡는다.</div>
   <div class="row" style="margin-top:8px"><button class="go" id="wgo" onclick="post('/api/watch',{walk:!$('wnowalk').checked})">점검 시작</button>
     <label style="flex:2 1 220px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="wnowalk" style="width:auto"> 걸어서 확인할 수 없는 곳 (시험장 등)</label></div>
   <div class="sub" id="wnote" style="margin-top:6px"></div>

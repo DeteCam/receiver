@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """의심 점수: 둘레 기기마다 증거를 쌓아 점수와 이유를 낸다 (docs/의심 점수.md 4절).
-버튼 하나('점검 시작')로 숙소의 몰카와 시험장의 부정행위 카메라를 같은 흐름으로 찾는다. 숙소인지 시험장인지 고르지 않는다:
+버튼 하나('점검 시작')로 몰카(숙소·화장실 등)와 시험장의 부정행위 카메라를 같은 흐름으로 찾는다. 장소를 고르지 않는다:
 환경이 다르면 쌓이는 증거가 달라 결과가 달라진다. 점수는 손으로 정한 시작값이고 실물 실험(S1~S5)으로 고친다.
 수신기(파이)와 시험이 같은 파일을 쓴다. 파이썬 3.7, 표준 라이브러리만.
 
@@ -15,15 +15,20 @@
 증거 (점수는 시작값)
   새로 나타남        기준선(첫 바퀴) 뒤에 처음 들린 기기                                   +2
   올려 보내는 양      초당 30개 넘게, 평균 300바이트 넘게 (detect.py 의 '카메라 후보')       +2
+  유일한 업로더       내 기기를 빼면 많이 올려 보내는 기기가 이것 하나뿐이고 멀지 않음        +1  (걷기 없이도 '카메라'까지 오른다)
   송출 패턴          꾸준히 +1 / 일정 주기로 몰아서 +2 / 가끔 터짐 +1                      (0.5초 칸의 개수로 가린다)
   걷기에 반응        판별 결과가 'camera'                                                +3
   수상한 곳에 붙음    붙은 Wi-Fi 가 개인 핫스팟처럼 보이거나(임의 주소) 이름을 숨겼거나 새로 생김  +1
+                     그런 곳에 붙어 데이터를 올리기까지 함                                  +2  (+1 대신)
+  여러 번 몰아서 보냄  수상한 곳에 붙은 기기가 몰아서 보내기를 3번 넘게 함 (사진을 찍을 때마다)  +1
+  기기가 붙은 핫스팟   개인 핫스팟처럼 보이는 Wi-Fi 에 기기가 붙어 있음 (카메라가 조용해도)     +1
   카메라 같은 이름    붙은 Wi-Fi (또는 자기가 만든 Wi-Fi) 의 이름이 카메라 앱 계열              +1
   가까움 / 멂        세기 -60dBm 넘게 +1, -75dBm 아래 -1
   내 기기            점수를 매기지 않는다
 등급: 5 이상 '카메라 가능성 높음', 3~4 '의심 기기', 2 이하 '무시'.
 허브: 의심 기기가 붙은 Wi-Fi(핫스팟·공유기)는 그 기기의 등급까지 올려 같이 보여 준다. 허브는 비컨을 늘 보내서 카메라가 조용할 때도 보인다.
-확인 요청: 걷기를 안 한 '의심 기기'(3~4점, 올려 보내는 기기)가 둘 이상이면 '걸으며 확인'을 하자고 한다. 시험장처럼 기기가 거의 없으면 요청하지 않는다.
+확인 요청: 걷기를 안 한 '의심 기기'(3~4점, 올려 보내는 기기)가 둘 이상이면 '걸으며 확인'을 하자고 한다. 하나뿐이면 걷지 않는다 (유일한 업로더).
+기준선: 기기가 처음부터 켜져 있으면 '새로 나타남'이 없다. 그래도 핫스팟·버스트 증거로 잡히게 했고, 시험장은 사람이 들어오기 전에 시작하면 더 좋다.
 """
 import re
 
@@ -73,6 +78,26 @@ def pattern(windows):
     return "burst", None
 
 
+def clumps(w):
+    """0.5초 칸 목록에서 덩어리(패킷이 이어진 칸들) 수. 1칸짜리 덩어리는 연결 유지 신호일 수 있어 2칸 넘게 이어지거나 칸에 3개 넘게 든 것만 센다"""
+    n = 0; i = 0
+    while i < len(w):
+        if w[i] > 0:
+            j = i
+            while j < len(w) and w[j] > 0:
+                j += 1
+            if j - i >= 2 or max(w[i:j]) >= 3:
+                n += 1
+            i = j
+        else:
+            i += 1
+    return n
+
+
+def hotspot_like(mac, ssid):
+    return is_random(mac) or _match(HOTSPOT_NAMES, ssid)
+
+
 class Tracker(object):
     def __init__(self):
         self.dev = {}; self.base = None; self.aps_base = set(); self.cycles = 0; self.t0 = None
@@ -87,7 +112,7 @@ class Tracker(object):
         for r in rows:
             mac = r["mac"]; d = self.dev.get(mac)
             if d is None:
-                d = self.dev[mac] = dict(mac=mac, role=r.get("role"), first=now, cycles=0, windows=[], per_s=0.0, mean_len=0, rssi=None, candidate=False,
+                d = self.dev[mac] = dict(mac=mac, role=r.get("role"), first=now, cycles=0, windows=[], clumps=0, per_s=0.0, mean_len=0, rssi=None, candidate=False,
                                          bssid=r.get("bssid") or "", ssid=r.get("ssid") or "", ch=r.get("ch"), beacon_only=bool(r.get("beacon_only")))
                 if not first:
                     self.events.append(dict(t=now, mac=mac, what="새로 나타남"))
@@ -108,6 +133,7 @@ class Tracker(object):
             d["candidate"] = d["candidate"] or bool(r.get("candidate"))
             if r.get("series"):
                 d["windows"] = (d["windows"] + [list(r["series"])])[-12:]
+                d["clumps"] += clumps(r["series"])
         if first:
             self.base = set(self.dev)
             self.aps_base = set(m for m, d in self.dev.items() if d["role"] == "ap")
@@ -131,14 +157,27 @@ class Tracker(object):
         (self.my.add if on else self.my.discard)(mac)
 
     # ---- 증거와 점수
-    def evidence(self, d):
+    def context(self):
+        """여러 기기를 함께 봐야 아는 것: 많이 올려 보내는 기기 목록, 핫스팟마다 붙은 기기"""
+        heavy = [m for m, d in self.dev.items() if m not in self.my and d["role"] != "ap" and d["candidate"]
+                 and not (d["rssi"] is not None and d["rssi"] < FAR)]
+        clients = {}
+        for m, d in self.dev.items():
+            if d["role"] != "ap" and d["bssid"] and m not in self.my:
+                clients.setdefault(d["bssid"], []).append(m)
+        return dict(heavy=heavy, clients=clients)
+
+    def evidence(self, d, ctx=None):
+        ctx = ctx or self.context()
         ev = []
         if self.base is not None and d["mac"] not in self.base:
             ev.append(("new", 2, "점검을 시작한 뒤 새로 나타남"))
         if d["candidate"] and d["role"] != "ap":
             ev.append(("heavy", 2, "올려 보내는 양이 많음 (초당 %.0f개, 평균 %d바이트)" % (d["per_s"], d["mean_len"])))
+        if d["candidate"] and d["role"] != "ap" and ctx["heavy"] == [d["mac"]]:
+            ev.append(("only", 1, "내 기기를 빼면 많이 올려 보내는 기기가 이것 하나뿐"))
+        p, per = pattern(d["windows"]) if d["role"] != "ap" else ("none", None)
         if d["role"] != "ap":
-            p, per = pattern(d["windows"])
             pts = {"steady": 1, "periodic": 2, "burst": 1}.get(p, 0)
             if pts:
                 ev.append(("pattern", pts, PATTERN_NAME[p] + ("" if per is None else " (약 %.1f초마다)" % per)))
@@ -147,7 +186,7 @@ class Tracker(object):
             ev.append(("walk", 3, "걷기에 전송량이 따라 변함 (판별)"))
         hub = self.dev.get(d["bssid"]) if d["role"] != "ap" else None
         hub_ssid = (hub or {}).get("ssid") or d.get("ssid") or ""
-        if d["role"] != "ap" and d["bssid"]:
+        if d["role"] != "ap" and d["bssid"] and d["bssid"] != d["mac"]:
             why = []
             if is_random(d["bssid"]) or _match(HOTSPOT_NAMES, hub_ssid):
                 why.append("개인 핫스팟처럼 보임")
@@ -156,7 +195,12 @@ class Tracker(object):
             if self.base is not None and d["bssid"] not in self.aps_base and d["bssid"] in self.dev:
                 why.append("새로 생긴 Wi-Fi")
             if why:
-                ev.append(("hub", 1, "공유기가 아닌 곳에 붙음: " + ", ".join(why)))
+                if p in ("steady", "periodic", "burst"):
+                    ev.append(("hub", 2, "공유기가 아닌 곳에 붙어 데이터를 올림: " + ", ".join(why)))
+                else:
+                    ev.append(("hub", 1, "공유기가 아닌 곳에 붙음: " + ", ".join(why)))
+                if p == "burst" and d["clumps"] >= 3:
+                    ev.append(("bursts", 1, "몰아서 보내기를 여러 번 함 (%d번): 사진을 찍을 때마다 올리는 모습" % d["clumps"]))
         if d["role"] == "ap":
             why = []
             if is_random(d["mac"]) or _match(HOTSPOT_NAMES, d["ssid"]):
@@ -165,6 +209,9 @@ class Tracker(object):
                 why.append("이름을 숨김")
             if why:
                 ev.append(("hub", 1, "Wi-Fi 를 만드는 기기: " + ", ".join(why)))
+            cl = ctx["clients"].get(d["mac"], [])
+            if cl and hotspot_like(d["mac"], d["ssid"]):
+                ev.append(("hubcl", 1, "개인 핫스팟처럼 보이는 Wi-Fi 에 기기 %d개가 붙어 있음" % len(cl)))
         if _match(CAM_NAMES, hub_ssid if d["role"] != "ap" else d["ssid"]):
             ev.append(("name", 1, "카메라 앱 계열의 Wi-Fi 이름 (%s)" % (hub_ssid if d["role"] != "ap" else d["ssid"])))
         if d["rssi"] is not None:
@@ -175,11 +222,11 @@ class Tracker(object):
         return ev
 
     def result(self, _alarms=True):
-        out = {}
+        out = {}; ctx = self.context()
         for mac, d in self.dev.items():
             if mac in self.my:
                 out[mac] = self._row(d, [], mine=True); continue
-            out[mac] = self._row(d, self.evidence(d))
+            out[mac] = self._row(d, self.evidence(d, ctx))
         for mac, r in out.items():                          # 허브: 붙은 기기 가운데 가장 높은 등급까지 올린다
             if r["role"] == "ap" or r["mine"]:
                 continue
@@ -203,7 +250,7 @@ class Tracker(object):
         return dict(mac=d["mac"], role=d["role"], bssid=d["bssid"], ssid=d["ssid"], ch=d["ch"], score=s, level=lv, mine=mine, reasons=[t for _, _, t in ev],
                     keys=[k for k, _, _ in ev], pattern=p, period=per, per_s=round(d["per_s"], 1), mean_len=d["mean_len"], rssi=d["rssi"],
                     new=bool(self.base is not None and d["mac"] not in self.base), walked=self.walk.get(d["mac"]), first=d["first"], last=d.get("last"),
-                    beacon_only=d["beacon_only"], clients=[])
+                    beacon_only=d["beacon_only"], clumps=d.get("clumps", 0), clients=[])
 
 
 def _rank(lv):

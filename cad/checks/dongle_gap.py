@@ -1,5 +1,5 @@
 """USB 동글 두 개(폰과 통신하는 것, 탐지용)의 틈: 서로, 요크와, 받침과. 끄덕임 전 범위에서 잰다.   python3 dongle_gap.py
-탐지 동글은 모델(34 x 16 x 8)과 들어가는 가장 큰 크기(45 x 18 x 8) 두 가지로 본다."""
+탐지 동글은 모델(34 x 16 x 8), 듀얼밴드 ASUS USB-AC51(31 x 16 x 9), 들어가는 가장 큰 크기(45 x 18 x 10) 세 가지로 본다."""
 import os, sys, json
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path[:0] = [HERE] + [os.path.join(os.path.dirname(HERE), d) for d in ("model", "export", "checks", "analysis", "figures")]      # cad 의 하위 폴더를 모두 찾는다
 import numpy as np
@@ -26,8 +26,9 @@ def run(tag, d):
     print(tag, out[tag])
 run("무선 동글 34x16x8", DONGLE)
 run("탐지 동글 34x16x8", DONGLE2)
-big = dict(DONGLE2, L=45.0, W=18.0)
-run("탐지 동글 45x18x8", big)
+run("탐지 동글 AC51 31x16x9", dict(DONGLE2, L=31.0, W=16.0, T=9.0))
+big = dict(DONGLE2, L=45.0, W=18.0, T=10.0)
+run("탐지 동글 45x18x10", big)
 g1 = P.dongle_dummy(DONGLE).min_gap(P.dongle_dummy(DONGLE2), 30.0); g2 = P.dongle_dummy(DONGLE).min_gap(P.dongle_dummy(big), 30.0)
 out["동글 사이"] = dict(small=round(g1, 1), big=round(g2, 1)); print("동글 사이", out["동글 사이"])
 # 머리 치마 밖으로 나오는 길이

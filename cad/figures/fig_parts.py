@@ -305,9 +305,9 @@ def bought():
     # 무선 동글 두 개
     def dongle(L, Wd, T, plug=12.0):
         return box(0, L - plug, -Wd / 2, Wd / 2, 0, T) , box(L - plug, L, -6.0, 6.0, T / 2 - 2.25, T / 2 + 2.25)
-    a1, a2 = dongle(34, 16, 8); b1, b2 = dongle(45, 18, 8)
-    boxed_card([(a1 + a2, DARK, "폰과 통신: NETGEAR WNA3100M"), (b1 + b2, "#3A4A5C", "탐지 동글: 이 크기 안")],
-               "무선 동글 2개", "WNA3100M: 34 × 16 × 8, 4 g (NETGEAR 공식 값, 가지고 있는 것) · 탐지 동글: 모니터 모드가 되는 칩 (RT5370, MT7601U, AR9271 가운데 하나), 몸통 45 × 18 × 8 안",
+    a1, a2 = dongle(34, 16, 8); b1, b2 = dongle(31, 16, 9)
+    boxed_card([(a1 + a2, DARK, "폰과 통신: NETGEAR WNA3100M"), (b1 + b2, "#3A4A5C", "탐지 동글: 예 ASUS USB-AC51")],
+               "무선 동글 2개", "WNA3100M: 34 × 16 × 8, 4 g (NETGEAR 공식 값, 가지고 있는 것) · 탐지 동글: 모니터 모드가 되는 듀얼밴드 MT7610U (예: ASUS USB-AC51, 31 × 16 × 9), 몸통 45 × 18 × 10 안",
                "구매_무선_동글.png", el=32, gap=26)
 
 

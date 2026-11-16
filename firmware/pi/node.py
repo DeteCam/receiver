@@ -301,7 +301,7 @@ class Node(object):
                     raise Stopped()
             rows, method = D.fake_rows(), "monitor"
         elif self.mon.refresh():
-            rows = D.scan(self.mon, tuple(channels or D.CH24), progress=lambda s, a, b: self.set(step=s, done=a, total=b)); method = "monitor"
+            rows = D.scan(self.mon, tuple(channels) if channels else None, progress=lambda s, a, b: self.set(step=s, done=a, total=b)); method = "monitor"
         else:
             rows = []; method = "csi"; chans = tuple(channels or D.CH24)
             for k, ch in enumerate(chans):
@@ -387,7 +387,7 @@ class Node(object):
         의심 기기가 둘 이상 애매하면 그때만 '걸으며 확인'을 한다 (walk=False 면 하지 않는다: 시험장처럼 사람이 걸을 수 없는 곳).
         의심 기기와 그 허브가 있는 채널은 바퀴마다 자세히 듣는다 (몇 초마다 몰아서 보내는 카메라를 놓치지 않으려고)."""
         T = self.tracker = SC.Tracker(); t_end = time.time() + 60.0 * float(minutes) if minutes else None
-        chans = tuple(channels or D.CH24); extra = []; asked = set()
+        extra = []; asked = set(); seen5 = None            # seen5: AP 가 들린 5GHz 채널 (듀얼밴드 동글일 때만 쓴다)
         logf = None
         if not self.dry:                                   # 바퀴마다의 표를 남긴다 (실험 S1~S5 를 host/watch_report.py 로 다시 계산한다)
             try:
@@ -412,11 +412,13 @@ class Node(object):
                     for _ in range(int(3 * 4)):
                         time.sleep(0.25 / self.speed); check()
                 elif self.mon.refresh():
+                    chans = tuple(channels) if channels else D.plan(self.mon.channels(), seen5, k)
                     rows = D.scan(self.mon, chans, quick=0.5, focus=cycle or 6.0, n_focus=2, extra=extra,
                                   progress=lambda s, a, b: (check(), self.set(step="감시 %d바퀴째 · %s" % (k + 1, s))))
                 else:
                     raise RuntimeError("점검에는 탐지 동글이 필요합니다 (기기마다 길이와 주소 짝을 봐야 한다). 동글을 꽂고 다시 하세요.")
                 now = time.time(); T.update(rows, now); self.survey = rows
+                seen5 = (seen5 or set()) | D.ap_channels5(rows)
                 if logf:
                     logf.write(json.dumps(dict(t=now, rows=rows, walk=dict(T.walk), mine=sorted(T.my)), ensure_ascii=False) + "\n"); logf.flush()
                 r = publish()

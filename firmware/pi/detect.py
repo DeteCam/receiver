@@ -20,12 +20,16 @@
   작은 프레임만 많이 보내는 기기(영상을 받는 쪽이 보내는 응답)와 가끔만 보내는 기기는 빠진다.
   영상 통화나 화면 공유처럼 카메라가 아닌데 많이 내보내는 기기는 여기서 못 가린다: 그것은 다음 단계(판별)가 한다.
 한계
-  안테나가 하나인 2.4GHz 동글은 5GHz 를 못 듣고, 안테나 두 개로 한꺼번에 보내는(2 스트림) 프레임도 못 읽는다. 몰래카메라는 거의 2.4GHz·안테나 하나다.
+  2.4GHz 전용 동글(RT5370, MT7601U)은 5GHz 를 못 듣는다. 듀얼밴드 동글(MT7610U, MT7612U)이면 5GHz 도 듣는다:
+  처음 한 바퀴는 5GHz 를 모두 훑고, 그 뒤로는 AP 가 들린 5GHz 채널만 돈다 (카메라는 어딘가의 AP 에 붙어야 하므로). FULL5 바퀴마다 다시 모두 훑는다.
+  안테나가 하나인 동글은 두 개로 한꺼번에 보내는(2 스트림) 프레임을 못 읽는다. 몰래카메라는 거의 안테나 하나다.
 """
 from __future__ import print_function
 import os, struct, subprocess, sys, time
 
 CH24 = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)
+CH5 = (36, 40, 44, 48, 52, 56, 60, 64, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 149, 153, 157, 161, 165)   # 한국 5GHz 20MHz 채널 (동글이 되는 것만 쓴다)
+FULL5 = 5                      # 이 바퀴마다 5GHz 를 모두 다시 훑는다 (새로 켠 5GHz 핫스팟을 찾으려고)
 MIN_RATE = 30.0                # 초당 데이터 프레임 수 (5초에 150개)
 MIN_LEN = 300.0                # 평균 길이 (바이트, 헤더와 암호 덧붙임을 뺀 것)
 WEAK_RSSI = -75.0              # 이보다 약하면 '다른 방일 수 있음'
@@ -290,6 +294,20 @@ class Monitor(object):
         if rc != 0 or rc2 != 0:
             raise RuntimeError("탐지 동글(%s, 드라이버 %s)을 모니터 모드로 바꾸지 못했습니다. 다른 프로그램이 쓰는 중인지 보세요:  sudo ./link_setup.sh check" % (ifc, self.driver))
 
+    def channels(self):
+        """이 동글이 들을 수 있는 채널 (iw phy 의 주파수 목록에서 꺼진 것을 뺀다). 못 읽으면 2.4GHz"""
+        if getattr(self, "_chans", None) is not None:
+            return self._chans
+        ch = ()
+        try:
+            out = subprocess.check_output(["iw", "dev", self.iface, "info"], universal_newlines=True)
+            phy = [l.split()[-1] for l in out.splitlines() if l.strip().startswith("wiphy")][0]
+            ch = parse_phy_channels(subprocess.check_output(["iw", "phy", "phy" + phy, "info"], universal_newlines=True))
+        except Exception:
+            pass
+        self._chans = ch or CH24
+        return self._chans
+
     def channel(self, ch):
         return subprocess.call(["sudo", "iw", "dev", self.iface, "set", "channel", str(int(ch))], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
 
@@ -309,10 +327,42 @@ class Monitor(object):
             self.proc = None
 
 
+def parse_phy_channels(text):
+    """'iw phy … info' 의 '* 5180 MHz [36] (20.0 dBm)' 줄에서 쓸 수 있는 채널 번호. disabled 는 뺀다 (no IR 은 듣기만 하므로 괜찮다)"""
+    out = []
+    for l in text.splitlines():
+        l = l.strip()
+        if l.startswith("*") and "MHz [" in l and "disabled" not in l:
+            try:
+                c = int(l.split("[", 1)[1].split("]", 1)[0])
+            except ValueError:
+                continue
+            if (c in CH24 or c in CH5) and c not in out:
+                out.append(c)
+    return tuple(out)
+
+
+def plan(supported, seen5=None, cycle=0):
+    """이번 바퀴에 훑을 채널: 2.4GHz 는 모두, 5GHz 는 처음·FULL5 바퀴마다 모두, 그 밖에는 AP 가 들린 채널만"""
+    c24 = [c for c in supported if c <= 14]; c5 = [c for c in supported if c > 14]
+    if not c5:
+        return tuple(c24)
+    if seen5 is None or cycle % FULL5 == 0:
+        return tuple(c24 + c5)
+    return tuple(c24 + [c for c in c5 if c in seen5])
+
+
+def ap_channels5(rows):
+    """5GHz 에서 AP(또는 AP 에 붙은 기기)가 들린 채널"""
+    return set(int(r["ch"]) for r in rows if r.get("ch") and int(r["ch"]) > 14)
+
+
 def scan(mon, channels=CH24, quick=0.6, focus=5.0, n_focus=3, path=PCAP, progress=None, extra=()):
     """채널을 한 번 훑고(채널마다 quick 초), 데이터가 많은 채널 n_focus 개를 focus 초씩 자세히 듣는다. 13채널이면 약 30초.
+    channels=None 이면 동글이 들을 수 있는 채널 모두 (듀얼밴드면 5GHz 까지).
     extra = 데이터가 적어도 꼭 자세히 들을 채널 (감시할 때: 의심 기기와 그 허브가 있는 채널. 몇 초마다 몰아서 보내는 카메라를 놓치지 않으려고)"""
     say = progress or (lambda *a: None)
+    channels = tuple(channels or mon.channels())
     mon.prepare(); mon.start(path); hops = []
     try:
         for k, ch in enumerate(channels):
@@ -374,11 +424,14 @@ if __name__ == "__main__":
         sys.exit(__doc__)
     if sys.argv[1] == "--check":
         print("USB 무선 장치:", usb_wifi() or "없음"); d = find_monitor()
+        if d:
+            c = Monitor().channels(); print("들을 수 있는 채널: %s (%s)" % (" ".join(map(str, c)), "2.4GHz 와 5GHz" if any(x > 14 for x in c) else "2.4GHz 만"))
         print("탐지 동글:", ("%s (드라이버 %s%s)" % (d["name"], d["driver"], "" if d["driver"] in MON_OK else ", 확인 안 된 드라이버")) if d else "없음 (모니터 모드가 되는 동글을 가운데 USB 자리에 꽂는다)")
     elif sys.argv[1] == "--live":
         m = Monitor()
         if not m.available():
             sys.exit("탐지 동글을 찾지 못했습니다.")
-        show(scan(m, progress=lambda s, a, b: print("  ", s)))
+        print("들을 수 있는 채널:", m.channels())
+        show(scan(m, None, progress=lambda s, a, b: print("  ", s)))
     else:
         show(analyse(read_frames(sys.argv[1])))

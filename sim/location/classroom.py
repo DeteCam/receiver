@@ -3,7 +3,7 @@
 교실: 9.0 x 7.2 x 2.8m, 콘크리트 벽, 앞벽 칠판(철판), 오른쪽 벽 유리창. 책상·의자 쇠다리는 흩어지는 약한 파로.
 자리: 5줄 x 8칸 = 40자리 (옆 간격 1.0m, 앞뒤 1.1m). 사람 40명은 앉은 키 1.3m, 반지름 0.2m 기둥이고 움직이지 않는다.
 카메라: 한 자리를 뽑아, 그 사람 책상 위(필통 등, 높이 0.75~0.9m) 또는 가슴(옷 단추, 몸 바로 앞 1.1~1.25m)에 둔다. 카메라 주인의 몸도 기둥이다.
-수신기: 두 자리에서 잰다 (2대를 두거나 1대를 옮긴다). 자리와 높이를 바꿔 본다.
+수신기: 시험 중에 둘 수 있는 곳만 (모서리, 벽, 천장, 빔프로젝터 위). 대수와 높이를 바꿔 본다. 감독관이 들고 가까이 가는 것은 견줌용.
   - 앞 두 모서리, 교탁 높이 0.75m
   - 앞 두 모서리, 높은 곳 1.9m (칠판 위 선반·사물함 위: 앉은 사람 머리 위로 본다)
   - 앞 가운데 + 옆벽 가운데, 높이 1.9m (두 선이 직각에 가깝게 만난다)
@@ -38,6 +38,16 @@ RX = {"앞 두 모서리 · 교탁 높이 0.75m": [(0.6, 0.6, 0.75), (8.4, 0.6, 
       "앞 가운데 + 옆벽 · 2.6m": [(4.5, 0.5, 2.6), (8.6, 4.4, 2.6)],
       "옮겨 가며 3자리 · 2.0m": "adaptive",
       "모서리 2 + 가까이 2 (옮겨 가며)": "close"}       # 앞 두 모서리 2.6m 에서 잰 뒤, 감독관이 들고 가장 그럴듯한 자리의 뒤 1m, 옆뒤 대각 1.5m 에서 (머리 위 1.8m) 잰다         # 앞 가운데에서 한 번 -> 그 결과의 줄 옆 벽 쪽 통로 -> 그 자리 뒤 (감독관이 받침대에 올려 옮긴다)
+C4 = [(0.6, 0.6), (8.4, 0.6), (0.6, 6.6), (8.4, 6.6)]
+RX.update({"앞 둘 + 뒤 하나 모서리 · 2.6m": [(x, y, 2.6) for x, y in C4[:3]],
+           "네 모서리 · 2.6m": [(x, y, 2.6) for x, y in C4],
+           "네 모서리 · 1.9m": [(x, y, 1.9) for x, y in C4],
+           "네 모서리 + 옆벽 가운데 · 2.6m": [(x, y, 2.6) for x, y in C4 + [(0.35, 3.6), (8.65, 3.6)]]})     # 시험 중에도 둘 수 있는 곳: 모서리와 벽 (높이 달아 둔다)
+RX.update({"천장 가운데 한 곳 · 2.7m": [(4.5, 4.2, 2.7)],                                       # 위에서 내려다보면 방향만으로 책상 높이의 점이 정해진다
+           "천장 가운데 두 곳 · 2.7m": [(4.5, 3.0, 2.7), (4.5, 5.5, 2.7)],
+           "빔프로젝터 위 + 뒤 천장 · 2.3m": [(4.5, 2.6, 2.3), (4.5, 5.6, 2.3)]})
+CEIL = ("천장 가운데 한 곳 · 2.7m", "천장 가운데 두 곳 · 2.7m", "빔프로젝터 위 + 뒤 천장 · 2.3m")
+CORNER_ONLY = ("앞 두 모서리 · 천장 밑 2.6m", "앞 둘 + 뒤 하나 모서리 · 2.6m", "네 모서리 · 2.6m", "네 모서리 · 1.9m", "네 모서리 + 옆벽 가운데 · 2.6m")
 AD_H = 2.0
 
 
@@ -114,8 +124,8 @@ def rc(k):
     return divmod(int(k), COLS)
 
 
-def run(n=150, rxname="앞 두 모서리 · 천장 밑 2.6m", where="책상 위", people=True, seed=5):
-    fus = Fusion(); frames = PLANS["tilt3"]; grid = SeatGrid(); rows = []
+def run(n=150, rxname="앞 두 모서리 · 천장 밑 2.6m", where="책상 위", people=True, seed=5, plan="tilt3"):
+    fus = Fusion(); frames = PLANS[plan]; grid = SeatGrid(); rows = []
     for i in range(n):
         rng = np.random.default_rng(seed * 7919 + i)
         seat = int(rng.integers(len(SEATS)))
@@ -171,14 +181,14 @@ def run(n=150, rxname="앞 두 모서리 · 천장 밑 2.6m", where="책상 위"
 
 def summ(rows):
     out = {}
-    for tag in ("1", "2", "3", "4"):
+    for tag in ("1", "2", "3", "4", "5", "6"):
         if not all(("exact_" + tag) in r for r in rows):
             continue
         out[tag] = dict(exact=round(100 * np.mean([r["exact_" + tag] for r in rows]), 1), near=round(100 * np.mean([r["near_" + tag] for r in rows]), 1),
                         top3=round(100 * np.mean([r["top3_" + tag] for r in rows]), 1), dist_med=round(float(np.median([r["dist_" + tag] for r in rows])), 2),
                         n50_med=float(np.median([r["n50_" + tag] for r in rows])))
     out["dir_med"] = [round(float(np.median([r["err"][j] for r in rows])), 1) for j in range(len(rows[0]["err"]))]
-    last = max(k for k in out if k in ("1", "2", "3", "4"))
+    last = max((k for k in out if k in ("1", "2", "3", "4", "5", "6")), key=int)
     out["n"] = len(rows)
     # 줄마다 (앞줄 -> 뒷줄): 두 자리로 정확히 맞힌 비율
     out["by_row"] = [round(100 * np.mean([r["near_" + last] for r in rows if rc(r["seat"])[0] == q]), 0) if any(rc(r["seat"])[0] == q for r in rows) else None for q in range(ROWS)]
@@ -187,14 +197,16 @@ def summ(rows):
 
 def main(n=150):
     res = {}
-    conds = [(rx, "책상 위", True) for rx in RX] + [(rx, "가슴", True) for rx in ("앞 두 모서리 · 천장 밑 2.6m", "옮겨 가며 3자리 · 2.0m", "모서리 2 + 가까이 2 (옮겨 가며)")] + \
-            [(rx, "책상 위", False) for rx in ("앞 두 모서리 · 천장 밑 2.6m", "옮겨 가며 3자리 · 2.0m", "모서리 2 + 가까이 2 (옮겨 가며)")]
+    # 시험 중에는 자리 사이로 들고 다닐 수 없다: 모서리·벽·천장에 미리 두는 것만 (가까이 가서 재는 것은 견줌용)
+    conds = [(rx, wh, True) for rx in ("앞 두 모서리 · 교탁 높이 0.75m",) + CORNER_ONLY + CEIL + ("모서리 2 + 가까이 2 (옮겨 가며)",) for wh in ("책상 위", "가슴")] + \
+            [(rx, "책상 위", False) for rx in ("네 모서리 · 2.6m", "천장 가운데 한 곳 · 2.7m")]
     for rx, wh, ppl in conds:
         key = "%s | %s | %s" % (rx, wh, "40명" if ppl else "빈 교실")
         t0 = time.time(); s = summ(run(n, rx, wh, ppl)); res[key] = s
-        last = max(k for k in s if k in ("1", "2", "3", "4"))
+        last = max((k for k in s if k in ("1", "2", "3", "4", "5", "6")), key=int)
+        f = s.get("2", s["1"])
         print("%-44s 두 자리: 정확 %4.1f%% 옆자리까지 %4.1f%% | 마지막(%s): 정확 %4.1f%% 옆자리까지 %4.1f%% 3후보 안 %4.1f%% 50%%후보 %2.0f자리 | 방향 %s | 줄별(옆자리까지) %s (%.0f초)" % (
-            key, s["2"]["exact"], s["2"]["near"], last, s[last]["exact"], s[last]["near"], s[last]["top3"], s[last]["n50_med"], s["dir_med"], s["by_row"], time.time() - t0), flush=True)
+            key, f["exact"], f["near"], last, s[last]["exact"], s[last]["near"], s[last]["top3"], s[last]["n50_med"], s["dir_med"], s["by_row"], time.time() - t0), flush=True)
     json.dump(dict(n=n, results=res), open(os.path.join(HERE, "classroom_result.json"), "w"), ensure_ascii=False, indent=1)
 
 

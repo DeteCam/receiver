@@ -98,6 +98,9 @@ def hotspot_like(mac, ssid):
     return is_random(mac) or _match(HOTSPOT_NAMES, ssid)
 
 
+BIG = 300            # 평균 프레임이 이보다 커야 사진·영상을 올리는 것으로 본다 (바이트)
+
+
 class Tracker(object):
     def __init__(self):
         self.dev = {}; self.base = None; self.aps_base = set(); self.cycles = 0; self.t0 = None
@@ -167,11 +170,21 @@ class Tracker(object):
                 clients.setdefault(d["bssid"], []).append(m)
         return dict(heavy=heavy, clients=clients)
 
+    def _infra(self, bssid):
+        """원래 있던(기준선) 공유기이고 핫스팟·숨긴 Wi-Fi 같지 않다. 기준선이 없으면 핫스팟 같지 않은 AP"""
+        h = self.dev.get(bssid)
+        if h is None or h.get("role") != "ap" or h.get("ssid") == "" or hotspot_like(bssid, h.get("ssid") or ""):
+            return False
+        return self.base is None or bssid in self.aps_base
+
     def evidence(self, d, ctx=None):
         ctx = ctx or self.context()
         ev = []
         if self.base is not None and d["mac"] not in self.base:
-            ev.append(("new", 2, "점검을 시작한 뒤 새로 나타남"))
+            if d["role"] != "ap" and self._infra(d["bssid"]):           # 기준선에 있던 건물·숙소 공유기에 새로 붙은 기기: 들어온 사람의 폰일 때가 많다
+                ev.append(("new", 1, "점검을 시작한 뒤 새로 나타남 (원래 있던 공유기에 붙음)"))
+            else:
+                ev.append(("new", 2, "점검을 시작한 뒤 새로 나타남"))
         if d["candidate"] and d["role"] != "ap":
             ev.append(("heavy", 2, "올려 보내는 양이 많음 (초당 %.0f개, 평균 %d바이트)" % (d["per_s"], d["mean_len"])))
         if d["candidate"] and d["role"] != "ap" and ctx["heavy"] == [d["mac"]]:
@@ -179,6 +192,8 @@ class Tracker(object):
         p, per = pattern(d["windows"]) if d["role"] != "ap" else ("none", None)
         if d["role"] != "ap":
             pts = {"steady": 1, "periodic": 2, "burst": 1}.get(p, 0)
+            if pts and d["mean_len"] < BIG:                                # 작은 알림·연결 유지 패킷만 오가는 폰은 패턴으로 치지 않는다
+                pts = 0
             if pts:
                 ev.append(("pattern", pts, PATTERN_NAME[p] + ("" if per is None else " (약 %.1f초마다)" % per)))
         v = self.walk.get(d["mac"])
@@ -231,7 +246,7 @@ class Tracker(object):
             if r["role"] == "ap" or r["mine"]:
                 continue
             h = out.get(r["bssid"])
-            if h is None or h["mine"] or r["level"] == "ignore":
+            if h is None or h["mine"] or r["level"] == "ignore" or self._infra(r["bssid"]):   # 원래 있던 공유기는 올리지 않는다
                 continue
             h["clients"].append(mac)
             if _rank(r["level"]) > _rank(h["level"]):

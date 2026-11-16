@@ -48,7 +48,7 @@ def hidden_cam():
     T.walked(CAM, "camera"); T.walked(PHONE, "suspect")
     r = T.result(); d = dict((x["mac"], x) for x in r["devices"])
     assert d[CAM]["level"] == "camera" and d[PHONE]["level"] == "suspect" and not r["need_confirm"]
-    assert d[HOTEL_AP]["level"] == "camera" and CAM in d[HOTEL_AP]["clients"]     # 허브(여기서는 그 방의 공유기)도 같이 보인다
+    assert d[HOTEL_AP]["level"] != "camera"                                          # 그 방의 원래 공유기는 카메라가 붙어 있어도 올리지 않는다
     T.mine(PHONE, True); d = dict((x["mac"], x) for x in T.result()["devices"])
     assert d[PHONE]["level"] == "mine"
     return d[CAM]
@@ -115,6 +115,34 @@ def exam_on_from_start():
     return quiet, d[SPYCAM]
 
 
+def phone_idle(r):
+    """가방 속 폰: 학교 공유기에 붙어 가끔 작은 알림만 오간다"""
+    w = [0] * 20
+    for i in r.sample(range(20), 2):
+        w[i] = r.choice([1, 2, 3, 4])
+    return w
+
+
+def crowded_exam(start_empty):
+    """대학 시험장: 폰 40대가 학교 공유기에 붙어 있고, 한 명이 핫스팟에 붙인 카메라로 가끔 찍는다.
+    빈 방에서 시작하든 사람이 들어온 뒤 시작하든 폰은 하나도 울리지 않고 카메라만 '카메라'"""
+    r = random.Random(1); T = S.Tracker()
+    phones = ["%02x:aa:bb:cc:dd:%02x" % ((0x02 | (i << 2)) & 0xfe, i) for i in range(40)]
+    hall = lambda: row(HALL_AP, "ap", HALL_AP, "KOREATECH", rssi=-60, beacon=True, ch=1)
+    if start_empty:
+        T.update([hall()], 0.0)
+    for k in range(10):
+        rows = [hall()] + [row(m, bssid=HALL_AP, per_s=0.5, mean_len=r.choice([120, 180, 240]), rssi=r.uniform(-70, -50), series=phone_idle(r), ch=1) for m in phones]
+        rows += [row(HOTSPOT, "ap", HOTSPOT, "", rssi=-55, beacon=True, ch=6), row(SPYCAM, bssid=HOTSPOT, per_s=3, mean_len=900, rssi=-56, series=presses(1), ch=6)]
+        T.update(rows, 30.0 * (k + 1))
+    res = T.result(); d = dict((x["mac"], x) for x in res["devices"])
+    loud = [m for m in phones if d[m]["level"] != "ignore"]
+    assert not loud, [(m, d[m]["score"], d[m]["reasons"]) for m in loud[:3]]
+    assert d[SPYCAM]["level"] == "camera" and d[HOTSPOT]["level"] == "camera", (d[SPYCAM]["score"], d[SPYCAM]["reasons"])
+    assert d[HALL_AP]["level"] == "ignore" and not res["need_confirm"]
+    return max(d[m]["score"] for m in phones), d[SPYCAM]
+
+
 def exam_button():
     """버튼을 누를 때만 찍는 카메라: 평소에는 핫스팟 비컨만 새로 보인다 -> 핫스팟이 '의심 기기'"""
     T = S.Tracker()
@@ -127,6 +155,7 @@ def exam_button():
 
 if __name__ == "__main__":
     test_pattern(); c = hidden_cam(); a = hidden_cam_alone(); e, h = exam(); q, o = exam_on_from_start(); b = exam_button()
+    ce = [crowded_exam(True), crowded_exam(False)]
     show = lambda d: "%d %s · %s" % (d["score"], S.LEVEL_NAME[d["level"]], " + ".join(d["reasons"]))
     print("몰카 (영상 통화 폰과 같이):", show(c))
     print("몰카 (혼자 올림):", show(a))
@@ -134,5 +163,7 @@ if __name__ == "__main__":
     print("  그 핫스팟:", h["score"], S.LEVEL_NAME[h["level"]], "·", " + ".join(h["reasons"]))
     print("처음부터 켠 핫스팟 (누르기 전):", show(q))
     print("처음부터 켠 카메라 (몇 번 누른 뒤):", show(o))
+    for name, (pm, cam) in zip(("빈 방에서 시작", "사람이 들어온 뒤 시작"), ce):
+        print("대학 시험장 폰 40대 (%s): 폰 최고 %d점, 카메라 %s" % (name, pm, show(cam)))
     print("버튼 카메라의 핫스팟:", b["score"], S.LEVEL_NAME[b["level"]], "·", " + ".join(b["reasons"]))
     print("점수 검사 통과")

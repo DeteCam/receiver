@@ -13,6 +13,16 @@
   S.add(pose=((x, y, z), heading_deg), obs=obs, frames=frames)   # 자리마다 한 번. pose = 받침 바닥 한가운데의 자리와 받침 0도(앞 표시)가 향한 각
   r = S.result()                                           # 추정 구간, 믿음, 다음에 놓을 자리
 좌표: z 가 위. heading 은 위에서 볼 때 방의 +x 에서 반시계로 잰 각(도).
+
+시험장 모드 (ExamSession, 2026-11-17)
+  몰카 찾기(Session)는 '방 안 어디든' 칸으로 나눠 구간을 구하고, 수신기는 바닥·탁자 어디에나 놓는다.
+  시험장은 카메라가 '어느 자리'에 있는지가 답이고, 시험 중에는 자리 사이로 들어갈 수 없다. 그래서 다른 것은 셋뿐이다:
+    - 후보: 방의 칸 대신 자리마다 카메라가 있을 법한 점 (책상 위 여러 점 + 가슴). 답은 자리 번호 후보 3개.
+    - 수신기를 놓는 곳: 사용자가 정한 곳만 (모서리·벽·교탁 자리, 받침대 높이 2.4m).
+    - 다음 자리 고르기: 지금 확률이 높은 자리들이 그곳에서 가장 벌어져 보이는 곳 (sim/location/perimeter2.py 에서 가장 좋았던 것).
+  점수 계산(score_points, likelihood)은 몰카 찾기와 같은 것을 쓴다.
+  E = ExamSession(seats=[{"id": "1-1", "x": .., "y": ..}, ...], spots=[{"name": "앞 왼쪽", "x": .., "y": .., "z": 2.4}, ...], front=(0, -1))
+  E.add(pose, obs, frames); r = E.result()                 # 자리 후보 3개, 다음에 놓을 곳
 """
 import numpy as np
 from estimator import frame, to_scan
@@ -219,12 +229,7 @@ class Session(object):
 
     def add(self, pose, obs, frames, est=None):
         """pose = ((x, y, z), heading_deg). obs = Fusion.read() 가 준 스캔별 관측, frames = [(yaw, tilt), ...]. est = 그 자리에서 구한 방향(수신기 좌표, 없으면 None)"""
-        base = np.asarray(pose[0], dtype=float); head = float(pose[1])
-        m = dict(pose=(base, head), obs=[dict(seen=bool(o["seen"]), psi=float(o["psi"]), depth=float(o["depth"])) for o in obs], frames=[(float(y), float(t)) for y, t in frames],
-                 ref=base + origin(frames), d=None)
-        if est is not None:
-            d = to_room(np.asarray(est, dtype=float), head); m["d"] = d / np.linalg.norm(d)
-        self.measures.append(m); self.grid = None
+        self.measures.append(make_measure(pose, obs, frames, est)); self.grid = None
         return len(self.measures)
 
     def _grid(self):
@@ -282,3 +287,109 @@ class Session(object):
                 post = posterior(g, ms, self.prior, Q_BAD, SIG_SCALE); c, idx = zone(g, post)[:2]; _, axis = long_axis(g, post, idx)
             val = third_score([m["ref"] for m in ms], np.asarray(c), np.asarray(axis), P, frames, near=0.5 * k); best = pick(P, val, n, sep=0.5 * k, largest=True)
         return [dict(x=round(float(P[i][0]), 2), y=round(float(P[i][1]), 2), z=round(float(P[i][2]), 2)) for i in best]
+
+
+# ---------------------------------------------------------------- 시험장 모드
+EXAM_DESK_Z, EXAM_CHEST_Z = 0.80, 1.17      # 책상 위 (필통 등), 가슴 (단추) 높이 (m). sim/location/classroom.py 의 SeatGrid 와 같다
+EXAM_BODY_BACK = 0.25                       # 의자에 앉은 몸은 자리 점에서 칠판 반대쪽으로 0.25m (몸 반지름 0.2 + 0.04 앞이 가슴 카메라)
+EXAM_PLAN = "tilt18"                        # 시험장에서 한 곳에서 재는 계획 (숙임 30·54.7·78도 x 받침 6방향). 3번보다 옆자리까지 맞히는 비율이 크게 오른다
+EXAM_MAX_POS = 6                            # 이만큼 재면 그만 (6곳에서 옆자리까지 96~97%: sim/location/perimeter2.py)
+EXAM_GOOD_P = 0.6                           # 후보 3자리의 확률 합이 이만큼 넘고 EXAM_GOOD_N 곳을 쟀으면 '좁혀짐'
+EXAM_GOOD_N = 6                             # 4곳에서 멈추면 3후보 안 88% , 6곳까지 재면 92~96% (sim/location/exam_mode_check.py). 확률 합은 늘 자신이 지나쳐서 곳 수로 정한다
+
+
+class SeatPoints(object):
+    """자리마다 카메라가 있을 법한 점들. X (N,3), owner (N,) = 자리 번호(0부터)"""
+    def __init__(self, seats, front=(0.0, -1.0)):
+        f = np.asarray(front, dtype=float); f = f / np.linalg.norm(f); side = np.array([-f[1], f[0]])
+        pts, owner = [], []
+        for k, s_ in enumerate(seats):
+            c = np.array([float(s_["x"]), float(s_["y"])])
+            for dx in (-0.25, 0.0, 0.25):
+                for df in (0.25, 0.10):                                   # 책상 위: 자리 점에서 칠판 쪽으로 0.10·0.25m, 옆으로 -0.25·0·0.25m
+                    q = c + df * f + dx * side; pts.append((q[0], q[1], EXAM_DESK_Z)); owner.append(k)
+                q = c - (EXAM_BODY_BACK - 0.24) * f + 0.3 * dx * side; pts.append((q[0], q[1], EXAM_CHEST_Z)); owner.append(k)   # 가슴
+        self.X = np.array(pts); self.owner = np.array(owner); self.n = len(seats)
+
+
+def make_measure(pose, obs, frames, est=None):
+    base = np.asarray(pose[0], dtype=float); head = float(pose[1])
+    m = dict(pose=(base, head), obs=[dict(seen=bool(o["seen"]), psi=float(o["psi"]), depth=float(o["depth"])) for o in obs], frames=[(float(y), float(t)) for y, t in frames],
+             ref=base + origin(frames), d=None)
+    if est is not None:
+        d = to_room(np.asarray(est, dtype=float), head); m["d"] = d / np.linalg.norm(d)
+    return m
+
+
+def spread_value(p, seats_xy, spot_xy, top_mass=0.9):
+    """지금 자리 확률 p 일 때, 수신기를 spot 에 두면 후보 자리들이 얼마나 갈리는가 (클수록 좋다).
+    확률 높은 자리들(합 top_mass 까지)끼리 그 자리에서 본 방향 차이를, 그 거리에서의 방향 오차(6도 + 2.5도/m)로 나눠 확률로 가중해 더한다 (3 에서 자른다)."""
+    o = np.argsort(-p); k = int(np.searchsorted(np.cumsum(p[o]), top_mass) + 1); top = o[:max(k, 2)]; w = p[top]
+    v = seats_xy[top] - np.asarray(spot_xy, dtype=float)[None, :2]
+    az = np.arctan2(v[:, 1], v[:, 0]); d = np.hypot(v[:, 0], v[:, 1]); sig = np.radians(6.0 + 2.5 * d)
+    da = np.abs((az[:, None] - az[None, :] + np.pi) % (2 * np.pi) - np.pi) / ((sig[:, None] + sig[None, :]) / 2)
+    return float(np.sum(w[:, None] * w[None, :] * np.minimum(da, 3.0)))
+
+
+class ExamSession(object):
+    """시험장: 정해진 곳(모서리·벽·교탁 자리)에서만 재고, 답은 자리 번호 후보.
+    seats: [{"id": "3-2", "x": m, "y": m}, ...]  자리 점 = 의자 앞 끝, 책상 뒤 끝쯤 (폰 AR 이나 좌석표로)
+    spots: [{"name": "앞 왼쪽 모서리", "x": m, "y": m, "z": m}, ...]  수신기 받침 바닥을 놓을 수 있는 곳 (받침대 위, z 는 받침 바닥 높이)
+    front: 학생이 보는 쪽 (칠판 쪽) 단위 벡터 (방 좌표 x, y)"""
+    def __init__(self, seats, spots, front=(0.0, -1.0)):
+        if not seats:
+            raise ValueError("자리가 없습니다")
+        if not spots:
+            raise ValueError("수신기를 놓을 곳이 없습니다")
+        self.seats = [dict(id=str(s_.get("id", i + 1)), x=float(s_["x"]), y=float(s_["y"])) for i, s_ in enumerate(seats)]
+        self.spots = [dict(name=str(q.get("name", "곳 %d" % (i + 1))), x=float(q["x"]), y=float(q["y"]), z=float(q.get("z", 2.4))) for i, q in enumerate(spots)]
+        self.front = (float(front[0]), float(front[1])); self.pts = SeatPoints(self.seats, self.front)
+        self.xy = np.array([[s_["x"], s_["y"]] for s_ in self.seats]); self.measures = []; self.used = []
+
+    def add(self, pose, obs, frames, est=None, spot=None):
+        """pose = ((x, y, z), heading_deg). spot = 놓은 곳의 번호 (spots 안의 순서). 모르면 pose 에서 가장 가까운 곳으로 본다"""
+        m = make_measure(pose, obs, frames, est); self.measures.append(m)
+        if spot is None:
+            b = m["pose"][0]; spot = int(np.argmin([np.hypot(q["x"] - b[0], q["y"] - b[1]) for q in self.spots]))
+        self.used.append(int(spot))
+        return len(self.measures)
+
+    def seat_probs(self):
+        if not self.measures:
+            return np.full(len(self.seats), 1.0 / len(self.seats))
+        post = posterior(self.pts, self.measures, None, Q_BAD, SIG_SCALE)
+        p = np.bincount(self.pts.owner, post, minlength=len(self.seats)); return p / p.sum()
+
+    def next_spot(self, p=None):
+        """다음에 수신기를 놓을 곳 (spots 안의 번호). 아직 안 잰 곳 가운데 후보 자리들이 가장 벌어져 보이는 곳. 처음에는 0번"""
+        free = [i for i in range(len(self.spots)) if i not in self.used]
+        if not free:
+            return None
+        if not self.measures:
+            return free[0]
+        p = self.seat_probs() if p is None else p
+        val = [spread_value(p, self.xy, (self.spots[i]["x"], self.spots[i]["y"])) for i in free]
+        return free[int(np.argmax(val))]
+
+    def result(self):
+        n = len(self.measures); p = self.seat_probs(); o = np.argsort(-p)
+        top = [dict(id=self.seats[i]["id"], x=round(self.seats[i]["x"], 2), y=round(self.seats[i]["y"], 2), p=round(float(p[i]), 3)) for i in o[:3]]
+        mass = float(sum(t["p"] for t in top)); seen = sum(1 for m in self.measures if any(o_["seen"] for o_ in m["obs"]))
+        nxt = self.next_spot(p)
+        if n == 0:
+            verdict, msg = "none", "아직 잰 곳이 없습니다. '%s'에 수신기를 놓고 재세요." % self.spots[nxt]["name"]
+        elif seen == 0:
+            verdict, msg = "nothing", "어느 곳에서도 골이 보이지 않았습니다. 카메라가 신호를 내는 중인지(ESP32 찌르기), 채널과 주소가 맞는지 확인하세요."
+        elif n >= EXAM_GOOD_N and mass >= EXAM_GOOD_P:
+            verdict, msg = "good", "후보 3자리: %s (합 %.0f%%). 이 자리들을 확인하세요." % (", ".join(t["id"] for t in top), 100 * mass)
+        elif n >= EXAM_MAX_POS or nxt is None:
+            verdict, msg = "wide", "%d곳을 재도 후보가 넓습니다 (후보 3자리 합 %.0f%%). %s 둘레를 넓게 확인하세요." % (n, 100 * mass, ", ".join(t["id"] for t in top))
+        elif n >= 4:
+            verdict, msg = "more", "지금 후보 3자리: %s. '%s' 쪽으로 옮겨 %d곳 더 재면 더 확실해집니다." % (", ".join(t["id"] for t in top), self.spots[nxt]["name"], EXAM_GOOD_N - n)
+        else:
+            verdict, msg = "more", "후보 3자리 합 %.0f%%. '%s' 쪽으로 옮겨 한 번 더 재세요." % (100 * mass, self.spots[nxt]["name"])
+        out = dict(mode="exam", positions=n, verdict=verdict, message=msg, top=top, top_mass=round(mass, 3), plan=EXAM_PLAN,
+                   seats=[dict(id=s_["id"], p=round(float(p[i]), 3)) for i, s_ in enumerate(self.seats)],
+                   used=[self.spots[i]["name"] for i in self.used])
+        out["next"] = None if (nxt is None or verdict in ("good", "wide", "nothing")) else dict(index=int(nxt), **self.spots[nxt])
+        return out

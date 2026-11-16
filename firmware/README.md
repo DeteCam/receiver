@@ -11,7 +11,7 @@
 
 ```
 python3 pi/node.py --dry --port 8080     # 장치 없이 화면 보기: http://localhost:8080
-python3 tests/test_core.py && python3 tests/test_score.py && python3 tests/test_node_dry.py && python3 tests/test_control.py && python3 tests/test_marker.py
+python3 tests/test_core.py && python3 tests/test_score.py && python3 tests/test_exam.py && python3 tests/test_node_dry.py && python3 tests/test_control.py && python3 tests/test_marker.py
 pi/install.sh pi@raspberrypi.local       # 파이에 넣기 (랜선을 꽂은 채로)
 ```
 

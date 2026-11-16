@@ -1,0 +1,41 @@
+{
+ "n": 100,
+ "results": {
+  "좁혀지면 멈춤 | 책상 위": {
+   "exact": 76.0,
+   "near": 94.0,
+   "top3": 96.0,
+   "positions": 6.0,
+   "verdicts": {
+    "good": 100
+   }
+  },
+  "좁혀지면 멈춤 | 가슴": {
+   "exact": 74.0,
+   "near": 94.0,
+   "top3": 92.0,
+   "positions": 6.0,
+   "verdicts": {
+    "good": 100
+   }
+  },
+  "6곳까지 | 책상 위": {
+   "exact": 76.0,
+   "near": 94.0,
+   "top3": 96.0,
+   "positions": 6.0,
+   "verdicts": {
+    "good": 100
+   }
+  },
+  "6곳까지 | 가슴": {
+   "exact": 74.0,
+   "near": 94.0,
+   "top3": 92.0,
+   "positions": 6.0,
+   "verdicts": {
+    "good": 100
+   }
+  }
+ }
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""수신기 프로그램(node.py)을 가짜 모드로 띄워 네 단계를 차례로 불러 본다: 탐지 -> 판별 -> 위치 재기(두 자리) -> 구간 -> 마커.
+"""수신기 프로그램(node.py)을 가짜 모드로 띄워 네 단계를 차례로 불러 본다: 탐지 -> 판별 -> 위치 재기(두 자리) -> 구간 -> 시험장 모드 -> 마커.
     python3 tests/test_node_dry.py [파이썬 실행 파일]        (파이와 같은 파이썬 3.7 로 해 보려면 그 경로를 준다)
 장치가 없어도 되는 검사다. 모터·CSI·동글이 실제로 도는지는 실물에서 확인해야 한다."""
 import json, os, subprocess, sys, time
@@ -109,6 +109,29 @@ def main():
             nx = z2["next"][0]
             assert post("/api/measure", {"plan": "tilt3", "pose": {"x": nx["x"], "y": nx["y"], "z": 0.0, "heading": 0.0}}).get("ok"); wait("재기")
             z3, e3, in3 = zone("세 자리"); assert z3["positions"] == 3 and in3 and z3["length_m"] < z2["length_m"] and e3 < 0.5, (e3, z3["length_m"])
+            # 시험장 모드: 자리(가짜 카메라는 2-3 자리 책상 위)와 둘레의 놓을 곳을 주고, 권하는 곳으로 옮겨 가며 잰다
+            xs = [2.4 + 1.1 * (i - 2) for i in range(6)]; ys = [3.3 + 0.95 * (j - 1) for j in range(7)]
+            seats = [dict(id="%d-%d" % (j + 1, i + 1), x=x, y=y) for j, y in enumerate(ys) for i, x in enumerate(xs)]
+            spots = [dict(name=nm, x=x, y=y, z=2.4) for nm, x, y in (("앞 왼쪽", 0.5, 0.5), ("앞 오른쪽", 7.0, 0.5), ("뒤 왼쪽", 0.5, 8.6), ("뒤 오른쪽", 7.0, 8.6),
+                                                                      ("왼쪽 벽", 0.3, 4.3), ("오른쪽 벽", 7.2, 4.3), ("교탁", 3.75, 1.3))]
+            assert "error" in post("/api/exam", {"seats": seats, "spots": []})                        # 놓을 곳이 없으면 거절
+            assert post("/api/reset").get("ok") and post("/api/exam", {"seats": seats, "spots": spots, "front": [0, -1]}).get("ok")
+            st = get("/api/status"); assert st["mode"] == "exam" and "2.4m" in st["hint"], st["hint"]
+            ex = get("/api/exam"); assert ex["verdict"] == "none" and ex["next"]["index"] == 0 and ex["plan"] == "tilt18", ex
+            for k in range(4):
+                nx = ex["next"]
+                plan = None if k == 0 else "tilt3"                                                     # 처음 한 번은 시험장 기본(18번), 나머지는 검사 시간을 줄이려고 3번
+                assert post("/api/measure", {"plan": plan, "spot": nx["index"], "pose": {"x": nx["x"], "y": nx["y"], "z": nx["z"], "heading": 0.0}}).get("ok")
+                s, _ = wait("재기", 400)
+                if k == 0:
+                    assert len(get("/api/status")["positions"][-1]["scans"]) >= 18, "시험장 기본 계획이 18번이 아닙니다"
+                ex = get("/api/exam")
+                print("시험장 %d곳 (%s): 후보 %s | %s" % (k + 1, nx["name"], [(t["id"], t["p"]) for t in ex["top"]], ex["message"]))
+                if ex["next"] is None:
+                    break
+            assert "2-3" in [t["id"] for t in ex["top"]] and ex["verdict"] in ("good", "more", "wide"), ex
+            assert len(set(ex["used"])) == len(ex["used"]), ex["used"]                                 # 같은 곳을 두 번 권하지 않는다
+            assert post("/api/exam", {}).get("ok") and get("/api/status")["mode"] == "room" and get("/api/exam")["mode"] == "room"
 
         # 4 마커: 재고 난 뒤의 자세(끄덕임 54.7도)에서, 설계 쪽(cad/)이 계산해 둔 좌표와 같은가
         m = get("/api/marker"); g = json.load(open(os.path.join(PI, "marker.json"), encoding="utf-8"))

@@ -20,10 +20,14 @@
 주소 목록 (모두 JSON)
   GET  /api/status                지금 상태, 설정, 잰 자리들
   GET  /api/zone                  추정 구간 (자리마다 놓인 곳을 알려 준 뒤)
-  POST /api/measure  {plan, pose} 한 자리 재기. pose = {x, y, z, heading} (m, 도) 는 나중에 /api/pose 로 줘도 된다
+  POST /api/measure  {plan, pose, spot} 한 자리 재기. pose = {x, y, z, heading} (m, 도) 는 나중에 /api/pose 로 줘도 된다. spot = 시험장 모드에서 놓은 곳의 번호
   POST /api/pose     {index, pose}
   POST /api/room     {lo:[x,y,z], hi:[x,y,z]}      찾을 범위 (방의 두 구석). 안 주면 잰 자리 둘레 4m
   POST /api/reset                 잰 자리들을 지우고 새로 시작
+  POST /api/exam  {seats, spots, front}            시험장 모드로 바꾼다 (빈 몸이면 끈다). seats = [{id, x, y}] 자리 점, spots = [{name, x, y, z}] 수신기를 놓을 수 있는 곳
+                                                   (모서리·벽·교탁 자리, z = 받침대 위 높이), front = 학생이 보는 쪽 [x, y]. 탐지·점검은 몰카와 똑같고, 위치 찾기만 다르다:
+                                                   답이 '자리 번호 후보 3개'이고, 다음 자리는 spots 안에서만 고르고, 한 곳에서 18번 잰다
+  GET  /api/exam                  시험장 모드의 결과: 자리 후보 3개와 확률, 다음에 놓을 곳 (next.index 를 /api/measure 의 spot 으로 준다)
   POST /api/detect   {channels}                    탐지: 둘레 기기 찾기 (약 30초). 결과는 /api/status 의 survey
   POST /api/watch    {minutes, walk, channels}     점검: 기준선을 잡고 '멈춤'을 누를 때까지 (또는 minutes 분) 감시하며 기기마다 의심 점수와 이유를 낸다 (core/score.py).
                                                    의심 기기가 둘 넘게 애매하면 그때만 '걸으며 확인'을 한다 (walk=false 면 안 한다). 결과는 /api/status 의 watch
@@ -77,7 +81,7 @@ from fusion import origin             # noqa: E402
 VERSION = "2026-11-14"
 RX3 = os.path.join(HERE, "rx3.py")
 TILT3 = 54.7356
-PLANS = {"tilt3": 3, "tilt6": 6}                    # 한 자리에서 판을 돌리는 횟수
+PLANS = {"tilt3": 3, "tilt6": 6, "tilt18": 18}      # 한 자리에서 판을 돌리는 횟수 (tilt18 = 시험장 모드)
 HOME = os.path.expanduser("~/detecam")
 CONF = os.path.join(HOME, "config.json")
 DATA = os.path.join(HOME, "data")
@@ -117,6 +121,7 @@ class Node(object):
         self.mon = D.Monitor(dry=dry)                 # 탐지 동글 (없어도 된다)
         self.positions = []                           # 잰 자리들
         self.room = None; self.zone_cache = None
+        self.exam = None                              # 시험장 모드: dict(seats, spots, front). None 이면 몰카 찾기 (방 안 어디든)
         self.survey = []; self.detect = dict(method=None, time=None); self.ident = {}; self.ident_last = None
         self.tracker = None; self.watch = None              # 점검(감시): 기기마다 의심 점수 (core/score.py)
         self.homed_this_boot = False; self.dry_clock = 0.0; self.joints = dict(yaw=0.0, pitch=0.0)
@@ -205,8 +210,8 @@ class Node(object):
         return recs
 
     # ---- 한 자리 재기
-    def measure(self, plan=None, pose=None):
-        plan = plan or self.conf["plan"]
+    def measure(self, plan=None, pose=None, spot=None):
+        plan = plan or (K.EXAM_PLAN if self.exam else self.conf["plan"])
         if plan not in PLANS:
             raise ValueError("모르는 계획입니다: %s" % plan)
         ch, mac = int(self.conf["ch"]), (self.conf["mac"] or "").strip().lower() or None
@@ -247,6 +252,7 @@ class Node(object):
         pos = dict(time=stamp, plan=plan, ch=ch, mac=mac_used, packets=int(len(t)), az=res["az"], el=res["el"], n_seen=res["n_seen"], consistent=bool(res.get("consistent", False)),
                    spread=res.get("spread_deg"), scans=res["scans"], frames=frames, est=est,
                    obs=[dict(seen=bool(o["seen"]), psi=float(o["psi"]), depth=float(o["depth"])) for o in obs], pose=self.clean_pose(pose),
+                   spot=None if spot is None else int(spot),
                    # 판 각마다의 세기 곡선 (dB, 2도 칸, 못 잰 칸은 null). 실물 곡선을 모형과 견주거나 보정할 때 쓴다: GET /api/export 로 나온다
                    curves=[dict(yaw=float(r["yaw"]), pitch=float(r["pitch"]), bin_deg=float(ph[1] - ph[0]) if len(ph) > 1 else None,
                                 lv=[None if not np.isfinite(v) else round(float(v), 2) for v in lv]) for r, (ph, lv) in zip(recs, curves)])
@@ -289,6 +295,25 @@ class Node(object):
                 q = p["pose"]; S.add(((q["x"], q["y"], q["z"]), q["heading"]), p["obs"], p["frames"], p["est"]); used.append(i + 1)
         r = S.result(); r["used"] = used; r["waiting_pose"] = [i + 1 for i, p in enumerate(self.positions) if not p["pose"]]
         self.zone_cache = r
+        return r
+
+    # ---- 시험장 모드: 자리 후보
+    def set_exam(self, q):
+        if not q or not q.get("seats"):
+            self.exam = None
+        else:
+            K.ExamSession(q["seats"], q.get("spots") or [], q.get("front") or (0.0, -1.0))          # 잘못된 값이면 여기서 오류
+            self.exam = dict(seats=list(q["seats"]), spots=list(q.get("spots") or []), front=list(q.get("front") or (0.0, -1.0)))
+        self.save_session()
+
+    def exam_result(self):
+        if not self.exam:
+            return dict(mode="room", message="시험장 모드가 아닙니다. POST /api/exam 으로 자리와 놓을 곳을 주세요.")
+        E = K.ExamSession(self.exam["seats"], self.exam["spots"], self.exam["front"]); used = []
+        for i, p in enumerate(self.positions):
+            if p.get("pose") and p.get("obs"):
+                q = p["pose"]; E.add(((q["x"], q["y"], q["z"]), q["heading"]), p["obs"], p["frames"], p["est"], p.get("spot")); used.append(i + 1)
+        r = E.result(); r["used_positions"] = used; r["waiting_pose"] = [i + 1 for i, p in enumerate(self.positions) if not p.get("pose")]
         return r
 
     # ---- 1 탐지: 둘레 기기 찾기
@@ -569,7 +594,7 @@ class Node(object):
 
     def export(self):
         return dict(version=VERSION, time=time.strftime("%Y%m%d_%H%M%S"), config=self.conf, room=self.room, positions=self.positions, zone=self.zone(),
-                    survey=self.survey, detect=self.detect, ident=self.ident, watch=self.watch)
+                    exam=self.exam, exam_result=self.exam_result() if self.exam else None, survey=self.survey, detect=self.detect, ident=self.ident, watch=self.watch)
 
     # ---- 잰 자리와 방 크기는 파일에 남긴다 (다시 켜도 이어서 한다)
     def save_session(self):
@@ -578,20 +603,22 @@ class Node(object):
             return
         try:
             os.makedirs(HOME, exist_ok=True); tmp = SESSION + ".tmp"
-            json.dump(dict(positions=self.positions, room=self.room), open(tmp, "w"), ensure_ascii=False); os.replace(tmp, SESSION)
+            json.dump(dict(positions=self.positions, room=self.room, exam=self.exam), open(tmp, "w"), ensure_ascii=False); os.replace(tmp, SESSION)
         except Exception as e:
             log("자리 목록을 저장하지 못했습니다:", e)
 
     def load_session(self):
         if os.path.exists(SESSION):
             try:
-                d = json.load(open(SESSION)); self.positions = list(d.get("positions") or []); self.room = d.get("room")
+                d = json.load(open(SESSION)); self.positions = list(d.get("positions") or []); self.room = d.get("room"); self.exam = d.get("exam")
                 log("지난번에 잰 자리 %d개를 불러왔습니다." % len(self.positions))
             except Exception as e:
                 log("자리 목록을 읽지 못했습니다:", e)
 
     def hint(self):
-        """방이 좁으면 '여섯 번 재기'를 권한다 (시뮬레이션: 변기 칸에서 30도 넘게 틀리는 일이 반쯤으로 준다)"""
+        """방이 좁으면 '여섯 번 재기'를 권한다 (시뮬레이션: 변기 칸에서 30도 넘게 틀리는 일이 반쯤으로 준다). 시험장 모드면 받침대 높이를 알린다"""
+        if self.exam:
+            return "시험장 모드: 받침대 위 2.4m 높이에서 재세요 (2.2m 로 낮추면 옆자리까지 맞히는 비율이 9할에서 7할 대로 떨어집니다). 한 곳에서 18번 잽니다 (약 2분)."
         if self.room:
             if min(self.room["hi"][i] - self.room["lo"][i] for i in range(2)) < 2.0:
                 return "좁은 곳입니다 (가로나 세로가 2m 아래). 재는 방법을 '여섯 번'으로 하면 크게 틀리는 일이 반쯤으로 줍니다."
@@ -607,7 +634,7 @@ class Node(object):
         keys = ("time", "plan", "ch", "mac", "packets", "az", "el", "n_seen", "consistent", "spread", "scans", "pose")
         last = self.ident.get(self.ident_last) if self.ident_last else None
         j = self.joints_now()
-        return dict(version=VERSION, numpy=np.__version__, python=sys.version.split()[0], dry=self.dry, status=st, config=self.conf, room=self.room, hint=self.hint(), survey=self.survey, detect=self.detect, now=time.time(),
+        return dict(version=VERSION, numpy=np.__version__, python=sys.version.split()[0], dry=self.dry, status=st, config=self.conf, room=self.room, mode="exam" if self.exam else "room", hint=self.hint(), survey=self.survey, detect=self.detect, now=time.time(),
                     joints=dict(yaw=round(j["yaw"], 1), pitch=round(j["pitch"], 1), spin=self.spin_now(), homed=bool(self.homed_this_boot)),
                     ident=dict((m, dict(verdict=r["verdict"], ratio=r["ratio"], mode=r["mode"])) for m, r in self.ident.items()), ident_last=last, watch=self.watch,
                     plans=dict((k, dict(name=p["name"], seconds=len(I.plan_stimulus(k)) * I.DT, say=list(p["say"]))) for k, p in I.PLANS.items()),
@@ -659,6 +686,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.send(n.status())
         if path == "/api/zone":
             return self.send(n.zone())
+        if path == "/api/exam":
+            return self.send(n.exam_result())
         if path == "/api/marker":
             try:
                 return self.send(n.marker())
@@ -684,7 +713,7 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/stop":
                 return self.send(dict(ok=True, message=n.stop()))
             if path == "/api/measure":
-                n.start("재기", n.measure, q.get("plan"), q.get("pose"))
+                n.start("재기", n.measure, q.get("plan"), q.get("pose"), q.get("spot"))
             elif path == "/api/goto":
                 if q.get("yaw") is None and q.get("pitch") is None:
                     raise ValueError("yaw 나 pitch 를 주세요.")
@@ -754,6 +783,8 @@ class Handler(BaseHTTPRequestHandler):
                 n.positions[i]["pose"] = n.clean_pose(q.get("pose")); n.save_session()
             elif path == "/api/room":
                 n.room = dict(lo=[float(v) for v in q["lo"]], hi=[float(v) for v in q["hi"]]) if q.get("lo") else None; n.save_session()
+            elif path == "/api/exam":
+                n.set_exam(q)
             elif path == "/api/reset":
                 n.positions = []; n.save_session()
             elif path == "/api/delete":

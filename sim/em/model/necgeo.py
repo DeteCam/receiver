@@ -12,7 +12,7 @@ class Model:
     def __init__(self, f_ghz=2.437, cell=10.0):
         self.f = f_ghz; self.lam = C0 / f_ghz; self.cell = cell
         self.ctx = nec_context(); self.geo = self.ctx.get_geometry()
-        self.tag = 0; self.nseg = 0; self.parts = {}; self._seen = set(); self.feed = None; self.rec = []
+        self.tag = 0; self.nseg = 0; self.parts = {}; self._seen = set(); self.feed = None; self.rec = []; self.loads = []      # loads: (tag, seg, R, X) 옴. 먹이지 않는 안테나의 단자에 다는 50옴 (그 칩의 입력)
 
     # ---- 선 하나 (mm). 이미 넣은 선과 똑같은 것은 건너뛴다 (맞닿은 면의 모서리)
     def wire(self, p, q, rad, nseg=None, name=None):
@@ -95,6 +95,8 @@ class Model:
         ctx.geometry_complete(0)
         ctx.set_extended_thin_wire_kernel(True)
         ctx.gn_card(-1, 0, 0, 0, 0, 0, 0, 0)
+        for tag, seg, r_, x_ in self.loads:                                                # LD 4: 그 조각에 R + jX
+            ctx.ld_card(4, tag, seg, seg, r_, x_, 0.0)
         for tag, seg in (self.feed if isinstance(self.feed, list) else [self.feed]):          # 먹임이 여러 개면 모두 같은 위상으로 건다
             ctx.ex_card(0, tag, seg, 0, 1.0, 0, 0, 0, 0, 0)
         ctx.fr_card(0, 1, self.f * 1000.0, 0)

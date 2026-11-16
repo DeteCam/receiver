@@ -8,6 +8,8 @@
   base   받침: 배터리
   plate  도는 금속판 (크기·모양은 바꿀 수 있다)
   cw     균형추 (100원 동전 더미)
+  esp    ESP32 (2026-11-16): FPC 안테나(머리 천장, 파이 안테나 바로 위), 동축선, XIAO 기판(뚜껑 안쪽), 파이 GPIO 까지 점퍼선.
+         먹이지 않는 쪽 안테나의 단자에는 50옴을 단다 (그 칩의 입력). esp_feed='fpc' 이면 FPC 를 먹이고 파이 안테나에 50옴.
 먹임 선에 1V 를 걸어 먼 곳의 전기장을 구한다. 보내는 무늬와 받는 무늬는 같으므로(상반성), 이것이 곧 '그 방향에서 온 전파를 얼마나 세게 받는가'다.
 """
 import os as _os, sys as _sys; _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))); import empaths      # noqa: E401  sim/em 의 길잡이
@@ -78,7 +80,7 @@ def add_conn(m, zs):
     m.box(D.BX0, D.BX1, -16.4, 0.0, zs[0], zs[3], "conn", cell=7.0)
 
 
-def add_head(m, xs, zs, cable=True):
+def add_head(m, xs, zs, cable=True, esp=False):
     m.cylinder((-D.M_OFFSET, 0, D.M1_Z0), (-D.M_OFFSET, 0, D.M1_ZT), D.M_BODY_R, "head", nphi=8, cell=9.5)            # 모터 3
     for k, zc in enumerate(D.DRV_ZC):                                                                            # 드라이버 3장 (구리가 꽉 찼다고 본다: 나쁜 쪽)
         m.sheet((16.0, 3.3, zc - 14.0), (32.0, 0, 0), (0, 0, 28.0), "head", cell=7.0)                               # 보드 사이 틈 1mm 는 철망으로 못 그려서 위아래 2mm 씩 줄였다
@@ -89,7 +91,10 @@ def add_head(m, xs, zs, cable=True):
         z0 = zs[len(zs) - 1 - jz]
         m.polyline([(xs[-1], 0, z0), (xs[-1] + 2, -11.0, z0), (30.0, -15.0, zc), (30.0, -4.0, zc)], 1.2, "head")
     m.polyline([(-27.0, -4.0, 22.0), (-20.0, -15.0, 9.0), (-20.0, -15.0, -6.0), (0.0, -21.0, -13.0), (24.0, -13.0, -22.0)], 1.0, "head")   # 모터 3 전선
-    m.polyline([(-46.0, -22.0, -36.0), (-30.0, -22.0, -46.0), (6.0, -20.0, -40.0)], 0.8, "head")                                         # 버튼 선
+    if esp:                                                                                                                               # 버튼 선: ESP32 가 있으면 XIAO 뒤(기판 쪽)로 돌아간다
+        m.polyline([(-46.0, -22.0, -36.0), (-32.0, -7.0, -40.0), (6.0, -7.0, -40.0), (6.0, -20.0, -40.0)], 0.8, "head")
+    else:
+        m.polyline([(-46.0, -22.0, -36.0), (-30.0, -22.0, -46.0), (6.0, -20.0, -40.0)], 0.8, "head")                                     # 버튼 선
     if cable:                                                                                                                             # 전원선 (머리 안 구간): 파이 접지에 이어져 있다
         z0 = zs[len(zs) - 1 - 2]
         m.polyline([(xs[0], 0, z0), (-48.6, -4.0, z0), (-48.6, -4.0, -60.0), (-48.6, -4.0, -108.0)], 1.5, "head")
@@ -113,6 +118,22 @@ def add_base(m, yaw, pitch, size="S", cable=True):
         Ty = yoke_to_head(pitch)
         zc = max(26.0, 2.3 + D.BATT_T + 2.5)                                                                               # 선은 배터리 윗면보다 2.5 위로 지나간다
         m.polyline([ap(Ty, (0.0, 0.0, 46.0)), ap(T, (0.0, 0.0, zc)), ap(T, (0.0, y0 - 6.0, zc - 2.0 if zc == 26.0 else zc)), ap(T, (0.0, y0, 2.3 + D.BATT_T))], 1.5, "base")   # 전원선: 가운데 통 -> 배터리 앞 플러그
+
+
+FPC = dict(x0=-19.5, x1=19.5, y=-2.2, z=7.0)     # FPC 안테나 (39 x 8 띠를 선 하나로). 실물은 z 8.3 (모터 3 밑면 10 과 1.7 차이)인데, 철망 선 굵기 때문에 1.3 낮췄다
+
+
+def add_esp(m, xs, zs, feed="pi", fpc=None):
+    """ESP32 부품. 돌려주는 것: FPC 먹임 (tag, seg)"""
+    f = dict(FPC, **(fpc or {})); x0, x1, y, z = f["x0"], f["x1"], f["y"], f["z"]
+    t = m.wire((x0, y, z), (x1, y, z), 0.5, 7, "esp")                                     # 가운데 조각(4)이 단자
+    xb = -23.4; ys = np.linspace(-28.5, -10.7, 4); zz = np.linspace(-55.0, -36.0, 4)          # XIAO 접지면 (21 x 17.8 -> 19 x 17.8: 아래 변이 단자 덩어리에 1.8 까지 닿아 철망으로는 2 줄였다)
+    m.sheet((xb, ys[0], zz[0]), (0, ys[-1] - ys[0], 0), (0, 0, zz[-1] - zz[0]), "esp", cell=7.0)
+    cx = f.get("coax_end", (x0, y, z))
+    m.polyline([cx, (cx[0] + 5.5, -24.0, cx[2] - 5.0), (xb, ys[1], zz[-1])], 0.6, "esp")      # 동축선 겉선: FPC 끝 -> 뚜껑 쪽 -> XIAO 안테나 단자 (윗변)
+    m.polyline([(xb, ys[2], zz[-1]), (-6.0, -12.0, -28.0), (xs[-1] + 2.0, -12.0, zs[-2]), (xs[-1], 0, zs[-2])], 0.6, "esp")         # 점퍼선 5V -> GPIO 2번
+    m.polyline([(xb, ys[3], zz[2]), (-8.0, -9.0, -36.0), (6.0, -7.0, -24.0), (xs[-1] + 2.0, -11.0, zs[-3])], 0.9, "esp")             # 점퍼선 GND·TX·RX 다발 -> GPIO 8·9·10번 (드라이버 다발의 시작점에 붙는다)
+    return (t, 4)
 
 
 def rot_pts(P, spin):
@@ -185,7 +206,7 @@ def add_cw(m, spin, n_coin=D.N_COIN):
     m.cylinder(p(D.POD_XC, 0.0, D.POD_Z1 - D.COIN_T * n_coin), p(D.POD_XC, 0.0, D.POD_Z1), D.COIN_D / 2, "cw", nphi=8, cell=8.0)
 
 
-def build(spin, parts=("ant", "plate"), yaw=0.0, pitch=D.TILT3, feed="notch", plate=None, size="S", cable=True, cw=None):
+def build(spin, parts=("ant", "plate"), yaw=0.0, pitch=D.TILT3, feed="notch", plate=None, size="S", cable=True, cw=None, esp_feed="pi", fpc=None, esp_load=50.0):
     m = G.Model(cell=CELL)
     if "ant" in parts:
         xs, zs = add_board(m, feed)
@@ -199,11 +220,17 @@ def build(spin, parts=("ant", "plate"), yaw=0.0, pitch=D.TILT3, feed="notch", pl
     if "conn" in parts:
         add_conn(m, zs)
     if "head" in parts:
-        add_head(m, xs, zs, cable)
+        add_head(m, xs, zs, cable, esp="esp" in parts)
     if "yoke" in parts:
         add_yoke(m, pitch, cable)
     if "base" in parts:
         add_base(m, yaw, pitch, size, cable)
+    if "esp" in parts:
+        ft = add_esp(m, xs, zs, esp_feed, fpc)
+        if esp_feed == "fpc":
+            m.loads.append(m.feed + (50.0, 0.0)); m.feed = ft
+        else:
+            m.loads.append(ft + (float(esp_load), 0.0))                  # ESP32 가 꺼져 있거나 보내는 중이면 그 단자 임피던스가 50옴이 아니다 (esp_load 로 바꿔 본다)
     if "plate" in parts and spin is not None:
         add_plate(m, spin, **(plate or {}))
     if "cw" in parts and spin is not None:

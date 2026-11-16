@@ -63,6 +63,13 @@ JOBS["shape_a"] = JOBS["shape"][0::2]; JOBS["shape_b"] = JOBS["shape"][1::2]    
 JOBS["dev"] = [("dev_y%+04d" % y, FULL, dict(yaw=float(y))) for y in (0, 120, -120)]
 JOBS["dev6"] = [("dev6_y%+04d" % y, FULL, dict(yaw=float(y))) for y in (-150, -90, -30, 30, 90, 150)]          # 여섯 자세로 잴 때 (plan_eval.py)
 
+# ESP32 (2026-11-16): 지금 설계 + ESP32 부품 (FPC 안테나, 동축선, XIAO, 점퍼선). esp_pi = 파이 안테나로 받을 때(FPC 는 50옴으로 끝남), esp_fpc = FPC 로 받을 때
+FULL_ESP = ("ant", "conn", "head", "yoke", "base", "esp", "plate", "cw")
+JOBS["esp_pi"] = [("esp_pi_y%+04d" % y, FULL_ESP, dict(yaw=float(y), esp_feed="pi")) for y in (0, 120, -120)]
+JOBS["esp_fpc"] = [("esp_fpc_y%+04d" % y, FULL_ESP, dict(yaw=float(y), esp_feed="fpc")) for y in (0, 120, -120)]
+JOBS["esp_open_a"] = [("esp_open_y%+04d" % y, FULL_ESP, dict(yaw=float(y), esp_feed="pi", esp_load=1e5)) for y in (0, 120)]       # ESP32 단자가 거의 열림 (꺼짐 쪽)
+JOBS["esp_open_b"] = [("esp_open_y%+04d" % y, FULL_ESP, dict(yaw=float(y), esp_feed="pi", esp_load=1e5)) for y in (-120,)]
+
 if __name__ == "__main__":
     groups = sys.argv[1:] or ["base", "full", "alt"]
     for g in groups:

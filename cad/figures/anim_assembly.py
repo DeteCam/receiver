@@ -1,4 +1,4 @@
-"""조립 시뮬레이션 영상: 조립 안내의 순서대로 부품을 하나씩 제자리에 넣고, 나사 55개를 하나하나 드라이버로 돌려 조인다.
+"""조립 시뮬레이션 영상: 조립 안내의 순서대로 부품을 하나씩 제자리에 넣고, 나사 59개를 하나하나 드라이버로 돌려 조인다.
     xvfb-run -a python3 anim_assembly.py plan                 # 장면 목록과 길이 -> 결과 폴더의 anim_assembly.json (장의 시작 시각)
     xvfb-run -a python3 anim_assembly.py still 12.5 30        # 그 시각(초)의 화면을 그림으로 (확인용, 임시 폴더)
     xvfb-run -a python3 anim_assembly.py render K N           # 영상을 N 토막으로 나눠 K 번째 토막을 그린다 (토막마다 따로 돌릴 수 있다)
@@ -135,8 +135,10 @@ def screw_group(name):
         return "Y"
     if name.startswith("모터 2 귀"):
         return "M2"
-    if name.startswith("모터 3 귀"):
+    if name.startswith(("모터 3 귀", "안테나 누름판")):
         return "C"
+    if name.startswith("ESP32 막음쇠"):
+        return "L"
     if name.startswith(("판 틀 나사", "누름쇠 나사", "축 고정", "균형추 마개")):
         return "R"
     return "H"
@@ -145,15 +147,21 @@ def screw_group(name):
 def part_group(name, g):
     if name in ("motor2", "motor2_cap", "pinion2", "m2_ring"):
         return "M2"
-    if name in ("crown", "motor3", "motor3_cap"):
+    if name in ("crown", "motor3", "motor3_cap", "fpc", "ant_clip"):
         return "C"
+    if name in ("head_lid", "xiao", "xiao_cap"):                              # 뚜껑은 떼어 놓고 ESP32 를 단 다음 닫는다
+        return "L"
     if name.startswith(("coin", "nut_")):
         return "R"
     return {"B": "B", "Y": "Y", "H": "H", "R": "R"}[g]
 
 
 # ------------------------------------------------------------------ 무리(받침·요크·머리·회전부)의 자리
-G0 = dict(yaw=0.0, pitch=0.0, spin=0.0, lift_Y=150.0, off_M2=np.array([0.0, 80.0, 0.0]), lift_H=230.0, lift_C=70.0, off_R=np.array([40.0, -420.0, -120.0]), flip=0.0, show_main=1.0)
+G0 = dict(yaw=0.0, pitch=0.0, spin=0.0, lift_Y=150.0, off_M2=np.array([0.0, 80.0, 0.0]), lift_H=230.0, lift_C=70.0, off_R=np.array([40.0, -420.0, -120.0]), flip=0.0, show_main=1.0,
+          off_L=np.array([190.0, 0.0, -40.0]), flip_L=90.0)                      # 뚜껑: 머리 앞(+X) 탁자 위에 안쪽이 위를 보게 엎어 둔다
+
+
+LID_C = W0[:3, :3] @ np.array([0.0, HYL, -46.0]) + W0[:3, 3]             # 뚜껑을 엎는 축이 지나는 점 (세계, 조립된 자리의 뚜껑 가운데쯤)
 
 
 def group_T(G, bar_c):
@@ -162,6 +170,7 @@ def group_T(G, bar_c):
     T["M2"] = T["Y"] @ Tr(G["off_M2"])
     T["H"] = Rax("z", G["yaw"]) @ Tr([0, 0, G["lift_H"]]) @ NodT(G["pitch"])
     T["C"] = T["H"] @ Tr([0, 0, G["lift_C"]])
+    T["L"] = T["H"] @ Tr(G["off_L"]) @ about(LID_C, Rax("y", G["flip_L"]))
     T["R"] = T["H"] @ Tr(G["off_R"]) @ about(bar_c, Rax("y", G["flip"])) @ SpinT(G["spin"])
     return T
 
@@ -251,6 +260,9 @@ def make_plan():
     pl.part("crown", (0, 0, 1), 40, "모터 자리(09)", cam=dict(az=30, el=35, dist=360))
     pl.part(["motor3", "motor3_cap"], (0, 0, 1), 40, "모터 3을 넣는다 (흰 플러그를 먼저 네모 구멍으로)", cam=dict(az=30, el=45, dist=300))
     pl.screws_(["모터 3 귀 %d" % i for i in range(1, 3)], "모터 3 귀 나사", cam=dict(az_pref=30))
+    pl.part("fpc", (0, 0, -1), 30, "모터 자리 밑면 홈에 ESP32 FPC 안테나를 댄다 (동축선은 왼쪽 끝 홈으로)", cam=dict(az=-30, el=-40, dist=300))
+    pl.part("ant_clip", (0, 0, -1), 30, "안테나 누름판(21)을 덮는다", cam=dict(az=-30, el=-40, dist=300))
+    pl.screws_(["안테나 누름판 %d" % i for i in range(1, 3)], "안테나 누름판 나사", cam=dict(az=-30, el=-40, dist=300))
     pl.group("lift_C", 0.0, "모터 자리를 머리 몸통 위에 얹는다 (모터 3 전선을 드라이버 3에)", dur=1.6, cam=dict(az=30, el=30, dist=420))
     pl.screws_(["모터 자리 %d" % i for i in range(1, 5)], "모터 자리 나사", cam=dict(az_pref=30))
     pl.part("sector", F(1, 0, 0), 35, "부채꼴 기어(06)를 오른쪽 옆면에 댄다", cam=dict(az=75, el=15, dist=360))
@@ -273,7 +285,13 @@ def make_plan():
     pl.screws_(["핀 막이 (왼쪽)"], "핀 막이 나사")
     pl.screws_(["끄덕임 멈춤 %d" % i for i in range(1, 3)], "끄덕임 멈춤 나사 (꼭 10mm. 머리 옆 돌기가 두 나사 사이에)")
     pl.add("note", 1.8, "모터 1·2 전선과 전원선을 머리 아래로 올려 꽂고, 케이블 타이로 묶는다", cam=dict(az=20, el=-10, dist=480))
-    pl.part("head_lid", F(0, -1, 0), 45, "뚜껑(08)을 닫는다", cam=dict(az=25, el=12, dist=420))
+    pl.part("head_lid", (0, 0, 1), 40, "뚜껑(08)은 떼어 안쪽이 위를 보게 엎어 둔다", cam="LID")
+    pl.part("xiao", (0, 0, 1), 30, "ESP32(XIAO)를 왼쪽 홈 받침 2개에 세워 끼운다 (핀 머리가 파이 쪽, USB-C 가 아래)", cam="LID")
+    pl.part("xiao_cap", (0, 0, 1), 25, "ESP32 막음쇠(22)를 받침 위에 댄다", cam="LID")
+    pl.screws_(["ESP32 막음쇠 %d" % i for i in range(1, 3)], "막음쇠 나사", cam="LID")
+    pl.add("note", 2.2, "안테나 동축선을 XIAO 의 안테나 단자(U.FL)에 눌러 끼우고, 점퍼선 4가닥을 파이 2·8·9·10번 핀에", cam="LID")
+    pl.group("flip_L", 0.0, "뚜껑을 세운다", dur=1.4, cam=dict(az=20, el=15, dist=520))
+    pl.group("off_L", np.zeros(3), "뚜껑(08)을 앞에서 밀어 닫는다", dur=1.8, cam=dict(az=25, el=12, dist=420))
     pl.screws_(["머리 뚜껑 %d" % i for i in range(1, 5)], "뚜껑 나사")
     pl.screws_(["고정 나사(옮길 때)"], "옮길 때만: 머리를 0°에 묶는 고정 나사 (재기 전에 뺀다)")
     # ⑥ 판과 균형추
@@ -454,7 +472,9 @@ class Renderer:
                     pts.append(q[:, :3].mean(0))
             return np.mean(pts, 0) if pts else None
         rotor_pt = lambda hp_: (GTe["R"] @ W0 @ np.r_[hp_, 1.0])[:3]
-        if isinstance(c, str):
+        if c == "LID":                                                        # 엎어 둔 뚜껑을 위에서 비스듬히
+            f = (GTe["L"] @ np.r_[LID_C, 1.0])[:3] + np.array([0.0, 0.0, 10.0]); az, el, dist = 20.0, 55.0, 260.0
+        elif isinstance(c, str):
             presets = {"R": ([0, 0, 40], -150, 28, 460), "POD": ([POD_XC, 0, 25], -150, 35, 230), "FLANGE": ([70, 0, 20], -130, 30, 170),
                        "RF": ([75, 0, 20], 40, 22, 330), "RP": ([75, 0, 15], 35, 15, 560), "RB": ([75, 0, 96], -120, 30, 200), "RT": ([80, 0, 94], 45, 30, 240)}
             hp_, az, el, dist = presets[c]; f = rotor_pt(hp_)
@@ -479,7 +499,7 @@ class Renderer:
                     f = np.asarray(c["focus"], float)
         else:
             c = c or {}
-            names = a.get("names") or {"lift_C": ["crown"], "off_M2": ["motor2"], "lift_Y": ["yoke"], "lift_H": ["head_shell"], "flip": ["rotor_bar"], "off_R": ["rotor_bar"]}.get(a.get("key"), [])
+            names = a.get("names") or {"lift_C": ["crown"], "off_M2": ["motor2"], "lift_Y": ["yoke"], "lift_H": ["head_shell"], "flip": ["rotor_bar"], "off_R": ["rotor_bar"], "flip_L": ["head_lid"], "off_L": ["head_lid"]}.get(a.get("key"), [])
             f = np.asarray(c["focus"], float) if "focus" in c else center(names)
             if f is None:                                                         # 부품이 없는 동작(설명)은 앞 동작의 초점을 쓴다
                 prev = [b for b in pl.acts if b is not a and b["t1"] <= a["t0"] and b["t1"] > b["t0"] and b["kind"] not in ("card", "intro", "end")]

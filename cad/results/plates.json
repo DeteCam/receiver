@@ -62,8 +62,8 @@
     "09_crown",
     "06_sector_gear"
    ],
-   "sec": 13163,
-   "g": 105.77
+   "sec": 13566,
+   "g": 106.89
   },
   {
    "key": "4판_회전부_맞춤2",
@@ -82,14 +82,16 @@
    "title": "5판 · 판 틀",
    "files": [
     "18_plate_frame",
-    "19_plate_clamp"
+    "19_plate_clamp",
+    "21_ant_clip",
+    "22_xiao_cap"
    ],
-   "sec": 2519,
-   "g": 16.65
+   "sec": 2753,
+   "g": 18.27
   }
  ],
- "total_sec": 52629,
- "total_g": 452.6,
+ "total_sec": 53266,
+ "total_g": 455.3,
  "optional": [
   {
    "key": "선택_받침통_L",

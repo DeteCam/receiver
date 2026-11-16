@@ -10,8 +10,8 @@ python3 export/export2.py                             # ../stl 다시 만들기
 | 폴더 | 하는 일 | 스크립트 (걸리는 시간) |
 |---|---|---|
 | `model/` | 치수와 부품 모양 | `p2.py` (치수), `params.py`, `parts2.py` (부품과 조립), `parts.py` (사는 부품), `cadlib.py`, `paths.py` |
-| `export/` | 내보내기 | `export2.py` (STL 31개를 내보내고 다시 읽어 검사, 1분), `export_assembly.py` (3D 보기 파일), `marker.py` (AR 마커, `opencv-python`) |
-| `checks/` | 검사 | `check2.py`·`check_extra.py` (전 범위 겹침, 나사 머리·볼트·동전·크기가 다른 부품까지, 10분쯤), `audit_screws.py` (나사 55개, 1분), `audit_assembly.py` (조립 순서대로 밀어 넣기, 1분), `audit_motion.py` (기어, 멈춤턱), `audit_sweep.py` (판을 돌리며 촘촘히, 30분~1시간), `audit_holes.py` (나사 구멍 둘레 살, 몇 분), `plate_play.py` (판의 움직임, 1분), `dongle_gap.py`, `room_check.py`, `cable_vis.py` |
+| `export/` | 내보내기 | `export2.py` (STL 33개를 내보내고 다시 읽어 검사, 1분), `export_assembly.py` (3D 보기 파일), `marker.py` (AR 마커, `opencv-python`) |
+| `checks/` | 검사 | `check2.py`·`check_extra.py` (전 범위 겹침, 나사 머리·볼트·동전·크기가 다른 부품까지, 10분쯤), `audit_screws.py` (나사 59개, 1분), `audit_assembly.py` (조립 순서대로 밀어 넣기, 1분), `audit_motion.py` (기어, 멈춤턱), `audit_sweep.py` (판을 돌리며 촘촘히, 30분~1시간), `audit_holes.py` (나사 구멍 둘레 살, 몇 분), `plate_play.py` (판의 움직임, 1분), `dongle_gap.py`, `room_check.py`, `cable_vis.py` |
 | `analysis/` | 해석 | `mass.py` (무게, 동전 수, 모터 힘), `strength.py` (튼튼함 손계산), `fem_rotor.py` (유한요소: `pip install pytetwild` 와 CalculiX `ccx`, 10분), `tipmodel.py`·`tipover.py` (넘어짐 계산), `tip_mujoco.py` (물리 엔진: `pip install mujoco`, 2분) |
 | `figures/` | 문서의 그림 | `figs.py`, `fig_*.py`, `anim2.py` (그리기는 `render.py`, `xvfb-run -a` 로) |
 | `slicing/` | Bambu Studio 슬라이싱과 검사 | `slice_bambu.py ../stl ../print --parts` (15분), `print_check.py ../stl ../print` (10분) |

@@ -205,20 +205,28 @@ if "3" in WANT:
     A["wbtn"] = (tube([(BTN_X, BTN_PCB_Y - 1.5, BTN_Z - 30), (BTN_X + 6, -22, -62), (-20, -24, -58), (4, -22, -30), (10.5, -12, -8.5)], 1.0), "H", "#8E5BD9", False)
     A["w3"] = (tube([(-25, 0, 16), (-21, -15, 9), (-21, -15, -6), (20, -8, -8), (DRV_X0 + 17.5, -7, DRV_ZC[0] - 9)], 1.5), "H", "#D9B13B", False)
     A["wpw"] = (tube([(-18, -24, -8), (8, -24, -10), (DRV_X0 + 6, -10, -6)], 1.2), "H", "#C0392B", False)
+    xb = P._xiao_box()
+    A["fpc"] = (P.fpc_dummy(), "H", "#1F1F1F", False); A["aclip"] = (P.ant_clip(), "H", C["accent"], True)
+    A["xiao"] = (P.xiao_dummy(), "H", "#2E6FB5", False); A["xcap"] = (P.xiao_cap(), "H", C["accent"], True)
+    A["wcoax"] = (tube([(-ESP_ANT["L"] / 2 + 3, ESP_ANT["yc"], HZ1 - 1.5), (-21.0, -24.0, 2.0), (xb[0] - 1.5, -24.0, xb[5] - 3.0)], 0.9), "H", "#555555", False)
+    A["wesp"] = (tube([(xb[1] + 16.5, xb[3] - 1.6, xb[5] - 6.0), (2.0, -16.0, -20.0), (10.5, -12.0, -12.0)], 1.2), "H", "#2E6FB5", False)
     pts = {"pi": (-20, -3, -50), "ant": (0, -2.5, 0), "plug": (BX0 - 5.7, -4, -10), "d3": (DRV_X0 + 17.5, -9.0, DRV_ZC[0]), "d2": (DRV_X0 + 17.5, -9.0, DRV_ZC[1]),
            "d1": (DRV_X0 + 17.5, -9.0, DRV_ZC[2]), "m3": (-8, -14, 20), "gpio": (BX0 + 52.5, -8, -28), "lan": (BX0 + 10.25, -14.0, BZ0 + 6), "dongle": (BX0 + DONGLE["x"], -PI_T / 2 - DONGLE["up"] - 4.0, BZ0 - 12), "dongle2": (BX0 + DONGLE2["x"], -PI_T / 2 - DONGLE2["up"] - 4.0, BZ0 - 12), "cable": (BX0 - 5.6, -4.2, -95),
-           "win": (-HX, -4, -14), "hole": (-21, -15, 8), "btn": (BTN_X, BTN_PCB_Y - 5.0, BTN_Z), "pin56": (10.5, -12, -8.5)}
+           "win": (-HX, -4, -14), "hole": (-21, -15, 8), "btn": (BTN_X, BTN_PCB_Y - 5.0, BTN_Z), "pin56": (10.5, -12, -8.5),
+           "fpc": (14.0, ESP_ANT["yc"] - 6.5, HZ1 - 0.6), "xiao": (P._xiao_box()[0] - 1.0, -20.0, P._xiao_box()[4] + 9.0)}
     cam = dict(cam_az=-78, cam_el=12, dist=470, focus=(0, 0, -40))
     vis_check(A, pts, tag="3a", **cam)
     pix = render.render(A, TMP + 'raw3a.png', size=(S, S), label_pts=pts, ground=False, **cam)
     Image.open(TMP + 'raw3a.png').crop((0, 0, S, S - 230)).save(TMP + 'raw3ac.png')
     annotate(TMP + 'raw3ac.png', OUT + '03_머리_속.png', pix, [
-        ("m3", "모터 3\n전선은 바닥 구멍으로 내려온다", 'L', 230),
-        ("win", "전원 플러그 창\nㄱ자 플러그가 벽에 안 걸린다", 'L', 420),
-        ("plug", "전원 플러그 (ㄱ자 마이크로 5핀)\n선은 아래로 내려 받침 속 배터리로", 'L', 610),
-        ("btn", "전원 버튼 모듈 (KY-004)\n받침 살에 얹고 뚜껑의 살이 눌러 고정한다", 'L', 800),
-        ("pi", "라즈베리파이 3B+\n뒷벽 기둥 4개에 M2.5 나사로 조인다", 'L', 990),
-        ("lan", "랜 단자 (개발할 때만)\n쓰려면 조립할 때 랜선을 꽂아 둔다", 'L', 1180),
+        ("m3", "모터 3\n전선은 바닥 구멍으로 내려온다", 'L', 190),
+        ("fpc", "ESP32 안테나 (FPC, 검정)\n천장 홈에 대고 누름판으로 조인다. 판 회전축 위", 'L', 350),
+        ("win", "전원 플러그 창\nㄱ자 플러그가 벽에 안 걸린다", 'L', 510),
+        ("plug", "전원 플러그 (ㄱ자 마이크로 5핀)\n선은 아래로 내려 받침 속 배터리로", 'L', 670),
+        ("btn", "전원 버튼 모듈 (KY-004)\n받침 살에 얹고 뚜껑의 살이 눌러 고정한다", 'L', 830),
+        ("xiao", "ESP32 (XIAO, 파랑)\n뚜껑 안쪽에 세워 끼운다 (뚜껑을 닫은 자리)", 'L', 990),
+        ("pi", "라즈베리파이 3B+\n뒷벽 기둥 4개에 M2.5 나사로 조인다", 'L', 1150),
+        ("lan", "랜 단자 (개발할 때만)\n쓰려면 조립할 때 랜선을 꽂아 둔다", 'L', 1300),
         ("ant", "안테나\n판 회전축이 여기를 지난다", 'R', 230),
         ("pin56", "버튼 선 2가닥 (보라)\nGPIO 5번, 6번 핀에 꽂는다", 'R', 420),
         ("gpio", "GPIO 핀\n점퍼선 10cm로 바로 옆 드라이버에", 'R', 610),
@@ -227,7 +235,7 @@ if "3" in WANT:
         ("d1", "드라이버 1 (받침 회전)\n셋 다 기둥 4개에 M2 나사로 조인다", 'R', 980),
         ("dongle", "무선 동글 (주황. 폰과 통신)\nGPIO 쪽 USB 의 위 칸", 'R', 1130),
         ("dongle2", "탐지 동글 (청록. 둘레 기기 엿듣기)\n가운데 USB 의 위 칸. 없어도 된다", 'R', 1280),
-    ], foot="노란 선 = 모터 3 전선, 빨간 선 = 점퍼선 한 가닥(예), 보라 선 = 버튼 선. 실제로는 점퍼선 18가닥이 파이와 드라이버 사이를 오간다.", title="머리 속 (뚜껑을 떼고 앞에서 본 모습)", sub="안쪽 크기 108 × 33.6 × 108mm · 드라이버 자리 폭 37mm (보드 35mm) · 점퍼선을 꽂고도 뚜껑까지 5mm 넘게 남는다", pad_side=380)
+    ], foot="노랑 = 모터 3 전선, 빨강 = 점퍼선(예), 보라 = 버튼 선, 파랑 = ESP32 점퍼선 4가닥, 회색 = ESP32 안테나 동축선. 파이와 드라이버 사이 점퍼선은 18가닥.", title="머리 속 (뚜껑을 떼고 앞에서 본 모습)", sub="안쪽 크기 108 × 33.6 × 108mm · 드라이버 자리 폭 37mm (보드 34mm) · 점퍼선을 꽂고도 뚜껑까지 5mm 넘게 남는다", pad_side=380, pad_bottom=170)
 
     # (나) 전체: 껍데기를 반투명하게 하고 모터, 배터리, 전선 길을 보여 준다 (전선 길은 room_check.py 에서 길이를 잰 그 길)
     yaw, pitch, spin = 0.0, TILT3, 90.0
@@ -283,9 +291,9 @@ if "4" in WANT:
     SL = slice_summary()["parts"]
     tw = 400
     names = ["01_base_tub_S", "02_base_cover_S", "03_clip", "04_yoke", "05_pinion_fit2", "16_m2_ring", "06_sector_gear", "07_head_shell", "08_head_lid", "09_crown", "15_marker_frame",
-             "10_rotor_bar_fit2", "11_coin_cap", "12_coin_spacer", "13_pin_fit2", "14_pin_keeper", "17_lan_cap", "18_plate_frame", "19_plate_clamp", "20_batt_fill", "90_test_coupon", "91_driver_check", "01_base_tub_L", "02_base_cover_L", "17_lan_cap_L"]
+             "10_rotor_bar_fit2", "11_coin_cap", "12_coin_spacer", "13_pin_fit2", "14_pin_keeper", "17_lan_cap", "18_plate_frame", "19_plate_clamp", "20_batt_fill", "21_ant_clip", "22_xiao_cap", "90_test_coupon", "91_driver_check", "01_base_tub_L", "02_base_cover_L", "17_lan_cap_L"]
     short = {"01_base_tub_S": "받침 통 S", "02_base_cover_S": "받침 덮개 S", "05_pinion_fit2": "작은 기어 10T", "10_rotor_bar_fit2": "회전 막대", "13_pin_fit2": "끄덕임 축 핀",
-             "01_base_tub_L": "받침 통 L (선택)", "02_base_cover_L": "받침 덮개 L (선택)", "11_coin_cap": "균형추 통 마개", "12_coin_spacer": "동전 채움 조각", "20_batt_fill": "배터리 채움 조각", "14_pin_keeper": "핀 막이",
+             "01_base_tub_L": "받침 통 L (선택)", "02_base_cover_L": "받침 덮개 L (선택)", "11_coin_cap": "균형추 통 마개", "12_coin_spacer": "동전 채움 조각", "20_batt_fill": "배터리 채움 조각", "14_pin_keeper": "핀 막이", "21_ant_clip": "안테나 누름판", "22_xiao_cap": "ESP32 막음쇠",
              "15_marker_frame": "마커 틀", "18_plate_frame": "판 틀", "19_plate_clamp": "판 누름쇠", "91_driver_check": "보드 구멍 맞춤 판", "04_yoke": "요크", "17_lan_cap": "랜선 홈 마개 S", "17_lan_cap_L": "랜선 홈 마개 L (선택)"}
     spec = {s[0]: s for s in E.SPEC}
     cols = 8; nrow = int(np.ceil(len(names) / cols)); ch = tw + 122
@@ -295,7 +303,7 @@ if "4" in WANT:
     for i, n in enumerate(names):
         name, fn, rot, qty, ko, pick, infill = spec[n]
         m = E.oriented(fn, rot); bb = m.bounding_box(); span = max(bb[3] - bb[0], bb[4] - bb[1], (bb[5] - bb[2]) * 1.4)
-        col = P.COL["accent"] if n[:2] in ("03", "05", "06", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "20") else P.COL["body"]
+        col = P.COL["accent"] if n[:2] in ("03", "05", "06", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "20", "21", "22") else P.COL["body"]
         render.render({n: (m, "X", col, True)}, TMP + 'thumb.png', cam_az=-55, cam_el=32, size=(tw, tw), dist=max(span, 34) * 3.3, focus=(0, 0, (bb[5] - bb[2]) / 2), ground=True, ground_z=-0.05)
         x, y = (i % cols) * tw, (i // cols) * ch + 160
         sheet.paste(Image.open(TMP + 'thumb.png'), (x, y))
@@ -317,11 +325,11 @@ if "5" in WANT:
     bpcb, bsw = P.button_dummy()
     headi = {"shell": P.head_shell(), "pi": pb + pc, "d0": (db + dc).transform(P.driver_T(0)), "d1": (db + dc).transform(P.driver_T(1)), "d2": (db + dc).transform(P.driver_T(2)), "plug": P.usb_plug_dummy(),
              "btn": bpcb + bsw, "dongle": P.dongle_dummy() + P.dongle_dummy(DONGLE2)}
-    heado = {"crown": P.crown(), "motor3": v1._m1(mb) + v1._m1(mc), "sector": P.sector_head(), "marker_frame": P.marker_frame()}
-    lid = {"lid": P.head_lid()}                                  # 뚜껑은 머리를 요크에 올리고 전선을 다 꽂은 뒤 마지막에 닫는다
+    heado = {"crown": P.crown(), "motor3": v1._m1(mb) + v1._m1(mc), "sector": P.sector_head(), "marker_frame": P.marker_frame(), "ant_clip": P.ant_clip(), "fpc": P.fpc_dummy()}
+    lid = {"lid": P.head_lid(), "xiao": P.xiao_dummy(), "xiao_cap": P.xiao_cap()}                                  # 뚜껑은 머리를 요크에 올리고 전선을 다 꽂은 뒤 마지막에 닫는다
     join = {"pin_r": Yk(P.pin(1)), "pin_l": Yk(P.pin(-1)), "keeper_r": Yk(P.pin_keeper(1)), "keeper_l": Yk(P.pin_keeper(-1)), "motor2": Yk((mb + mc).transform(P.motor2_T())), "pinion2": Yk(P.pinion2()), "m2_ring": Yk(P.m2_ring())}
     rot = {"rotor_bar": Rt(P.rotor_bar()), "plate": Rt(P.al_plate(150.0)), "plate_frame": Rt(P.plate_frame()), "plate_clamp": Rt(P.plate_clamp()), "coin_cap": Rt(P.coin_cap(P.COINS[(150.0, AL_T)])), "rotor_hw": Rt(P.rotor_hw(150.0, P.COINS[(150.0, AL_T)]))}
-    gray = {"battery": C["batt"], "motor1": C["metal"], "motor2": C["metal"], "motor3": C["metal"], "pi": C["pcb"], "d0": "#3B8F5E", "d1": "#3B8F5E", "d2": "#3B8F5E", "plug": C["dark"], "plate": C["foil"], "rotor_hw": C["screw"], "btn": "#B03A2E", "dongle": "#5E6B85", "cap": AC}
+    gray = {"battery": C["batt"], "motor1": C["metal"], "motor2": C["metal"], "motor3": C["metal"], "pi": C["pcb"], "d0": "#3B8F5E", "d1": "#3B8F5E", "d2": "#3B8F5E", "plug": C["dark"], "plate": C["foil"], "rotor_hw": C["screw"], "btn": "#B03A2E", "dongle": "#5E6B85", "cap": AC, "xiao": "#2E6FB5", "fpc": C["dark"]}
 
     def scene(old, new, hi_names=None):
         A = {}
@@ -338,8 +346,8 @@ if "5" in WANT:
         ("① 받침", "전원선을 덮개의 가운데 통으로 올려 둔다.\n통 뒤쪽 홈에 마개를 위에서 끼우고,\n덮개를 나사 4개로 덮는다.", scene({"tub": base["tub"], "battery": base["battery"]}, {"cover": base["cover"], "cap": base["cap"]}), dict(cam_az=-60, cam_el=28, dist=520, focus=(0, 0, 25))),
         ("② 요크", "모터 1을 상자 속 돋은 자리에 나사 2개로 달고,\n아래에서 작은 기어를 축에 끼운다. 전원선을 꿰며\n요크를 받침에 얹고, 고리를 뒤에서 밀어 잠근다.", scene(base, yoke), dict(cam_az=-60, cam_el=24, dist=640, focus=(-10, 0, 70))),
         ("③ 머리 속", "몸통 기둥에 파이(M2.5 나사 4)와 드라이버 3장(M2\n나사 12)을 조인다. 점퍼선, ㄱ자 젠더, 전원 버튼 모듈\n(왼쪽 받침 살)을 달고, 동글 두 개를 아래 USB 에 꽂는다.", scene({"shell": headi["shell"]}, {k: v for k, v in headi.items() if k != "shell"}), dict(cam_az=-72, cam_el=18, dist=430, focus=(0, 0, -46))),
-        ("④ 머리 겉", "모터 3을 넣은 모터 자리(나사 4)를 얹고 전선을 드라이버\n3에 꽂는다. 부채꼴 기어(나사 2)를 붙이고, 등판에 마커\n종이를 대고 마커 틀(나사 4)로 덮는다. 뚜껑은 아직.", scene(headi, heado), dict(cam_az=-40, cam_el=20, dist=520, focus=(10, 0, -40))),
-        ("⑤ 머리 올리기", "모터 2에 맞춤 링과 작은 기어를 끼워 오른쪽 팔 바깥에서\n넣는다. 머리를 내리며 이를 맞물리고 핀 2개를 민 뒤 핀 막이\n(나사 1개씩)를 단다. 전선을 꽂고 뚜껑(나사 4)을 닫는다.", scene({**base, **yoke, **posed_head}, {**join, **posed_lid}), dict(cam_az=62, cam_el=16, dist=820, focus=(0, 0, 120))),
+        ("④ 머리 겉", "모터 자리 밑면 홈에 ESP32 안테나를 대고 누름판(M2 나사 2)으로\n조인 뒤, 모터 3을 넣은 모터 자리(나사 4)를 얹는다. 부채꼴\n기어(나사 2), 마커 종이와 마커 틀(나사 4). 뚜껑은 아직.", scene(headi, heado), dict(cam_az=-40, cam_el=20, dist=520, focus=(10, 0, -40))),
+        ("⑤ 머리 올리기", "모터 2에 맞춤 링과 작은 기어를 끼워 오른쪽 팔 바깥에서\n넣는다. 머리를 내리며 이를 맞물리고 핀 2개와 핀 막이를 단다.\n뚜껑 안쪽에 ESP32 를 끼워 막음쇠(M2 2)로 막고, 전선을 꽂고 닫는다.", scene({**base, **yoke, **posed_head}, {**join, **posed_lid}), dict(cam_az=62, cam_el=16, dist=820, focus=(0, 0, 120))),
         ("⑥ 판", "동전 %d개를 넣어 마개로 막고, 판 틀을 판 받이에 접시머리\n4개로 단다. 판 아래 변을 아래 턱 밑에 비스듬히 밀어 넣고\n눕힌 뒤 누름쇠(나사 2개)로 누른다. 회전 막대를 모터 3 축에\n꽂아 축 고정 나사를 조인다." % P.COINS[(150.0, AL_T)], scene({**base, **yoke, **posed_head, **posed_lid, **join}, rot, ("rotor_bar", "plate_frame", "plate", "plate_clamp", "coin_cap")), dict(cam_az=-58, cam_el=14, dist=900, focus=(0, 0, 150))),
     ]
     band = 186
@@ -356,11 +364,11 @@ if "5" in WANT:
 
 # ---------------------------------------------------------------- 6 배선
 if "6" in WANT:
-    W, Hh = 2000, 1690
+    W, Hh = 2000, 1920
     im = Image.new('RGB', (W, Hh), "#FCFCFB"); d = ImageDraw.Draw(im)
     C1, C2, C3, CB = "#2A78D6", "#EB6834", "#1BAF7A", "#8E5BD9"; RED, BLK = "#C0392B", "#3A3F45"
-    d.text((60, 40), "배선: 라즈베리파이 GPIO ↔ 드라이버 3장 + 전원 버튼", font=font(52, True), fill=INK)
-    d.text((60, 116), "점퍼선(암-암) 20가닥: 드라이버 18가닥(10cm) + 버튼 2가닥(20cm). 색칠한 핀만 쓴다. 판 회전은 DiffLoc 코드와 같은 핀(GPIO 6, 13, 19, 26)이다.", font=font(28), fill=SUB)
+    d.text((60, 40), "배선: 라즈베리파이 GPIO ↔ 드라이버 3장 + 전원 버튼 + ESP32", font=font(52, True), fill=INK)
+    d.text((60, 116), "점퍼선(암-암) 24가닥: 드라이버 18가닥(10cm) + 버튼 2가닥 + ESP32 4가닥(20cm). Y 분배 케이블 2개. 색칠한 핀만 쓴다.", font=font(28), fill=SUB)
     name = {1: "3.3V", 2: "5V", 4: "5V", 6: "GND", 9: "GND", 14: "GND", 17: "3.3V", 20: "GND", 25: "GND", 30: "GND", 34: "GND", 39: "GND",
             3: "GPIO2", 5: "GPIO3", 7: "GPIO4", 8: "GPIO14", 10: "GPIO15", 11: "GPIO17", 12: "GPIO18", 13: "GPIO27", 15: "GPIO22", 16: "GPIO23", 18: "GPIO24", 19: "GPIO10",
             21: "GPIO9", 22: "GPIO25", 23: "GPIO11", 24: "GPIO8", 26: "GPIO7", 27: "ID_SD", 28: "ID_SC", 29: "GPIO5", 31: "GPIO6", 32: "GPIO12", 33: "GPIO13", 35: "GPIO19",
@@ -373,6 +381,8 @@ if "6" in WANT:
         use[pg] = (BLK, "%s · −" % t)
     use[2] = (RED, "드라이버 3 · +"); use[4] = (RED, "드라이버 1과 2 · +  (둘로 나눈다)")
     use[5] = (CB, "전원 버튼 · S"); use[6] = (CB, "전원 버튼 · −")
+    CE = "#2E6FB5"
+    use[2] = (RED, "드라이버 3 과 ESP32 · +  (둘로 나눈다)"); use[8] = (CE, "ESP32 · RX (D7)"); use[10] = (CE, "ESP32 · TX (D6)"); use[9] = (CE, "ESP32 · GND")
     x0, y0, dy, pw = 600, 262, 52, 46
     d.rounded_rectangle([x0 - 24, y0 - 30, x0 + pw * 2 + 36, y0 + dy * 20 - 6], 18, outline="#C9CCD1", width=3, fill="#F1F3F1")
     d.text((x0 + pw + 6, y0 - 58), "파이 GPIO 핀 (SD카드 쪽이 위)", font=font(27, True), fill=INK, anchor="mm")
@@ -402,7 +412,7 @@ if "6" in WANT:
         for i, (lab, p) in enumerate(rows):
             ty = by + 82 + i * 32
             d.text((bx + 30, ty), lab, font=font(24, True), fill=INK, anchor="lm")
-            d.text((bx + 190, ty), "←  %d번 핀 (%s)%s" % (p, name[p], "  · 둘로 나눈 선" if (lab.startswith("+") and p == 4) else ""), font=font(24), fill=INK, anchor="lm")
+            d.text((bx + 190, ty), "←  %d번 핀 (%s)%s" % (p, name[p], "  · 둘로 나눈 선" if lab.startswith("+") else ""), font=font(24), fill=INK, anchor="lm")
         d.text((bx + 30, by + bh - 24), "흰 5핀 소켓에는 모터 전선을 꽂는다", font=font(21), fill=SUB, anchor="lm")
     by = 200 + 3 * (bh + 16); bh2 = 176
     d.rounded_rectangle([bx, by, bx + bw_, by + bh2], 18, outline=CB, width=5, fill="#FFFFFF")
@@ -412,8 +422,17 @@ if "6" in WANT:
         ty = by + 82 + i * 32
         d.text((bx + 30, ty), lab, font=font(24, True), fill=INK, anchor="lm"); d.text((bx + 190, ty), txt, font=font(24), fill=INK, anchor="lm")
     d.text((bx + 30, by + bh2 - 24), "가운데 핀(+)은 비워 둔다", font=font(21), fill=SUB, anchor="lm")
-    fy = y0 + dy * 20 + 40
-    for i, l in enumerate(["· 5V 핀은 2번, 4번 두 개뿐이다. 4번에 Y 분배 케이블을 꽂아 둘로 갈라 드라이버 1과 2의 +에 꽂는다. GND 핀은 넉넉해서 드라이버마다 따로 쓴다.",
+    by = by + bh2 + 16; bh3 = 240
+    d.rounded_rectangle([bx, by, bx + bw_, by + bh3], 18, outline=CE, width=5, fill="#FFFFFF")
+    d.ellipse([bx + 24, by + 22, bx + 50, by + 48], fill=CE)
+    d.text((bx + 64, by + 35), "ESP32 · XIAO ESP32-C3", font=font(30, True), fill=INK, anchor="lm")
+    for i, (lab, txt) in enumerate((("5V", "←  2번 핀 (5V)  · 둘로 나눈 선"), ("GND", "←  9번 핀 (GND)"), ("D6 (TX)", "→  10번 핀 (GPIO15, 파이 RX)"), ("D7 (RX)", "←  8번 핀 (GPIO14, 파이 TX)"))):
+        ty = by + 82 + i * 32
+        d.text((bx + 30, ty), lab, font=font(24, True), fill=INK, anchor="lm"); d.text((bx + 190, ty), txt, font=font(24), fill=INK, anchor="lm")
+    d.text((bx + 30, by + bh3 - 24), "안테나 단자에는 FPC 안테나의 동축선을 꽂는다", font=font(21), fill=SUB, anchor="lm")
+    fy = max(y0 + dy * 20 + 40, by + bh3 + 36)
+    for i, l in enumerate(["· 5V 핀은 2번, 4번 두 개뿐이다. Y 분배 케이블 2개로 4번은 드라이버 1과 2에, 2번은 드라이버 3과 ESP32 에 나눈다. GND 핀은 넉넉해서 따로 쓴다.",
+                           "· ESP32 는 UART(8·10번)로 CSI 를 보낸다. /boot/config.txt 에 dtoverlay=disable-bt 를 넣어 8·10번을 블루투스에서 떼어 온다 (블루투스는 쓰지 않는다).",
                            "· 한 번에 모터 하나만 돌리고 멈춘 모터는 전류를 끈다(기어가 버틴다). 그래서 파이의 5V 핀으로 충분하다 (모터 1개 약 0.24A).",
                            "· 모터가 반대로 돌면 선을 바꾸지 말고 제어 코드의 방향 값(DIR)만 뒤집는다. 드라이버의 전원 점퍼(ON/OFF 캡)는 꽂아 둔다.",
                            "· 전원 버튼: 2초 누르면 안전하게 꺼지고, 꺼진 뒤 한 번 누르면 다시 켜진다. I2C는 꺼 둔다 (5번 핀을 같이 쓴다).",
@@ -424,7 +443,7 @@ if "6" in WANT:
 
 # ---------------------------------------------------------------- 7 출력판 나누기
 PLATE_KO = {"90_test_coupon": "시험 조각", "91_driver_check": "보드 맞춤 판", "16_m2_ring": "맞춤 링", "02_base_cover_S": "받침 덮개", "01_base_tub_S": "받침 통", "03_clip": "고리", "04_yoke": "요크", "17_lan_cap": "홈 마개",
-            "07_head_shell": "머리 몸통", "08_head_lid": "머리 뚜껑", "09_crown": "모터 자리", "06_sector_gear": "부채꼴 기어", "11_coin_cap": "마개", "12_coin_spacer": "동전 채움 조각", "20_batt_fill": "배터리 채움 조각", "14_pin_keeper": "핀 막이",
+            "07_head_shell": "머리 몸통", "08_head_lid": "머리 뚜껑", "09_crown": "모터 자리", "06_sector_gear": "부채꼴 기어", "11_coin_cap": "마개", "12_coin_spacer": "동전 채움 조각", "20_batt_fill": "배터리 채움 조각", "14_pin_keeper": "핀 막이", "21_ant_clip": "안테나 누름판", "22_xiao_cap": "ESP32 막음쇠",
             "15_marker_frame": "마커 틀", "18_plate_frame": "판 틀", "19_plate_clamp": "누름쇠", "01_base_tub_L": "받침 통 L", "02_base_cover_L": "받침 덮개 L", "17_lan_cap_L": "홈 마개 L"}
 
 

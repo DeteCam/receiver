@@ -46,7 +46,7 @@ if __name__ == "__main__":
     # 머리 좌표에서 한 번만 만든다
     mb, mc = v1.motor_body_dummy()
     b, cc = v1.pi_dummy(); db, dc = v1.driver_dummy()
-    HEADP = union([P.head_shell(), P.head_lid(), P.crown(), P.marker_frame(), P.head_hw(), v1._m1(mb), v1._m1(mc), b, cc, P.usb_plug_dummy(), P.lan_plug_dummy(), P.dongle_dummy(), P.dongle_dummy(DONGLE2)] + list(P.button_dummy())
+    HEADP = union([P.head_shell(), P.head_lid(), P.crown(), P.marker_frame(), P.head_hw(), v1._m1(mb), v1._m1(mc), b, cc, P.usb_plug_dummy(), P.lan_plug_dummy(), P.dongle_dummy(), P.dongle_dummy(DONGLE2), P.ant_clip(), P.fpc_dummy(), P.xiao_cap(), P.xiao_dummy()] + list(P.button_dummy())
                   + [db.transform(P.driver_T(k)) for k in range(3)] + [P.driver_keepout(k) for k in range(3)] + [P.gpio_keepout()])
     SEC = P.sector_head()
     YOKE = union([P.yoke(), P.pin(1), P.pin(-1), P.pin_keeper(1), P.pin_keeper(-1), mb.transform(P.motor1_T()), mc.transform(P.motor1_T()),

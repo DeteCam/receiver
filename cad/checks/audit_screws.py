@@ -43,6 +43,7 @@ PARTS = {   # 이름: (형상(세계 좌표, 받침 0도, 끄덕임 0도, 판 0�
     "회전 막대": (Rt(P.rotor_bar()), True), "알루미늄 판": (Rt(P.al_plate(150.0)), False), "마개": (Rt(P.coin_cap(N_COIN)), True), "동전": (Rt(P.coins(N_COIN)), False),
     "판 틀": (Rt(P.plate_frame()), True), "누름쇠": (Rt(P.plate_clamp()), True),
     "배터리": (P.battery_dummy("S"), False),
+    "안테나 누름판": (Hd(P.ant_clip()), True), "ESP32 막음쇠": (Hd(P.xiao_cap()), True), "ESP32": (Hd(P.xiao_dummy()), False), "FPC 안테나": (Hd(P.fpc_dummy()), False),
     "랜 플러그": (Hd(P.lan_plug_dummy()), False), "무선 동글": (Hd(P.dongle_dummy()), False), "탐지 동글": (Hd(P.dongle_dummy(DONGLE2)), False), "랜선 홈 마개": (P.lan_cap(), True), "버튼 모듈": (Hd(P.button_dummy()[0] + P.button_dummy()[1]), False),
 }
 px, pz = P.pin2_xz(); lx, lz = P.lock_xz(); kx, kz = P.keeper_xz()
@@ -88,6 +89,11 @@ for k in range(3):                                                         # 드
         S.append(("드라이버 %d-%d" % (3 - k, i + 1), hp((x, yf, z)), hv((0, 1, 0)), 6, ["드라이버 %d" % (3 - k)], "머리 몸통", INSIDE, "둥근", dict(m=2.0)))
 for i, (sx, sz) in enumerate(P.marker_screws()):                           # 마커 틀: M3 x 6, 등판 겉에서
     S.append(("마커 틀 %d" % (i + 1), hp((sx, HY1 + MK_FRAME["t"], sz)), hv((0, -1, 0)), 6, ["마커 틀"], "머리 몸통", HEAD_ONLY, "둥근", {}))      # 머리를 요크에 올리기 전에 단다
+for i, (sx, sy) in enumerate(ANT_CLIP["screws"]):                         # ESP32 안테나 누름판: M2 x 6, 모터 자리를 뒤집어 놓고 밑면에서 (머리에 얹기 전)
+    S.append(("안테나 누름판 %d" % (i + 1), hp((sx, sy, HZ1 - ANT_CLIP["t"])), hv((0, 0, 1)), 6, ["안테나 누름판"], "모터 자리", ["모터 자리", "모터 3", "안테나 누름판", "FPC 안테나"], "둥근", dict(m=2.0)))
+_xb = P._xiao_box()
+for i, zc in enumerate(P.xiao_cap_z()):                                     # ESP32 막음쇠: M2 x 6, 뚜껑을 떼어 놓고 안쪽에서
+    S.append(("ESP32 막음쇠 %d" % (i + 1), hp((_xb[0] - XIAO["wall_c"] / 2 - 0.25, _xb[3] + 2.1, zc)), hv((0, -1, 0)), 6, ["ESP32 막음쇠"], "머리 뚜껑", ["머리 뚜껑", "ESP32", "ESP32 막음쇠"], "둥근", dict(m=2.0)))
 xf = FL_XH - FL_T; CSK_SINK = 0.36                                      # 접시머리 윗면이 면보다 0.36 낮게 묻힌다 (접시 자리 지름 6.7, 머리 지름 6)
 for i, (y, z) in enumerate(PLATE_BOLTS):                                   # 판 틀 -> 판 받이: M3 x 6 접시머리 + 너트. 판을 넣기 전에 홈 바닥에서 넣고, 판 받이 안쪽 육각 자리에 너트
     p0 = FL_X1 - CSK_SINK

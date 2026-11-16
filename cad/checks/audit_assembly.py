@@ -110,7 +110,10 @@ rows.append(dict(group="4", step="모터 3 흰 플러그 -> 모터 자리의 네
                  note="플러그 14.9 x 5.8, 구멍 %.0f x %.0f" % (CABLE_HOLE[1] - CABLE_HOLE[0], CABLE_HOLE[3] - CABLE_HOLE[2])))
 print("4 %-30s 가는 길 겹침 %.2f mm3 %s" % ("흰 플러그 -> 네모 구멍", v, "" if v < 0.5 else " <== 확인"))
 sweep("4", "모터 3 -> 모터 자리", m3, crown, (0, 0, 1), 30, "위에서 내린다", allow_seat=5.0)
-sweep("4", "모터 자리(모터 3) -> 몸통", crown + m3, union([shell, pi, drv, keep, plug, btn]), (0, 0, 1), 25, "위에서 내린다", allow_seat=0.5)
+fpc, aclip = P.fpc_dummy(), P.ant_clip()
+sweep("4", "ESP32 안테나(FPC) -> 모터 자리 밑면 홈", fpc, crown + m3, (0, 0, -1), 15, "모터 자리를 뒤집어 놓고 홈에 댄다", allow_seat=0.3)
+sweep("4", "안테나 누름판 -> 모터 자리 밑면", aclip, union([crown, m3, fpc]), (0, 0, -1), 15, "FPC 위에 대고 M2 x 6 나사 2개", allow_seat=0.3)
+sweep("4", "모터 자리(모터 3, 안테나) -> 몸통", union([crown, m3, fpc, aclip]), union([shell, pi, drv, keep, plug, btn]), (0, 0, 1), 25, "위에서 내린다", allow_seat=0.5)
 sweep("4", "부채꼴 기어 -> 머리 옆면", sec, union([shell, crown]), (1, 0, 0), 20, "옆에서 댄다", allow_seat=0.5)
 
 # ---- 5 머리 올리기 (뚜껑은 아직 열어 둔 채)
@@ -149,7 +152,10 @@ sweep("5", "왼쪽 핀 -> 축 구멍", P.pin(-1), union([yoke, HEADY]), (0, -1, 
 YH = P.yoke_to_head(union([YSET, P.pin(1), P.pin(-1)]))                            # 요크 쪽 부품을 머리 좌표로 (끄덕임 0도)
 for s_, nm in ((1, "오른쪽"), (-1, "왼쪽")):
     sweep("5", "핀 막이 -> %s 팔 (핀을 꽂은 뒤)" % nm, P.pin_keeper(s_), union([yoke, P.pin(1), P.pin(-1), m2]), (0, s_, 0), 15, "바깥에서 대고 M3 나사 1개", allow_seat=0.5)
-sweep("5", "뚜껑 -> 몸통 (머리가 요크에 앉은 채)", lid, union([shell, pi, drv, keep, plug, btn, crown, m3, sec, YH]), (0, -1, 0), 40, "앞에서 뒤로 민다", allow_seat=0.5,
+xiao, xcap = P.xiao_dummy(), P.xiao_cap()
+sweep("5", "ESP32(XIAO) -> 뚜껑 안쪽 홈 받침", xiao, lid, (0, 1, 0), 25, "뚜껑을 떼어 엎어 놓고 위에서 홈에 꽂는다", allow_seat=0.3)
+sweep("5", "ESP32 막음쇠 -> 홈 받침 윗면", xcap, lid + xiao, (0, 1, 0), 15, "위에서 대고 M2 x 6 나사 2개", allow_seat=0.3)
+sweep("5", "뚜껑(ESP32 를 단 채) -> 몸통 (머리가 요크에 앉은 채)", union([lid, xiao, xcap]), union([shell, pi, drv, keep, plug, btn, crown, m3, fpc, aclip, sec, YH]), (0, -1, 0), 40, "앞에서 뒤로 민다 (점퍼선 4가닥을 GPIO 에 꽂은 다음)", allow_seat=0.5,
       note="뚜껑 안쪽의 누름 살이 버튼 기판 앞면에 닿는다 (틈 0)")
 
 # ---- 6 판

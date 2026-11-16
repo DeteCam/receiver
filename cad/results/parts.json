@@ -217,14 +217,14 @@
   "size": [
    111.7,
    108.0,
-   6.8
+   20.2
   ],
-  "volume_cm3": 17.7,
+  "volume_cm3": 18.5,
   "watertight": true,
-  "faces": 2060,
+  "faces": 2296,
   "bodies": 1,
-  "overhang_mm2": 773,
-  "flat_overhang_mm2": 773,
+  "overhang_mm2": 804,
+  "flat_overhang_mm2": 804,
   "ok": true
  },
  {
@@ -238,12 +238,12 @@
    72.0,
    21.0
   ],
-  "volume_cm3": 18.4,
+  "volume_cm3": 18.3,
   "watertight": true,
-  "faces": 3004,
+  "faces": 3474,
   "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
+  "overhang_mm2": 472,
+  "flat_overhang_mm2": 472,
   "ok": true
  },
  {
@@ -545,6 +545,44 @@
   "volume_cm3": 2.4,
   "watertight": true,
   "faces": 20,
+  "bodies": 1,
+  "overhang_mm2": 0,
+  "flat_overhang_mm2": 0,
+  "ok": true
+ },
+ {
+  "file": "21_ant_clip.stl",
+  "ko": "ESP32 안테나 누름판",
+  "qty": 1,
+  "pick": "FPC 안테나를 모터 자리 밑면 홈에 대고 눌러 M2 x 6 나사 2개로. 납작한 면을 바닥에",
+  "infill": 15,
+  "size": [
+   64.4,
+   31.7,
+   1.2
+  ],
+  "volume_cm3": 1.1,
+  "watertight": true,
+  "faces": 326,
+  "bodies": 1,
+  "overhang_mm2": 0,
+  "flat_overhang_mm2": 0,
+  "ok": true
+ },
+ {
+  "file": "22_xiao_cap.stl",
+  "ko": "ESP32 막음쇠",
+  "qty": 1,
+  "pick": "뚜껑 안쪽 홈 받침에 세워 끼운 XIAO 위를 막는다. M2 x 6 나사 2개",
+  "infill": 15,
+  "size": [
+   6.9,
+   27.0,
+   1.6
+  ],
+  "volume_cm3": 0.3,
+  "watertight": true,
+  "faces": 148,
   "bodies": 1,
   "overhang_mm2": 0,
   "flat_overhang_mm2": 0,

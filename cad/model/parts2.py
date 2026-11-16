@@ -521,7 +521,8 @@ def head_lid():
         m = m + box(x0, x1, HYL - 0.1, yf, BTN_Z - 3.0, BTN_Z + 3.0)
     xf = BTN_X - BTN_W / 2 + BTN_W_MAX                                         # 울타리 살: 가장 넓은 기판(16.5)의 오른쪽 변 바깥
     m = m + box(xf + 0.3, xf + 1.5, HYL - 0.1, yf + 1.2, zb + 2.0, zt - 2.0)
-    cut = []
+    m = m + union(xiao_holders())
+    cut = [xiao_holder_cut()]
     for sx, sz in LID_SCREWS:
         cut.append(cy(1.7, HY0 - 1, HYL + 1, sx, sz))
     eye = M.batch_hull([cy(4.5, HY0 - 1, HY0 + 0.8, -30.0, -20.0), cy(4.5, HY0 - 1, HY0 + 0.8, 30.0, -20.0)])     # 앞면 '눈' 띠 (0.8 깊이)
@@ -541,6 +542,72 @@ def head_lid():
     return m - union(cut)
 
 
+def _xiao_box():
+    """XIAO 기판이 차지하는 자리 (머리 좌표): x0, x1, y0, y1, z0, z1"""
+    X = XIAO; y0 = HYL + X["gap"]
+    return X["x"], X["x"] + X["pcb"], y0, y0 + X["W"], X["z1"] - X["L"], X["z1"]
+
+
+def xiao_holders():
+    """뚜껑 안쪽의 XIAO 홈 받침 2개 (위·아래 짧은 변). 받침 윗면(+Y)에 막음쇠 나사 자리"""
+    X = XIAO; x0, x1, y0, y1, z0, z1 = _xiao_box(); out = []
+    for za, zb in ((z0 - 3.0, z0 + X["depth"]), (z1 - X["depth"], z1 + 3.0)):
+        out.append(box(x0 - X["wall_c"] - 0.25, x1 + 0.25 + X["wall"], HYL - 0.1, y1 + 0.5, za, zb))
+    return out
+
+
+def xiao_holder_cut():
+    """홈 (기판 두께 + 0.5) 과 USB-C 자리, 막음쇠 나사 구멍"""
+    X = XIAO; x0, x1, y0, y1, z0, z1 = _xiao_box(); xm = x0 - X["wall_c"] / 2 - 0.25
+    cut = [box(x0 - 0.25, x1 + 0.25, HYL + 0.2, y1 + 1.0, z0 - 0.25, z1 + 0.25)]
+    yc = (y0 + y1) / 2
+    cut.append(box(x0 - 3.6, x1 + 0.3, yc - 4.8, yc + 4.8, z0 - 3.0, z0 + 1.0))      # USB-C 자리 (아래 짧은 변 가운데, 쓰지 않지만 걸리지 않게)
+    for zc in xiao_cap_z():
+        cut.append(cy(PILOT2, y1 - 4.0, y1 + 1.0, xm, zc))
+    return union(cut)
+
+
+def xiao_cap_z():
+    x0, x1, y0, y1, z0, z1 = _xiao_box(); d = XIAO["depth"]
+    return (z0 + d - 2.0, z1 - d + 2.0)
+
+
+def xiao_cap():
+    """XIAO 막음쇠: 홈 받침 2개의 윗면(+Y)을 잇는 막대. 기판이 홈에서 빠지지 않게 위를 막는다. M2 x 6 나사 2개. 출력: 그대로."""
+    X = XIAO; x0, x1, y0, y1, z0, z1 = _xiao_box(); xm = x0 - X["wall_c"] / 2 - 0.25; za, zb = xiao_cap_z()
+    m = box(x0 - X["wall_c"] - 0.25, x1 + 0.25 + X["wall"], y1 + 0.5, y1 + 2.1, za - 2.5, zb + 2.5)
+    return m - union([cy(1.1, y1, y1 + 3, xm, z) for z in (za, zb)])
+
+
+def xiao_dummy():
+    """XIAO ESP32-C3 (핀 머리 + 점퍼선 소켓 4개): 기판, 부품(-X, 차폐 캔 3.0), 핀 머리(+X 2.5) 와 소켓(+X 14)"""
+    x0, x1, y0, y1, z0, z1 = _xiao_box()
+    pcb = box(x0, x1, y0, y1, z0, z1)
+    comp = box(x0 - 3.0, x0, y0 + 2.5, y1 - 2.5, z0 + 2.0, z1 - 2.0)
+    rows = union([box(x1, x1 + 2.5, yc - 1.27, yc + 1.27, z0 + 1.6, z1 - 1.6) for yc in (y0 + 1.27 + 0.3, y1 - 1.27 - 0.3)])
+    sock = union([box(x1 + 2.5, x1 + 2.5 + 14.0, yc - 1.3, yc + 1.3, za, za + 2.6 * n) for yc, za, n in
+                  ((y0 + 1.57, z1 - 1.6 - 2.6, 1), (y1 - 1.57, z1 - 1.6 - 7.8, 3))])
+    return pcb + comp + rows + sock
+
+
+def ant_clip():
+    """FPC 누름판: 모터 자리 밑면의 홈에 FPC 안테나를 대고 이 판으로 눌러 M2 x 6 나사 2개로 조인다. 왼쪽 끝 홈으로 동축선이 나간다. 출력: 그대로."""
+    L, W, yc = ESP_ANT["L"], ESP_ANT["W"], ESP_ANT["yc"]; t = ANT_CLIP["t"]; z1 = HZ1; z0 = z1 - t
+    ya, yb = yc - W / 2 - 1.5, min(yc + W / 2 + 1.5, HY1 - HWB - 0.3)
+    bar = box(-L / 2 - 1.5, L / 2 + 1.5, ya, yb, z0, z1)
+    pads = [cz(3.2, z0, z1, sx, sy) for sx, sy in ANT_CLIP["screws"]]
+    m = union([bar] + [M.batch_hull([p, box(max(-L / 2, min(L / 2, sx)) - 3, max(-L / 2, min(L / 2, sx)) + 3, ya, yb, z0, z1)]) for p, (sx, sy) in zip(pads, ANT_CLIP["screws"])])
+    n = ANT_CLIP["notch"]
+    cut = [cz(1.1, z0 - 1, z1 + 1, sx, sy) for sx, sy in ANT_CLIP["screws"]]
+    cut.append(box(-L / 2 - 2.0, -L / 2 + 6.0, yc - n / 2, yc + n / 2, z1 - 0.5, z1 + 1))      # 동축선 길 (FPC 끝에서 나와 아래로)
+    return m - union(cut)
+
+
+def fpc_dummy():
+    L, W, yc = ESP_ANT["L"] - 6.0, ESP_ANT["W"] - 2.4, ESP_ANT["yc"]
+    return box(-L / 2, L / 2, yc - W / 2, yc + W / 2, HZ1 + ESP_ANT["pocket"] - ESP_ANT["t"], HZ1 + ESP_ANT["pocket"])
+
+
 def crown():
     """모터 자리: 머리 위에 얹는 바닥판과 둥근 벽. 판 회전 모터(J3)가 들어간다. 출력: 그대로."""
     z0 = HZ1; zf = z0 + 2.0
@@ -549,12 +616,17 @@ def crown():
     skirt = cz(SEAT_R, zf - 0.1, M1_ZT) - cz(SEAT_R - 1.4, zf, M1_ZT + 1)
     posts = [cz(3.0, zf - 0.1, M1_ZT - 0.8, -M_OFFSET, s * M_EAR) for s in (1, -1)]
     posts += [box(-M_OFFSET - 1, -M_OFFSET + 1, 17.5 if s > 0 else -34.5, 34.5 if s > 0 else -17.5, zf - 0.1, M1_ZT - 4) for s in (1, -1)]
+    posts += [cz(2.6, zf - 0.1, zf + 3.6, sx, sy) for sx, sy in ANT_CLIP["screws"]]           # FPC 누름판 나사 받이 (바닥 2 + 3.6)
     m = union([plate, floor, skirt] + posts)
     cut = [cz(1.3, zf + 5, M1_ZT + 1, -M_OFFSET, s * M_EAR) for s in (1, -1)]
     for sx, sy in CROWN_SCREWS:
         cut.append(cz(1.7, z0 - 1, zf + 1, sx, sy))
     x0, x1, y0, y1 = CABLE_HOLE
     cut.append(box(x0, x1, y0, y1, z0 - 1, zf + 1))
+    L, W = ESP_ANT["L"], ESP_ANT["W"]                                                # ESP32 안테나(FPC) 자리: 밑면의 얕은 홈, 판 회전축 위
+    yc = ESP_ANT["yc"]; cut.append(box(-L / 2, L / 2, yc - W / 2, yc + W / 2, z0 - 1, z0 + ESP_ANT["pocket"]))
+    for sx, sy in ANT_CLIP["screws"]:                                              # FPC 누름판 나사 (M2, 밑에서 조인다): 바닥 위로 받이를 세운다
+        cut.append(cz(PILOT2, z0 - 1, zf + 3.2, sx, sy))
     za, zb = zf + 5.0, M1_ZT - 3.0
     slot = prism_xy_to_yz(poly([(-2.2, za), (2.2, za), (2.2, zb - 2.2), (0, zb), (-2.2, zb - 2.2)]), SEAT_R - 3, SEAT_R + 1)
     for k in range(8):
@@ -826,7 +898,7 @@ def driver_T(k):
 
 def driver_keepout(k):
     """드라이버 보드 + 꽂힌 점퍼선이 차지하는 부피 (보드 윗면에서 24mm)"""
-    return box(-17.5, 17.5, -16, 16, 0, 1.6 + 24.0).transform(driver_T(k))
+    return box(-17.0, 17.0, -15.85, 15.85, 0, 1.6 + 24.0).transform(driver_T(k))
 
 
 def gpio_keepout():
@@ -911,6 +983,8 @@ def assembly(yaw=0.0, pitch=0.0, spin=0.0, size="S", length=150.0, dummies=True,
     A["head_shell"] = (H(head_shell()), "H", c["body"], True)
     A["head_lid"] = (H(head_lid()), "H", c["body"], True)
     A["crown"] = (H(crown()), "H", c["accent"], True)
+    A["ant_clip"] = (H(ant_clip()), "H", c["accent"], True)
+    A["xiao_cap"] = (H(xiao_cap()), "H", c["accent"], True)
     A["sector"] = (H(sector_head()), "H", c["accent"], True)
     nco = COINS[(float(length), float(AL_T))]
     A["rotor_bar"] = (R(rotor_bar()), "R", c["accent"], True)
@@ -939,6 +1013,8 @@ def assembly(yaw=0.0, pitch=0.0, spin=0.0, size="S", length=150.0, dummies=True,
             A["lan_plug"] = (H(lan_plug_dummy()), "H", c["dark"], False)
         A["dongle"] = (H(dongle_dummy()), "H", c["dark"], False)
         A["dongle2"] = (H(dongle_dummy(DONGLE2)), "H", c["dark"], False)
+        A["xiao"] = (H(xiao_dummy()), "H", c["pcb"], False)
+        A["fpc"] = (H(fpc_dummy()), "H", c["dark"], False)
         bp, bs = button_dummy()
         A["button_board"] = (H(bp), "H", c["pcb"], False)
         A["button_parts"] = (H(bs), "H", c["dark"], False)

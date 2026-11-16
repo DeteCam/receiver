@@ -152,7 +152,7 @@
   "at_mm": null,
   "seat_overlap_mm3": 0.0,
   "ok": true,
-  "note": "들어가는 길의 옆 틈 0.50 mm"
+  "note": "들어가는 길의 옆 틈 1.00 mm"
  },
  {
   "group": "3",
@@ -162,7 +162,7 @@
   "at_mm": null,
   "seat_overlap_mm3": 0.0,
   "ok": true,
-  "note": "들어가는 길의 옆 틈 1.50 mm"
+  "note": "들어가는 길의 옆 틈 2.01 mm"
  },
  {
   "group": "3",
@@ -172,7 +172,7 @@
   "at_mm": null,
   "seat_overlap_mm3": 0.0,
   "ok": true,
-  "note": "들어가는 길의 옆 틈 0.50 mm"
+  "note": "들어가는 길의 옆 틈 1.00 mm"
  },
  {
   "group": "3",
@@ -225,7 +225,27 @@
  },
  {
   "group": "4",
-  "step": "모터 자리(모터 3) -> 몸통",
+  "step": "ESP32 안테나(FPC) -> 모터 자리 밑면 홈",
+  "how": "모터 자리를 뒤집어 놓고 홈에 댄다",
+  "path_overlap_mm3": 0.0,
+  "at_mm": null,
+  "seat_overlap_mm3": 0.0,
+  "ok": true,
+  "note": ""
+ },
+ {
+  "group": "4",
+  "step": "안테나 누름판 -> 모터 자리 밑면",
+  "how": "FPC 위에 대고 M2 x 6 나사 2개",
+  "path_overlap_mm3": 0.0,
+  "at_mm": null,
+  "seat_overlap_mm3": 0.0,
+  "ok": true,
+  "note": ""
+ },
+ {
+  "group": "4",
+  "step": "모터 자리(모터 3, 안테나) -> 몸통",
   "how": "위에서 내린다",
   "path_overlap_mm3": 0.0,
   "at_mm": null,
@@ -353,8 +373,28 @@
  },
  {
   "group": "5",
-  "step": "뚜껑 -> 몸통 (머리가 요크에 앉은 채)",
-  "how": "앞에서 뒤로 민다",
+  "step": "ESP32(XIAO) -> 뚜껑 안쪽 홈 받침",
+  "how": "뚜껑을 떼어 엎어 놓고 위에서 홈에 꽂는다",
+  "path_overlap_mm3": 0.0,
+  "at_mm": null,
+  "seat_overlap_mm3": 0.0,
+  "ok": true,
+  "note": ""
+ },
+ {
+  "group": "5",
+  "step": "ESP32 막음쇠 -> 홈 받침 윗면",
+  "how": "위에서 대고 M2 x 6 나사 2개",
+  "path_overlap_mm3": 0.0,
+  "at_mm": null,
+  "seat_overlap_mm3": 0.0,
+  "ok": true,
+  "note": ""
+ },
+ {
+  "group": "5",
+  "step": "뚜껑(ESP32 를 단 채) -> 몸통 (머리가 요크에 앉은 채)",
+  "how": "앞에서 뒤로 민다 (점퍼선 4가닥을 GPIO 에 꽂은 다음)",
   "path_overlap_mm3": 0.0,
   "at_mm": null,
   "seat_overlap_mm3": 0.0,

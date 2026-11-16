@@ -689,24 +689,24 @@
      0
     ]
    ],
-   "sec": 13163,
-   "model_sec": 12578,
-   "g": 105.77,
-   "m": 35.46,
+   "sec": 13566,
+   "model_sec": 12980,
+   "g": 106.89,
+   "m": 35.84,
    "layers": 176,
    "max_z": 35.2,
    "features": {
     "Custom": 2,
-    "Outer wall": 2639,
-    "Inner wall": 2158,
-    "Gap infill": 2784,
+    "Outer wall": 2931,
+    "Inner wall": 2396,
+    "Gap infill": 3016,
     "Bottom surface": 5,
-    "Internal solid infill": 1081,
-    "Top surface": 88,
-    "Overhang wall": 54,
-    "Bridge": 40,
-    "Sparse infill": 689,
-    "Floating vertical shell": 119
+    "Internal solid infill": 1173,
+    "Top surface": 100,
+    "Bridge": 46,
+    "Overhang wall": 69,
+    "Sparse infill": 690,
+    "Floating vertical shell": 121
    },
    "settings": {
     "layer_height": "0.2",
@@ -1191,26 +1191,38 @@
      128.0,
      48.0,
      90
+    ],
+    [
+     "21_ant_clip",
+     230.0,
+     60.0,
+     90
+    ],
+    [
+     "22_xiao_cap",
+     50.0,
+     60.0,
+     0
     ]
    ],
-   "sec": 2519,
-   "model_sec": 1934,
-   "g": 16.65,
-   "m": 5.58,
+   "sec": 2753,
+   "model_sec": 2167,
+   "g": 18.27,
+   "m": 6.13,
    "layers": 23,
    "max_z": 4.6,
    "features": {
     "Custom": 2,
-    "Outer wall": 136,
-    "Inner wall": 129,
-    "Gap infill": 65,
-    "Bottom surface": 2,
-    "Internal solid infill": 45,
+    "Inner wall": 158,
+    "Outer wall": 174,
+    "Bottom surface": 4,
+    "Gap infill": 86,
+    "Internal solid infill": 60,
+    "Top surface": 8,
     "Sparse infill": 35,
     "Floating vertical shell": 23,
     "Bridge": 21,
-    "Overhang wall": 13,
-    "Top surface": 5
+    "Overhang wall": 13
    },
    "settings": {
     "layer_height": "0.2",
@@ -1254,23 +1266,43 @@
       53.5
      ],
      "dev": 0.0
+    },
+    {
+     "name": "21_ant_clip",
+     "bbox": [
+      214.15,
+      27.8,
+      245.85,
+      92.2
+     ],
+     "dev": 0.0
+    },
+    {
+     "name": "22_xiao_cap",
+     "bbox": [
+      46.55,
+      46.5,
+      53.45,
+      73.5
+     ],
+     "dev": 0.0
     }
    ],
    "extent": [
-    48.46,
-    42.71,
-    207.54,
+    46.76,
+    28.02,
+    245.43,
     193.79,
     4.6
    ],
-   "gap_min": 36.5,
-   "edge_min": 42.5,
+   "gap_min": 8.1,
+   "edge_min": 10.1,
    "notices": [
     "bed_temperature_too_high_than_filament"
    ],
    "printer_model_id": "BL-P001",
    "problems": [],
-   "desc": "판 틀(한 장)과 판 누름쇠: 1T 알루미늄 판을 구멍 없이 홈에 넣어 잡는다. 둘 다 평평한 면(판 틀은 뒷면, 누름쇠는 밑면)을 바닥에 두고 받침 없이 뽑는다"
+   "desc": "판 틀(한 장)과 판 누름쇠: 1T 알루미늄 판을 구멍 없이 홈에 넣어 잡는다. 둘 다 평평한 면(판 틀은 뒷면, 누름쇠는 밑면)을 바닥에 두고 받침 없이 뽑는다. ESP32 안테나 누름판과 ESP32 막음쇠도 같이 뽑는다"
   },
   "선택_받침통_L": {
    "name": "선택_받침통_L",
@@ -1675,43 +1707,43 @@
    "problems": []
   },
   "08_head_lid": {
-   "sec": 2865,
-   "model_sec": 2279,
-   "g": 21.82,
-   "m": 7.32,
+   "sec": 3399,
+   "model_sec": 2813,
+   "g": 22.82,
+   "m": 7.65,
    "infill": 15,
-   "layers": 34,
+   "layers": 101,
    "features": {
     "Custom": 2,
-    "Outer wall": 178,
-    "Inner wall": 144,
-    "Gap infill": 72,
+    "Outer wall": 399,
+    "Inner wall": 312,
+    "Gap infill": 265,
     "Bottom surface": 2,
-    "Internal solid infill": 71,
-    "Overhang wall": 11,
-    "Bridge": 4,
-    "Top surface": 3
+    "Internal solid infill": 157,
+    "Overhang wall": 26,
+    "Bridge": 6,
+    "Top surface": 13
    },
    "problems": []
   },
   "09_crown": {
-   "sec": 2733,
-   "model_sec": 2148,
-   "g": 20.79,
-   "m": 6.97,
+   "sec": 2842,
+   "model_sec": 2256,
+   "g": 20.91,
+   "m": 7.01,
    "infill": 15,
    "layers": 105,
    "features": {
     "Custom": 2,
-    "Inner wall": 339,
-    "Outer wall": 696,
-    "Gap infill": 553,
+    "Inner wall": 409,
+    "Outer wall": 767,
+    "Gap infill": 593,
     "Bottom surface": 1,
-    "Internal solid infill": 57,
-    "Sparse infill": 7,
+    "Internal solid infill": 63,
+    "Bridge": 5,
+    "Sparse infill": 9,
     "Floating vertical shell": 6,
-    "Bridge": 1,
-    "Top surface": 16
+    "Top surface": 18
    },
    "problems": []
   },
@@ -2086,6 +2118,43 @@
     "Top surface": 1
    },
    "problems": []
+  },
+  "21_ant_clip": {
+   "sec": 689,
+   "model_sec": 104,
+   "g": 1.61,
+   "m": 0.54,
+   "infill": 15,
+   "layers": 6,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 16,
+    "Outer wall": 17,
+    "Gap infill": 13,
+    "Bottom surface": 1,
+    "Internal solid infill": 8,
+    "Top surface": 2
+   },
+   "problems": []
+  },
+  "22_xiao_cap": {
+   "sec": 602,
+   "model_sec": 17,
+   "g": 0.67,
+   "m": 0.22,
+   "infill": 15,
+   "layers": 8,
+   "features": {
+    "Custom": 2,
+    "Outer wall": 21,
+    "Inner wall": 13,
+    "Bottom surface": 1,
+    "Gap infill": 9,
+    "Internal solid infill": 6,
+    "Top surface": 1
+   },
+   "problems": []
   }
- }
+ },
+ "failed": {}
 }

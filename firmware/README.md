@@ -1,22 +1,21 @@
 # firmware: 수신기 코드
 
-> **패널 수신기 (2026-11-17).** 방향을 재는 쪽이 돌판에서 패널로 바뀌었다. 패널의 계산은 `core/panel.py` (세기 → 위상 → 방향 → 자리)와 검사 `tests/test_panel.py` 에 있다. `pi/rx3.py`(모터), `core/analyze3.py`·`fusion.py`·`estimator.py`·`model.py`·`locate.py`(돌판의 방향·위치 계산)는 돌판 때의 것이고, 허브 코드를 패널에 맞게 고칠 때 걷어 낸다 ([스펙 006](../specs/006-panel-receiver/tasks.md)). 탐지(`pi/detect.py`, `core/score.py`)와 폰 화면은 그대로 쓴다.
-
-라즈베리파이에서 도는 코드와 계산, 검사입니다. 설치, 폰 화면, 주소(API)는 [혼자 동작](../docs/혼자%20동작.md)에 있습니다.
+패널의 계산과, 허브(라즈베리파이)가 쓸 탐지·판별·의심 점수 코드, 그리고 장치 없이 도는 검사다. ESP32-C5 에 올릴 코드와 허브 프로그램(패널에서 받기, 자리 내기, 폰 화면)은 아직 없다 ([스펙 006](../specs/006-panel-receiver/tasks.md)).
 
 | 폴더 | 내용 |
 |---|---|
-| `pi/` | 수신기에 넣는 것: `node.py`(전체), `rx3.py`(모터), `csi.py`, `detect.py`, `web.html`(폰 화면), `marker.json`, `install.sh`, `link_setup.sh` |
-| `core/` | 계산: 방향(`analyze3`, `fusion`, `estimator`, `model`), 추정 구간(`locate`), 판별(`identify`), 의심 점수(`score`), 가짜 방(`world`). `../sim` 의 실험도 이 코드를 씁니다 |
-| `host/` | 개발할 때 노트북에서: `scan3.py`, `hand_check.py` |
+| `core/` | `panel.py` (세기 → 위상 → 방향 → 자리), `identify.py` (판별: 움직임에 전송량이 따라오나), `score.py` (의심 점수). `../sim` 의 실험도 이 코드를 쓴다 |
+| `pi/` | `detect.py` (둘레를 엿들어 카메라 후보를 추린다), `link_setup.sh` (허브의 무선: 자기 Wi-Fi 만들기, 탐지 동글을 모니터 모드로) |
+| `host/` | `watch_report.py` (점검 기록을 의심 점수로 다시 계산해 실험 S1~S5 의 숫자를 낸다) |
 | `tests/` | 장치 없이 도는 검사 |
 
 ```
-python3 pi/node.py --dry --port 8080     # 장치 없이 화면 보기: http://localhost:8080
-python3 tests/test_panel.py && python3 tests/test_core.py && python3 tests/test_score.py && python3 tests/test_exam.py && python3 tests/test_node_dry.py && python3 tests/test_control.py && python3 tests/test_marker.py
-pi/install.sh pi@raspberrypi.local       # 파이에 넣기 (랜선을 꽂은 채로)
+python3 tests/test_panel.py && python3 tests/test_score.py && python3 tests/test_detect.py && python3 tests/test_band.py
+python3 pi/detect.py --check            # 파이에서: 탐지 동글이 모니터 모드로 듣는지
 ```
 
-- 파이에서는 `apt upgrade` 를 하지 않습니다 (CSI 펌웨어 nexmon 이 깨집니다).
-- `pi/` 와 `core/` 는 파이썬 3.7 + numpy 1.16 에서 돌아야 합니다.
-- 실물(파이, 모터, 동글)에서는 아직 돌려 보지 못했습니다.
+- `pi/` 와 `core/` 는 파이썬 3.7 + numpy 1.16 (라즈베리파이 3B+) 에서도 돌아야 한다.
+- 지금 파이에는 CSI 펌웨어 nexmon 이 깔려 있어 `apt upgrade` 를 하지 않는다 (nexmon 이 깨진다).
+- 실물(파이, 동글, ESP32-C5)에서는 아직 돌려 보지 못했다.
+
+돌판 수신기 때의 코드(허브 프로그램 `node.py`, 모터 `rx3.py`, nexmon CSI `csi.py`, 폰 웹 화면 `web.html`, 설치 `install.sh`, 방향·위치 계산 `analyze3`·`estimator`·`fusion`·`model`·`world`·`locate`, 노트북 도구, 그 검사)는 [receiver-legacy](https://github.com/DeteCam/receiver-legacy) 에 있다. 허브 프로그램을 새로 쓸 때 참고한다.

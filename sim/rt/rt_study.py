@@ -1,11 +1,10 @@
 """수신기 구조와 읽는 법을 같은 전파 길 위에서 견준다. '스탠드 없이, 두 곳 이하'라는 조건에서 무엇이 정확도를 막는지 본다.
 
-    python rt_study.py measure --recv plate uca8 ura4x4 ... [--n 160] [--jobs 11] [--sets kr40_real_s1 ...]
+    python rt_study.py measure --recv ura4x4p37.5h uca8 ... [--n 160] [--jobs 11] [--sets kr40_real_s1 ...]
     python rt_study.py table   [--recv ...]                       곳 조합마다의 자리 맞힘 표
     python rt_study.py bearing [--recv ...]                       한 곳에서 잰 방향의 오차
 
 받는 쪽 (recv)
-  plate       지금 수신기: 안테나 하나 + 도는 알루미늄 판, 세기 곡선 맞추기 (rt_eval 의 tmpw 그대로). plate6 = 한 곳에서 6번만
   uca8        위상이 맞는 안테나 8개를 반지름 8cm 원에 (수직 쌍극자). cyl16 = 그 원 두 층
   ura4x4 ...  위상이 맞는 패치 안테나 배열을 벽에 걸어 자리 쪽을 보게 (간격 반 파장). ura4x8 = 가로 8 x 세로 4, ura8x8. ura4x4p37 = 간격 37mm
               뒤에 h 를 붙이면 (ura4x4h) 수신 체인 하나로: 기준 안테나와 합쳐 세기만 재서 위상을 되찾는다 (안테나마다 패킷 4개)
@@ -13,14 +12,15 @@
   oracle<s>   직접파 방향을 표준편차 s 도로 안다고 칠 때 (기하만의 한계). oracleaz<s> = 방위각만
 
 모든 받는 쪽은 '후보 점마다의 로그 점수'를 내고, 자리 고르기는 장치 코드와 같은 방법(post_seat)으로 한다.
+돌판 수신기(plate)와 견준 계산은 receiver-legacy 저장소의 sim/rt 에 있다.
 """
 import os
 for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
     os.environ.setdefault(_v, "1")
 import sys, json, time, argparse                        # noqa: E402
 import numpy as np                                      # noqa: E402
-import rt_eval as E                                     # noqa: E402
-from rt_eval import sph, sph_v, rotz, K, SUB, C0, KIND, PLANS, post_seat, seat_rc   # noqa: E402
+import rt_common as K                                   # noqa: E402
+from rt_common import sph, sph_v, rotz, SUB, C0, KIND, REV_S, post_seat, seat_rc   # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, "study"); LAM = C0 / 2.437e9
 AIM = np.array([3.75, 4.85, 0.9])                       # 배열이 바라보는 곳: 자리들의 한가운데
@@ -118,7 +118,7 @@ def array_snap(rng, P, name, npk=20, dur=0.5, tv=1.0, snr=30.0, cal=(5.0, 0.5), 
     fb = np.ones((n, len(P.d)), complex)
     if tv > 0 and P.body.any():                                                 # rt_eval 과 같은 흔들림 (시간 축은 6.14초를 기준으로)
         nb = int(P.body.sum()); ph0 = rng.normal(0, 0.6 * tv, nb); amp = np.abs(rng.normal(0, 0.3 * tv, nb)); m = rng.integers(1, 4, nb); ps = rng.uniform(0, 2 * np.pi, nb)
-        fb[:, P.body] = (1 + rng.normal(0, 0.15 * tv, nb))[None, :] * np.exp(1j * (ph0[None, :] + amp[None, :] * np.sin(2 * np.pi * m[None, :] * tt[:, None] / E.REV_S + ps[None, :])))
+        fb[:, P.body] = (1 + rng.normal(0, 0.15 * tv, nb))[None, :] * np.exp(1j * (ph0[None, :] + amp[None, :] * np.sin(2 * np.pi * m[None, :] * tt[:, None] / REV_S + ps[None, :])))
     ce = np.exp(1j * np.radians(rng.normal(0, cal[0], M))) * 10 ** (rng.normal(0, cal[1], M) / 20.0)       # 보정하고 남은 안테나마다의 오차
     def add_noise(H):
         sig = np.median(np.abs(H) ** 2); na = np.sqrt(max(sig, 1e-24) * 10 ** (-snr / 10) / 2)
@@ -215,7 +215,7 @@ def aperture_trial(rng, D, c, u, elems, X, opt):
         if tv > 0 and P.body.any():
             r3 = np.random.default_rng([int(rng.integers(1 << 30)), s]); nb = int(P.body.sum())
             ph0 = r3.normal(0, 0.6 * tv, nb); amp = np.abs(r3.normal(0, 0.3 * tv, nb)); m = r3.integers(1, 4, nb); ps = r3.uniform(0, 2 * np.pi, nb)
-            fb[:, P.body] = (1 + r3.normal(0, 0.15 * tv, nb))[None, :] * np.exp(1j * (ph0[None, :] + amp[None, :] * np.sin(2 * np.pi * m[None, :] * tt[:, None] / E.REV_S + ps[None, :])))
+            fb[:, P.body] = (1 + r3.normal(0, 0.15 * tv, nb))[None, :] * np.exp(1j * (ph0[None, :] + amp[None, :] * np.sin(2 * np.pi * m[None, :] * tt[:, None] / REV_S + ps[None, :])))
         return fb @ base, P.los                                                  # [시각, 서브캐리어]
     M = len(elems); tt = np.linspace(0, dur, M * rep_n).reshape(rep_n, M)       # 안테나마다 rep_n 번, 돌아가며
     Z = np.zeros((rep_n, M, len(fk)), complex); nlos = 0
@@ -254,7 +254,7 @@ _G = {}
 
 
 def _init():
-    _G["pat"] = E.Pattern(); _G["fus"] = E.Fusion(); _G["tm"] = E.TM(_G["pat"], 160.0); _G["D"] = {}; _G["G"] = grid_dirs()
+    _G["D"] = {}; _G["G"] = grid_dirs()
 
 
 def _load(name):
@@ -285,34 +285,25 @@ def _trial(args):
     los_only = bool(opt.get("los_only")); want_b = seed % 1000 < opt.get("nbear", 0)
     for s in (opt.get("spots") or range(S)):                                    # opt["spots"]: 이 곳들만 잰다 (배울 자료를 많이 만들 때)
         r2 = np.random.default_rng([seed, s]); spot = D["spots"][s].astype(float)
-        if recv.startswith("plate"):
-            plan = "tilt6" if recv == "plate6" else "tilt18"; frames = PLANS[plan]
-            w = E.RTWorld(r2, D, s, c, frames, _G["pat"], u, rate=opt.get("rate", 100.0), tv=opt.get("tv", 1.0), snr=opt.get("snr", 30.0), los_only=los_only)
-            both = [w.scan(y, t) for y, t in frames]; pc = [b[1] for b in both]
-            pose = (w.base + r2.normal(0, 0.05, 3) * np.array([1, 1, 0.5]), w.head + r2.normal(0, 3.0))
-            _, b = _G["tm"].score(K.to_dev(pts.X, pose), [pc], frames); sc[s] = b[0]; los[s] = w.los; kdb[s] = w.k_db
-            if want_b:
-                Xg = spot + 6.0 * _G["G"]; _, bg = _G["tm"].score(K.to_dev(Xg, pose), [pc], frames); berr[s] = ang_err(_G["G"][int(np.argmax(bg[0]))], w.c_true)
+        P = Paths(D, s, c, u, los_only); los[s] = P.los; kdb[s] = P.k_db
+        if recv.startswith("oracle"):
+            az_only = recv.startswith("oracleaz"); sig = float(recv[8:] if az_only else recv[6:])
+            d = pts.X - spot; d = d / np.linalg.norm(d, axis=1, keepdims=True); t = P.c_true
+            az = lambda v: np.degrees(np.arctan2(v[..., 1], v[..., 0])); el = lambda v: np.degrees(np.arcsin(np.clip(v[..., 2], -1, 1)))
+            ea = r2.normal(0, sig) / max(np.cos(np.radians(el(t))), 0.2); ee = r2.normal(0, sig)
+            da = (az(d) - az(t) - ea + 180) % 360 - 180; de = el(d) - el(t) - ee
+            sc[s] = -0.5 * (da * np.cos(np.radians(el(t))) / sig) ** 2 - (0 if az_only else 0.5 * (de / sig) ** 2)
         else:
-            P = Paths(D, s, c, u, los_only); los[s] = P.los; kdb[s] = P.k_db
-            if recv.startswith("oracle"):
-                az_only = recv.startswith("oracleaz"); sig = float(recv[8:] if az_only else recv[6:])
-                d = pts.X - spot; d = d / np.linalg.norm(d, axis=1, keepdims=True); t = P.c_true
-                az = lambda v: np.degrees(np.arctan2(v[..., 1], v[..., 0])); el = lambda v: np.degrees(np.arcsin(np.clip(v[..., 2], -1, 1)))
-                ea = r2.normal(0, sig) / max(np.cos(np.radians(el(t))), 0.2); ee = r2.normal(0, sig)
-                da = (az(d) - az(t) - ea + 180) % 360 - 180; de = el(d) - el(t) - ee
-                sc[s] = -0.5 * (da * np.cos(np.radians(el(t))) / sig) ** 2 - (0 if az_only else 0.5 * (de / sig) ** 2)
-            else:
-                nm, _, img = recv.partition("+"); music = nm.endswith("m"); nm = nm[:-1] if music else nm; holo = nm.endswith("h"); nm = nm[:-1] if holo else nm
-                H, Rw, bore = array_snap(r2, P, nm, npk=opt.get("npk", 20), dur=opt.get("dur", 0.5), tv=opt.get("tv", 1.0), snr=opt.get("snr", 30.0), holo=holo,
-                                         mount=opt.get("mount", "aim"), tilt=opt.get("tilt", 0.0), imp=opt.get("imp"))
-                spot, Rw, bore = pose_err(r2, spot, Rw, bore, opt.get("pos_sd", 0.0), opt.get("yaw_sd", 0.0), opt.get("tilt_sd", 0.0))
-                sc[s] = array_score(H, Rw, bore, spot, pts.X, opt.get("neff", 12.0), music, img)
-                if want_b:
-                    bg = array_score(H, Rw, bore, spot, spot + 6.0 * _G["G"], opt.get("neff", 12.0), music)
-                    if bore is not None:
-                        bg = np.where(_G["G"] @ bore > 0.1, bg, -1e9)                # 패치 배열은 뒤쪽(벽 속)을 보지 않는다
-                    berr[s] = ang_err(_G["G"][int(np.argmax(bg))], P.c_true)
+            nm, _, img = recv.partition("+"); music = nm.endswith("m"); nm = nm[:-1] if music else nm; holo = nm.endswith("h"); nm = nm[:-1] if holo else nm
+            H, Rw, bore = array_snap(r2, P, nm, npk=opt.get("npk", 20), dur=opt.get("dur", 0.5), tv=opt.get("tv", 1.0), snr=opt.get("snr", 30.0), holo=holo,
+                                     mount=opt.get("mount", "aim"), tilt=opt.get("tilt", 0.0), imp=opt.get("imp"))
+            spot, Rw, bore = pose_err(r2, spot, Rw, bore, opt.get("pos_sd", 0.0), opt.get("yaw_sd", 0.0), opt.get("tilt_sd", 0.0))
+            sc[s] = array_score(H, Rw, bore, spot, pts.X, opt.get("neff", 12.0), music, img)
+            if want_b:
+                bg = array_score(H, Rw, bore, spot, spot + 6.0 * _G["G"], opt.get("neff", 12.0), music)
+                if bore is not None:
+                    bg = np.where(_G["G"] @ bore > 0.1, bg, -1e9)                # 패치 배열은 뒤쪽(벽 속)을 보지 않는다
+                berr[s] = ang_err(_G["G"][int(np.argmax(bg))], P.c_true)
     return seat, sc, los, kdb, berr
 
 
@@ -496,7 +487,7 @@ def bearing(a):
 
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(); ap.add_argument("cmd"); ap.add_argument("--recv", nargs="+", default=["plate"]); ap.add_argument("--n", type=int, default=160)
+    ap = argparse.ArgumentParser(); ap.add_argument("cmd"); ap.add_argument("--recv", nargs="+", default=["ura4x4p37.5h"]); ap.add_argument("--n", type=int, default=160)
     ap.add_argument("--jobs", type=int, default=max(1, (os.cpu_count() or 2) - 1)); ap.add_argument("--sets", nargs="+", default=["kr40_real_s%d" % i for i in range(1, 9)])
     ap.add_argument("--kinds", nargs="+", default=["책상", "가슴", "안경"]); ap.add_argument("--opt", default="{}"); ap.add_argument("--tag", default=""); ap.add_argument("--temp", type=float, default=1.0); ap.add_argument("--combo", nargs="*"); ap.add_argument("--ntest", type=int, default=2); ap.add_argument("--epochs", type=int, default=80)
     ap.add_argument("--same", action="store_true"); ap.add_argument("--tdiv", nargs="*"); ap.add_argument("--best", type=int, default=0); ap.add_argument("--cand", nargs="*"); ap.add_argument("--top", type=int, default=8)

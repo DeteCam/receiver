@@ -74,6 +74,8 @@ ESP32 는 수신 길이 하나라 안테나 사이의 위상을 직접 못 잽�
 
 비싼 부품을 사 놓고 안 되면 돈만 버립니다. 그래서 돈이 들지 않는 확인을 먼저 하고, 부품은 싼 것부터 다섯 번에 나눠 삽니다 ([사전 검증](docs/사전%20검증.md)).
 
+다섯 관문이 애초에 통과될 수 있는지도 사기 전에 자료로 따졌습니다. 물리나 규격으로 막히는 관문은 없고, 가장 불확실한 것은 관문 2 의 숫자(ESP32-C5 의 CSI 세기가 얼마나 고른가)입니다 ([되는지 근거와 대안](docs/되는지%20근거와%20대안.md) 6절). 패널을 줄이거나 패널 없이 찾는 방법, 5 GHz 카메라는 [다른 방법 검토](docs/다른%20방법%20검토.md)에 있습니다.
+
 ![사는 순서](docs/images/사전검증_관문.png)
 
 ## 폴더
@@ -107,7 +109,7 @@ specs/      스펙: 기능마다 spec → plan → tasks (스펙 주도 개발)
 - **출력 전**입니다. 계산, 슬라이싱, 슬라이싱한 파일의 검증까지 했고 실물은 없습니다.
 - 패널 구조는 두 가지가 실물에서 되어야 섭니다: ESP32-C5 가 ACK 의 CSI 를 내는가, 세기만으로 위상이 되찾아지는가. 사기 전에 확인할 수 있는 것(공개된 시험 보고, 가진 기록의 분석, 흔들림을 넣은 계산)은 확인했고 걸리는 것이 없었습니다 ([사전 검증](docs/사전%20검증.md)). 부품은 싼 것부터 다섯 번에 나눠 삽니다. 안 되어도 돌판으로 돌아가지 않고 받는 쪽만 바꿉니다: 수신 체인이 둘인 Wi-Fi 카드(Intel AX210)에 기준 안테나와 패널을 잇고, 패널·스위치·선은 그대로 씁니다 ([되는지 근거와 대안](docs/되는지%20근거와%20대안.md)).
 - 장치 코드는 패널의 계산(`firmware/core/panel.py`)과 검사까지 있습니다. ESP32 에 올릴 코드와 허브의 패널 연결은 아직 없습니다 ([스펙 006](specs/006-panel-receiver/tasks.md)). 허브는 탐지(`detect.py`)·판별(`identify.py`)·의심 점수(`score.py`)를 바탕으로 새로 씁니다. 돌판 때의 허브 프로그램과 모터 조종은 receiver-legacy 에 있습니다.
-- 블루투스로만 보내는 기기(일부 AI 안경), LTE 로 직접 보내는 카메라, 5 GHz 로만 보내는 카메라의 방향은 재지 못합니다. 이것들을 '있다'는 것만이라도 알리는 방법은 [전파 넓히기 검토](https://github.com/DeteCam/docs/blob/main/research/전파%20넓히기%20검토.md)에 있습니다.
+- 블루투스로만 보내는 기기(일부 AI 안경), LTE 로 직접 보내는 카메라, 5 GHz 로만 보내는 카메라의 방향은 재지 못합니다 (5 GHz 는 탐지는 되고, 판을 새로 만들면 방향도 잴 수 있습니다: [다른 방법 검토](docs/다른%20방법%20검토.md) 5절). 이것들을 '있다'는 것만이라도 알리는 방법은 [전파 넓히기 검토](https://github.com/DeteCam/docs/blob/main/research/전파%20넓히기%20검토.md)에 있습니다.
 - 저장소는 넷입니다: receiver(여기) · [app](https://github.com/DeteCam/app) · [ai](https://github.com/DeteCam/ai) · [docs](https://github.com/DeteCam/docs). 돌판 때의 것은 [receiver-legacy](https://github.com/DeteCam/receiver-legacy)(보관). 규칙은 [CONTRIBUTING](https://github.com/DeteCam/.github/blob/main/CONTRIBUTING.md).
 
 ## 받기와 올리기

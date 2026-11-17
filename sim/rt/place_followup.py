@@ -9,6 +9,9 @@
 5) 나쁜 것이 모두 겹친 패널 (이득 1 dB, 위상 단계 20도, 세기 튀기, 8비트)          -> study/place_x16_curve.json
 6) 5G (3.55 GHz) 휴대폰을 3.5 GHz 패널(4x4, 반 파장)과 2채널 수신기로             -> study/place_n16_curve.json
 7) 벽 패널을 거는 각도 (경첩 0도·30도 숙이기, 한가운데를 똑바로)                     -> study/place_o0/o30/oa_curve.json
+9) 패널 하나만 걸면: c32 의 순간 1~16 에서 곳마다 사진 1장(평균)과 16장                -> study/place_single.json
+8) 5 GHz Wi-Fi 카메라 (36번 채널 5.18 GHz)를 5 GHz 패널(4x4, 반 파장 28.9 mm)로: 세기 네 단계(h), 수신 체인 둘(r)
+                                                                              -> study/place_w16_curve.json, place_w16r_curve.json
 """
 import os, sys, json, subprocess, time
 import numpy as np
@@ -135,18 +138,48 @@ def step_5g(fin):
     run([PY, "place_study.py", "curve", "--tag", "n16", "--ks", "1", "2", "4", "8", "16", "--combos"] + combos_local(fin), env)
 
 
+def step_5ghz(fin):
+    env = {"DETECAM_FC": "5.18e9"}                                  # 5 GHz 36번 채널. 판·스위치·선을 5 GHz 용으로 새로 만든다고 본다
+    for s in range(1, 17):
+        if not os.path.exists(os.path.join(PATHS, "kr40_w5_s%d.npz" % s)):
+            run([PY, "rt_paths.py", "kr40_w5_s%d" % s, "--spotlist", spotlist(fin), "--seed", str(100 + s), "--jitter", "0.07", "--pose", "1"], env)
+    sets = ["kr40_w5_s%d" % s for s in range(1, 17)]
+    for tag, recv in (("w16", "ura4x4p28.9h"), ("w16r", "ura4x4p28.9r")):
+        if not os.path.exists(os.path.join(OUT, "place_%s.npz" % tag)):
+            run([PY, "place_study.py", "measure", "--tag", tag, "--recv", recv, "--sets"] + sets + ["--cams", "400", "--seed0", "60000", "--jobs", JOBS, "--full"], env)
+        run([PY, "place_study.py", "curve", "--tag", tag, "--ks", "1", "2", "4", "8", "16", "--combos"] + combos_local(fin), env)
+
+
+def step_single(fin):
+    import place_study as P
+    Z = np.load(os.path.join(OUT, "place_c32.npz")); Z = {k: Z[k] for k in Z.files}
+    seat = Z["seat"]; J = P.Judge(Z["owner"], Z["seats_xy"], seat)
+    L = Z["Lall"][:, :16].astype(np.float32); out = {}
+    for i in range(L.shape[2]):
+        m16 = P.metrics(J(L[:, :, i].sum(1))[0], seat); m16.pop("per_seat")
+        k1 = [P.metrics(J(L[:, s, i])[0], seat) for s in range(L.shape[1])]
+        out[str(fin["spots"][i])] = dict(name=fin["names"][i], k1=dict(exact=float(np.mean([m["exact"] for m in k1])), near=float(np.mean([m["near"] for m in k1]))), k16=m16)
+    with open(os.path.join(OUT, "place_single.json"), "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, indent=1)
+    log("패널 하나", {v["name"]: round(100 * v["k16"]["exact"]) for v in out.values()})
+
+
 def main():
     cmd = sys.argv[1] if len(sys.argv) > 1 else "all"
     log("# 시작", cmd)
     if cmd in ("all", "validate"):
         step_validate()
-    fin = step_final() if cmd in ("all", "final", "curve", "5g", "orient") else None
+    fin = step_final() if cmd in ("all", "final", "curve", "5g", "orient", "5ghz", "single") else None
     if cmd in ("all", "curve"):
         step_curve(fin)
     if cmd in ("all", "5g"):
         step_5g(fin)
     if cmd in ("all", "orient"):
         step_orient(fin)
+    if cmd in ("all", "5ghz"):
+        step_5ghz(fin)
+    if cmd in ("all", "single"):
+        step_single(fin)
     log("FOLLOWDONE", cmd)
 
 

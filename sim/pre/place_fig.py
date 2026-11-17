@@ -42,11 +42,14 @@ def collect():
     if F:
         out["final"] = F
         out["curve"] = {}
-        for tag in ("c32", "r32", "x16", "n16", "o0", "o30", "oa"):
+        for tag in ("c32", "r32", "x16", "n16", "o0", "o30", "oa", "q16", "w16", "w16r"):
             C = _j("place_%s_curve.json" % tag)
             if C:                                                        # 배치 이름마다 (같은 조합이 두 이름에 들 수 있다)
                 out["curve"][tag] = {key: {k: slim(m) for k, m in C["combos"][",".join(map(str, loc))].items()}
                                      for key, loc in F["local"].items() if ",".join(map(str, loc)) in C["combos"]}
+    S = _j("place_single.json")
+    if S:                                                                # 패널 하나만 걸 때 (다른 방법 검토 2절)
+        out["single_panel"] = S
     with open(os.path.join(HERE, "place.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False)
     print("ok place.json", list(out))

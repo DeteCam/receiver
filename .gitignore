@@ -11,6 +11,8 @@ sim/em/fdtd/*.h5
 sim/em/fdtd/*.log
 sim/em/fdtd/room2d_cache/
 sim/**/*.log
+sim/rt/paths/
+sim/rt/paths_old/
 firmware/data/
 console/src/node_modules/
 # 옵시디언이 문서 폴더에 만드는 것

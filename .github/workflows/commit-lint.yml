@@ -1,0 +1,39 @@
+name: commit-lint
+# 커밋 제목과 PR 제목이 규칙(CONTRIBUTING.md 2절)을 따르는지 본다
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: 제목 검사
+        env:
+          LC_ALL: C.UTF-8
+          EVENT: ${{ github.event_name }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          re='^(feat|fix|docs|test|refactor|perf|chore|build|ci|style|revert)(\([a-z0-9-]+\))?!?: .{1,72}$'
+          bad=0
+          check() { if ! printf '%s' "$1" | grep -Eq "$re"; then echo "::error::규칙에 맞지 않는 제목: $1"; bad=1; fi; }
+          if [ "$EVENT" = "pull_request" ]; then
+            check "$PR_TITLE"
+            range="$BASE_SHA..HEAD"
+          elif [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then
+            range="$BEFORE..HEAD"
+          else
+            range="HEAD~1..HEAD"
+          fi
+          while IFS= read -r s; do [ -n "$s" ] && check "$s"; done < <(git log --no-merges --format=%s "$range" 2>/dev/null || git log -1 --format=%s)
+          exit $bad

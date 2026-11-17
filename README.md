@@ -26,13 +26,15 @@ ESP32 는 수신 길이 하나라 안테나 사이의 위상을 직접 못 잽�
 
 ## 숫자로 보면 (계산, 실물은 아직)
 
-40명이 앉은 교실을 전파 경로 계산(Sionna RT)으로 풀었습니다 ([설계 검토](docs/설계%20검토.md), [패널 연구](sim/rt/패널%20연구.md)). 패널 둘을 창 유리와 복도 쪽 창턱의 2 m 높이에 걸고, 자리를 정확히 / 옆자리까지 맞힌 비율(%)입니다.
+40명이 앉은 교실을 전파 경로 계산(Sionna RT)으로 풀었습니다 ([설계 검토](docs/설계%20검토.md), [패널 연구](sim/rt/패널%20연구.md)). 패널 둘을 창 유리와 복도 쪽 창턱의 2 m 높이에 걸고, 자리를 정확히 / 옆자리까지 맞힌 비율(%)입니다. 카메라 1,500대를 사람 자세가 다른 여덟 순간에 잰 것입니다.
 
 | 카메라가 보낸 횟수 | 책상 위 | 가슴 | 안경 |
 |---|---|---|---|
-| 1번 | 70 / 90 | 56 / 81 | 70 / 93 |
-| 4번 | 80 / 95 | 80 / 94 | 88 / 99 |
-| 8번 | 84 / 97 | 87 / 97 | 90 / 100 |
+| 1번 | 69 / 89 | 52 / 79 | 62 / 91 |
+| 4번 | 86 / 95 | 73 / 91 | 79 / 97 |
+| 8번 | 90 / 96 | 79 / 93 | 84 / 98 |
+
+자리마다 고르지는 않습니다. 창가 쪽 앞 두 줄이 가장 약하고(한 번 28~33%), 패널을 하나 더 걸면 없어집니다 ([사각지대](docs/사각지대.md)).
 
 ![전송을 모을수록](docs/images/정확도_전송횟수.png)
 
@@ -41,12 +43,12 @@ ESP32 는 수신 길이 하나라 안테나 사이의 위상을 직접 못 잽�
 | 방향 오차 (한 번, 직접 보일 때) | 가운데값 3.6도. 몸에 가리면 24도 |
 | 한 번 재는 시간 | 0.3초 (패킷 64개) |
 | 사진만 가끔 보내는 카메라 | 전송 한 번(0.5초)마다 한 번 잰다 |
-| 강의실 72석 | 패널 둘, 여덟 번: 81 · 80 · 87%. 패널 셋: 89 · 94 · 99% |
+| 강의실 72석 | 패널 둘, 여덟 번: 81 · 80 · 87%. 패널 셋: 89 · 94 · 99% (카메라가 적은 첫 계산) |
 | 크기와 무게 | 패널 165 × 225 × 38 mm, 약 0.6 kg. 허브 165 × 87 × 59 mm |
 | 출력 | 다섯 판(1·2판은 두 번), 약 22시간, 필라멘트 0.8 kg, 받침 없이 (Bambu X1 Carbon, PLA) |
 | 부품 값 | 약 54만 원 (어림, 탐지용 동글과 필라멘트까지). 다섯 번에 나눠 산다: 3만 → 3.6만 → 5.3만 → 15.4만 → 26.7만 원 |
 
-앞선 구조(판을 돌리는 수신기)는 같은 조건에서 책상 위 21~55% 였습니다. 여섯 곳을 2.4 m 스탠드로 옮겨 가며 재야 90% 가 나왔습니다. 그 설계는 태그 [`plate-v2`](https://github.com/DeteCam/receiver/tree/plate-v2)에 있습니다.
+앞선 구조(판을 돌리는 수신기)는 같은 조건에서 책상 위 21~55% 였습니다. 여섯 곳을 2.4 m 스탠드로 옮겨 가며 재야 90% 가 나왔습니다. 그 설계와 계산, 코드는 모두 [receiver-legacy](https://github.com/DeteCam/receiver-legacy) 저장소로 옮겼습니다 (비공개 보관 저장소, 태그 `plate-v2`).
 
 ![돌판과 패널](docs/images/돌판과_패널.png)
 
@@ -80,11 +82,12 @@ ESP32 는 수신 길이 하나라 안테나 사이의 위상을 직접 못 잽�
 docs/       문서와 그림 (옵시디언 볼트의 DeteCam/receiver 폴더)
 cad/        3D 모델 코드: model/panel.py (치수와 부품), export/ checks/ figures/ slicing/ results/
 stl/        출력할 부품 8가지      print/      출력 파일 (G코드 5판)      marker/     AR 마커
-firmware/   수신기 코드: core/panel.py (패널 계산), pi/ (허브), tests/
-sim/        시뮬레이션: rt/ (교실과 숙소 방의 전파 경로 계산), pre/ (사기 전 검증), direction/ location/ em/ (돌판 때의 계산)
+firmware/   수신기 코드: core/ (패널 계산 panel.py, 판별 identify.py, 의심 점수 score.py), pi/ (탐지 detect.py), tests/
+sim/        시뮬레이션: rt/ (교실과 숙소 방의 전파 경로 계산), pre/ (사기 전 검증, 사각지대), identify/ (판별)
 specs/      스펙: 기능마다 spec → plan → tasks (스펙 주도 개발)
-console/    돌판 수신기의 시뮬레이터
 ```
+
+돌판 수신기 때의 것(모델, 모터 조종, 허브 프로그램, 폰 웹 화면, 시뮬레이터, 전파 계산)은 [receiver-legacy](https://github.com/DeteCam/receiver-legacy) 에 있습니다.
 
 파일마다의 설명은 **[폴더와 파일](docs/폴더와%20파일.md)** 에 있습니다.
 
@@ -93,17 +96,19 @@ console/    돌판 수신기의 시뮬레이터
 1. [설계도](docs/설계도.md) — 무엇을 만드나: 시스템 구성, 패널 배선, 동작 순서, 소프트웨어 구조, 치수
 2. [데모 환경](docs/데모%20환경.md) — 어디서 무엇을 어떤 기준으로 보이나
 3. [설계 검토](docs/설계%20검토.md) — 왜 돌판에서 패널로 바꿨나, 얼마나 맞나
-4. [사전 검증](docs/사전%20검증.md) — 사기 전에 확인한 것, 더 싼 구성, 싼 것부터 사는 순서
-5. [숙소 방 계산](docs/숙소%20방%20계산.md) — 숨긴 카메라의 자리 찾기
-6. [체크리스트](docs/체크리스트.md) · [부품표](docs/부품표.md) · [부품 검토](docs/부품%20검토.md) · [조립 안내](docs/조립%20안내.md) — 할 일, 살 것, 조립
+4. [사각지대](docs/사각지대.md) — 어느 자리를 잘 못 맞히나, 어떻게 메우나
+5. [사전 검증](docs/사전%20검증.md) — 사기 전에 확인한 것, 더 싼 구성, 싼 것부터 사는 순서
+6. [숙소 방 계산](docs/숙소%20방%20계산.md) — 숨긴 카메라의 자리 찾기
+7. [탐지와 판별](docs/탐지와%20판별.md) — 둘레에서 카메라 후보를 찾고 이 방을 찍는지 가리기
+8. [체크리스트](docs/체크리스트.md) · [부품표](docs/부품표.md) · [부품 검토](docs/부품%20검토.md) · [조립 안내](docs/조립%20안내.md) — 할 일, 살 것, 조립
 
-## 지금 상태 (2026-11-17)
+## 지금 상태 (2026-11-18)
 
 - **출력 전**입니다. 계산, 슬라이싱, 슬라이싱한 파일의 검증까지 했고 실물은 없습니다.
-- 패널 구조는 두 가지가 실물에서 되어야 섭니다: ESP32-C5 가 ACK 의 CSI 를 내는가, 세기만으로 위상이 되찾아지는가. 사기 전에 확인할 수 있는 것(공개된 시험 보고, 가진 기록의 분석, 흔들림을 넣은 계산)은 확인했고 걸리는 것이 없었습니다 ([사전 검증](docs/사전%20검증.md)). 부품은 싼 것부터 다섯 번에 나눠 삽니다. 안 되면 돌판(`plate-v2`)으로 돌아갑니다.
-- 장치 코드는 패널의 계산(`firmware/core/panel.py`)과 검사까지 있습니다. ESP32 에 올릴 코드와 허브의 패널 연결은 아직 없습니다 ([스펙 006](specs/006-panel-receiver/tasks.md)). `firmware/pi/` 의 모터 조종과 `console/` 의 시뮬레이터는 돌판 때의 것입니다.
-- 블루투스로만 보내는 기기(일부 AI 안경), LTE 로 직접 보내는 카메라, 5 GHz 로만 보내는 카메라의 방향은 재지 못합니다.
-- 저장소는 넷입니다: receiver(여기) · [app](https://github.com/DeteCam/app) · [ai](https://github.com/DeteCam/ai) · [docs](https://github.com/DeteCam/docs). 규칙은 [CONTRIBUTING](https://github.com/DeteCam/.github/blob/main/CONTRIBUTING.md).
+- 패널 구조는 두 가지가 실물에서 되어야 섭니다: ESP32-C5 가 ACK 의 CSI 를 내는가, 세기만으로 위상이 되찾아지는가. 사기 전에 확인할 수 있는 것(공개된 시험 보고, 가진 기록의 분석, 흔들림을 넣은 계산)은 확인했고 걸리는 것이 없었습니다 ([사전 검증](docs/사전%20검증.md)). 부품은 싼 것부터 다섯 번에 나눠 삽니다. 안 되면 돌판([receiver-legacy](https://github.com/DeteCam/receiver-legacy))으로 돌아갑니다.
+- 장치 코드는 패널의 계산(`firmware/core/panel.py`)과 검사까지 있습니다. ESP32 에 올릴 코드와 허브의 패널 연결은 아직 없습니다 ([스펙 006](specs/006-panel-receiver/tasks.md)). 허브는 탐지(`detect.py`)·판별(`identify.py`)·의심 점수(`score.py`)를 바탕으로 새로 씁니다. 돌판 때의 허브 프로그램과 모터 조종은 receiver-legacy 에 있습니다.
+- 블루투스로만 보내는 기기(일부 AI 안경), LTE 로 직접 보내는 카메라, 5 GHz 로만 보내는 카메라의 방향은 재지 못합니다. 이것들을 '있다'는 것만이라도 알리는 방법은 [전파 넓히기 검토](https://github.com/DeteCam/docs/blob/main/research/전파%20넓히기%20검토.md)에 있습니다.
+- 저장소는 넷입니다: receiver(여기) · [app](https://github.com/DeteCam/app) · [ai](https://github.com/DeteCam/ai) · [docs](https://github.com/DeteCam/docs). 돌판 때의 것은 [receiver-legacy](https://github.com/DeteCam/receiver-legacy)(보관). 규칙은 [CONTRIBUTING](https://github.com/DeteCam/.github/blob/main/CONTRIBUTING.md).
 
 ## 받기와 올리기
 
@@ -122,6 +127,6 @@ git add -A && git commit -m "무엇을 바꿨나" && git push     # 올리기
 - Holl, Reinhard. *Holography of Wi-fi Radiation.* Phys. Rev. Lett. 118, 183901 (2017): 기준 안테나를 두고 Wi-Fi 전파의 모양을 찍는다
 - Xie 외. *SWAN: Stitched Wi-Fi ANtennas.* MobiCom 2018: 스위치로 안테나를 늘린다
 - Abedi, Vasisht. *Wi-Peep.* MobiCom 2022: 빈 프레임을 보내 응답(ACK)을 받는다
-- DiffLoc (USENIX Security 2025), DiffLoc+ (IEEE JSAC 2026), CamLoPA (IEEE S&P 2025): Wi-Fi 숨은 카메라 위치 추정. 돌판 수신기의 바탕
+- DiffLoc (USENIX Security 2025), DiffLoc+ (IEEE JSAC 2026), CamLoPA (IEEE S&P 2025): Wi-Fi 숨은 카메라 위치 추정. 앞선 구조(돌판)의 바탕
 
 모두 [설계 검토 15절](docs/설계%20검토.md#15-바탕-자료)에 링크와 함께 있습니다.

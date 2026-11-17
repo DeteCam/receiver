@@ -23,4 +23,4 @@ python3 checks/panel_check.py                         # 겹침, 틈, 무게, 넘
 
 **마커.** 마커 띠(`../marker/AR_마커.pdf`, 34 mm 마커 둘)는 앞덮개의 아래쪽 표시선 안에 붙입니다. 귀의 좌표는 `../marker/marker.json` 에 있습니다 (패널 좌표).
 
-돌판 수신기의 모델과 검사(`parts2.py`, `checks/`, `analysis/`)는 태그 `plate-v2` 에 있습니다. 다만 `model/p2.py` 와 `model/params.py` (돌판의 치수)는 남겨 두었습니다. `sim/em` 과 `sim/rt/rt_eval.py`, `console/src/viewer_data3.py` 가 돌판의 치수를 여기서 읽기 때문입니다.
+돌판 수신기의 모델과 검사, 치수(`parts2.py`, `p2.py`, `params.py`, `checks/`, `analysis/`)와 그것을 읽는 계산은 모두 [receiver-legacy](https://github.com/DeteCam/receiver-legacy) 에 있습니다.

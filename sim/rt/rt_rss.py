@@ -11,7 +11,7 @@ for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
     os.environ.setdefault(_v, "1")
 import numpy as np                                      # noqa: E402
 import rt_study as S                                    # noqa: E402
-from rt_eval import KIND, seat_rc                       # noqa: E402
+from rt_common import KIND, seat_rc                       # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 NODES = {"2개 (두 옆벽 가운데)": [7, 11], "4개 (두 옆벽 앞·뒤)": [6, 8, 17, 18], "6개": [6, 8, 17, 18, 1, 16], "8개": [6, 7, 8, 17, 11, 18, 1, 16], "12개": [6, 7, 8, 17, 11, 18, 1, 16, 0, 2, 13, 15], "20개 (둘레 전부)": list(range(20))}

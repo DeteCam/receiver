@@ -1,5 +1,7 @@
 # firmware: 수신기 코드
 
+> **패널 수신기 (2026-11-17).** 방향을 재는 쪽이 돌판에서 패널로 바뀌었다. 패널의 계산은 `core/panel.py` (세기 → 위상 → 방향 → 자리)와 검사 `tests/test_panel.py` 에 있다. `pi/rx3.py`(모터), `core/analyze3.py`·`fusion.py`·`estimator.py`·`model.py`·`locate.py`(돌판의 방향·위치 계산)는 돌판 때의 것이고, 허브 코드를 패널에 맞게 고칠 때 걷어 낸다 ([스펙 006](../specs/006-panel-receiver/tasks.md)). 탐지(`pi/detect.py`, `core/score.py`)와 폰 화면은 그대로 쓴다.
+
 라즈베리파이에서 도는 코드와 계산, 검사입니다. 설치, 폰 화면, 주소(API)는 [혼자 동작](../docs/혼자%20동작.md)에 있습니다.
 
 | 폴더 | 내용 |
@@ -11,7 +13,7 @@
 
 ```
 python3 pi/node.py --dry --port 8080     # 장치 없이 화면 보기: http://localhost:8080
-python3 tests/test_core.py && python3 tests/test_score.py && python3 tests/test_exam.py && python3 tests/test_node_dry.py && python3 tests/test_control.py && python3 tests/test_marker.py
+python3 tests/test_panel.py && python3 tests/test_core.py && python3 tests/test_score.py && python3 tests/test_exam.py && python3 tests/test_node_dry.py && python3 tests/test_control.py && python3 tests/test_marker.py
 pi/install.sh pi@raspberrypi.local       # 파이에 넣기 (랜선을 꽂은 채로)
 ```
 

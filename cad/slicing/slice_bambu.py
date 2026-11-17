@@ -49,12 +49,13 @@ PLATES = {
     "선택_받침통_L": ("큰 배터리용 받침 통 (지름 190)", 15, [("01_base_tub_L", 128.0, 132.0, 0)]),
     "선택_받침덮개_L": ("큰 받침의 덮개 (지름 186), 큰 받침용 랜선 홈 마개", 15, [("02_base_cover_L", 128.0, 132.0, 0), ("17_lan_cap_L", 232.0, 232.0, 0)]),
 }
+PLATES["선택_스탠드받이"] = ("시험장에서 수신기를 스탠드 위에 올릴 때 쓰는 스탠드 받이. 윗면(평평한 면)을 바닥에 두고 받침 없이 뽑는다. 채움 100%", 100, [("23_stand_mount", 128.0, 132.0, 0)])
 SP2 = [(70.0, 62.0), (100.0, 62.0)]                                # 동전 채움 조각 2개 (1T 판이면 쓰지 않지만 균형을 다시 맞출 때 쓴다)
 for n in (1, 2, 3):
     PLATES["4판_회전부_맞춤%d" % n] = ("회전 막대(맞춤 %d) + 균형추 통 마개 + 동전 채움 조각 2개. 채움 100%%" % n, 100,
                                  [("10_rotor_bar_fit%d" % n, 128.0, 160.0, 0), ("11_coin_cap", 225.0, 78.0, 0)] + [("12_coin_spacer", x, y, 0) for x, y in SP2])
-ORDER = ["0판_시험조각", "1판_받침_S", "2판_요크", "3판_머리", "4판_회전부_맞춤1", "4판_회전부_맞춤2", "4판_회전부_맞춤3", "5판_판틀", "선택_받침통_L", "선택_받침덮개_L"]
-FULL = ("10_rotor_bar", "11_coin_cap", "12_coin_spacer")          # 따로 슬라이싱할 때 채움 100% 로 하는 부품 (판에 올릴 때와 같게)
+ORDER = ["0판_시험조각", "1판_받침_S", "2판_요크", "3판_머리", "4판_회전부_맞춤1", "4판_회전부_맞춤2", "4판_회전부_맞춤3", "5판_판틀", "선택_받침통_L", "선택_받침덮개_L", "선택_스탠드받이"]
+FULL = ("10_rotor_bar", "11_coin_cap", "12_coin_spacer", "23_stand_mount")          # 따로 슬라이싱할 때 채움 100% 로 하는 부품 (판에 올릴 때와 같게)
 
 
 def run(args, cwd, log):
@@ -136,6 +137,23 @@ def gcode_facts(text):
     return d
 
 
+def fix_model_id(gc, model="BL-P001"):
+    """슬라이서가 프린터 종류 표시(printer_model_id)를 비워 두면 X1 Carbon(BL-P001)으로 채운다.
+    명령줄로 돌릴 때 설치 환경에 따라 이 칸이 비는 일이 있다. G코드 본문(과 그 md5)은 건드리지 않는다."""
+    zin = zipfile.ZipFile(gc); name = "Metadata/slice_info.config"
+    info = zin.read(name).decode()
+    if 'key="printer_model_id" value=""' not in info:
+        zin.close(); return False
+    tmpf = gc + ".tmp"
+    with zipfile.ZipFile(tmpf, "w") as zout:
+        for it in zin.infolist():
+            data = zin.read(it.filename)
+            if it.filename == name:
+                data = info.replace('key="printer_model_id" value=""', 'key="printer_model_id" value="%s"' % model).encode()
+            zout.writestr(it, data, compress_type=it.compress_type)
+    zin.close(); os.replace(tmpf, gc); return True
+
+
 def slice_plate(name, infill, items, stl_dir, out, keep=True):
     tmp = tempfile.mkdtemp(prefix="bs_", dir=os.path.join(out, "_tmp"))
     files, shapes, heights, firsts = place(stl_dir, items, tmp)
@@ -151,6 +169,7 @@ def slice_plate(name, infill, items, stl_dir, out, keep=True):
     if rc2 != 0 or not os.path.exists(gc):
         return dict(name=name, ok=False, error="슬라이싱 실패 (%d) %s" % (rc2, probs), log=open(os.path.join(tmp, "2.log")).read()[-800:])
     res = json.load(open(os.path.join(tmp, "result.json")))
+    fix_model_id(gc)
     z = zipfile.ZipFile(gc)
     info = z.read("Metadata/slice_info.config").decode()
     sps = res.get("sliced_plates", [])

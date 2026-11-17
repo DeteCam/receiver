@@ -135,9 +135,33 @@ def tub(size="S"):
     cut.append(cy(5.0, 0, R + 2, 0, 2.3 + BATT_T / 2))                                # 왼쪽: 배터리를 밀어 빼는 구멍 (지름 10)
     for x, y in POSTS:
         cut.append(cz(1.3, 14.0, TUB_H + 1, x, y))
+        cut.append(cz(STAND_POST_HOLE[0], -1.0, STAND_POST_HOLE[1], x, y))               # 밑면: 스탠드 받이(23)를 붙이는 M3 나사의 안내 구멍
     for a in (-20, -10, 0, 10, 20):                                                   # 앞쪽 눈금. 가운데 줄은 바닥까지: 수신기의 앞을 맞출 때 쓴다
         cut.append(box(R - 0.8, R + 1, -0.9, 0.9, -1 if a == 0 else 9, 21).rotate([0, 0, a]))
     return m - union(cut)
+
+
+def stand_mount():
+    """스탠드 받이: 받침 통 밑에 M3 x 10 나사 4개로 붙인다. 가운데 통에 1/4인치 너트를 넣어 스탠드(삼각대)의 나사에 조인다.
+    좌표: 윗면(받침 통 바닥에 닿는 면) z = 0, 아래로 STAND_T. 출력: 뒤집어서 (윗면을 바닥에. 받침 없이 뽑힌다). 채움 100%."""
+    R, T, tp = STAND_R, STAND_T, STAND_PLATE
+    plate = cz(R, -tp, 0.0)
+    rim = cz(R, -T, -tp + 0.01) - cz(R - 2.4, -T - 1, -tp + 1)
+    hub = cz(STAND_HUB_R, -T, -tp + 0.01)
+    ribs = [box(STAND_HUB_R - 1.0, R - 1.0, -1.2, 1.2, -T, -tp + 0.01).rotate([0, 0, a]) for a in (0, 60, 120, 180, 240, 300)]
+    boss = [cz(5.0, -tp - 2.0, -tp + 0.01, x, y) for x, y in POSTS]                       # 나사 머리가 앉는 자리 둘레를 두껍게
+    m = union([plate, rim, hub] + ribs + boss)
+    cut = [extrude_z(hex_cs(STAND_NUT_AF + STAND_NUT_FIT), -T + STAND_FLOOR, 1.0),          # 너트 자리 (위에서 넣는다. 받침 통 바닥이 덮어 빠지지 않는다)
+           cz(STAND_BOLT_D / 2, -T - 1, 1.0)]                                             # 스탠드 나사가 지나는 구멍
+    for x, y in POSTS:
+        cut.append(cz(1.7, -T - 1, 1.0, x, y))                                            # M3 나사 구멍 (지름 3.4)
+    cut.append(box(R - 1.2, R + 1, -0.9, 0.9, -T - 1, 1.0))                               # 앞 표시 (받침 통의 가운데 눈금과 맞춘다)
+    return m - union(cut)
+
+
+def stand_nut():
+    """1/4-20 육각 너트 (그림·검사용)"""
+    return extrude_z(hex_cs(STAND_NUT_AF), -STAND_T + STAND_FLOOR, -STAND_T + STAND_FLOOR + STAND_NUT_T) - cz(5.35 / 2, -STAND_T, 0.0)
 
 
 def lan_cap(size="S"):
@@ -580,7 +604,7 @@ def xiao_cap():
 
 
 def xiao_dummy():
-    """XIAO ESP32-C3 (핀 머리 + 점퍼선 소켓 4개): 기판, 부품(-X, 차폐 캔 3.0), 핀 머리(+X 2.5) 와 소켓(+X 14)"""
+    """XIAO ESP32-C5 (핀 머리 + 점퍼선 소켓 4개): 기판, 부품(-X, 차폐 캔 3.0), 핀 머리(+X 2.5) 와 소켓(+X 14)"""
     x0, x1, y0, y1, z0, z1 = _xiao_box()
     pcb = box(x0, x1, y0, y1, z0, z1)
     comp = box(x0 - 3.0, x0, y0 + 2.5, y1 - 2.5, z0 + 2.0, z1 - 2.0)

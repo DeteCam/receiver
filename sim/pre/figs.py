@@ -121,7 +121,7 @@ def room():
             ax.plot([cams[k, 0], p[k, 0]], [cams[k, 1], p[k, 1]], color=RED, lw=0.4, alpha=0.18)
         ax.scatter(cams[ok, 0], cams[ok, 1], s=9, color=TEAL, alpha=0.7, lw=0); ax.scatter(cams[~ok, 0], cams[~ok, 1], s=11, color=RED, alpha=0.9, lw=0)
         ax.set_xlim(-0.15, S.W + 0.15); ax.set_ylim(-0.15, S.D + 0.15); ax.set_aspect("equal"); ax.axis("off")
-        ax.set_title("%s\n50cm 안 %.0f%%, 가운데값 %.2fm" % (ttl, 100 * ok.mean(), np.median(e)), fontsize=9.5, color=INK, loc="left", linespacing=1.4)
+        ax.set_title("%s\n방과 욕실 모두: 50cm 안 %.0f%%, 가운데값 %.2fm" % (ttl, 100 * ok.mean(), np.median(e)), fontsize=9.5, color=INK, loc="left", linespacing=1.4)
     fig.text(0.03, 0.03, "점 = 숨긴 카메라 864번 (위에서 본 그림). 청록: 50cm 안으로 맞힘. 빨강: 못 맞힘 (선은 잘못 짚은 곳까지)", fontsize=8.5, color=GRAY)
     ax = fig.add_axes([0.52, 0.56, 0.455, 0.3]); style(ax)
     show = [("한 쪽만\n(가운데에서 창 쪽)", "가운데에서 한 쪽만 (창 쪽) | 방"), ("가운데\n다섯 쪽", "가운데에 서서 다섯 쪽으로 돌림 | 방"), ("+ 창턱", "다섯 쪽 + 창턱 | 방"), ("+ 창턱\n+ 현관 통로", "다섯 쪽 + 창턱 + 현관 통로 | 방"), ("고정 둘\n(책상 위 + 창턱)", "책상 위 + 창턱 (고정 둘) | 방"),

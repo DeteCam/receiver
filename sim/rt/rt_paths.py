@@ -1,5 +1,5 @@
 """교실 장면에서 수신기 자리(출발점) -> 카메라 후보 점 160개의 전파 길을 Sionna RT 로 구해 npz 로 담는다.
-    python rt_paths.py 이름 [--h 2.4] [--depth 3] [--people 40|0|20] [--jitter 0.05] [--seed 1] [--spots exam|ceil|grid] [--no-diff]
+    python rt_paths.py 이름 [--h 2.4] [--depth 3] [--people 40|0|20] [--jitter 0.05] [--pose 0] [--seed 1] [--spots exam|ceil|real|real2|frame] [--no-diff]
 길마다: A[2,2] (카메라 편파 V/H x 수신기 편파 V/H), 지연 tau, 수신기에서의 방향(theta_t, phi_t), 카메라에서의 방향(theta_r, phi_r), 몸에 닿았는가, 직접파인가.
 상반성: 수신기를 '송신기'로 두고 한 번 풀면 모든 카메라 점까지의 길이 한꺼번에 나온다."""
 import sys, os, time, argparse
@@ -14,6 +14,22 @@ KEEP = 160              # 점마다 센 길부터 이만큼만 담는다
 EXAM_SPOTS = [(0.5, 0.5), (7.0, 0.5), (0.5, 8.6), (7.0, 8.6)] + [(0.3, y) for y in (2.5, 4.3, 6.1, 7.6)] + [(7.2, y) for y in (2.5, 4.3, 6.1, 7.6)] + \
              [(x, 8.6) for x in (2.0, 3.75, 5.5)] + [(x, 1.3) for x in (1.5, 3.75, 6.0)]            # exam_mode_check.py 와 같은 17곳
 EXTRA = {"ceil": [(3.75, 4.8), (3.75, 3.0), (3.75, 6.5)], "aisle": [(1.175, 4.85), (3.375, 4.85), (5.575, 4.85), (3.375, 2.95), (3.375, 6.75)]}
+
+# 높이까지 정해 둔 곳 (x, y, z). real: 스탠드 없이 실제로 놓을 만한 곳 (칠판 3.6 x 1.2m 가 앞벽 가운데, 윗변 2.1m)
+SPOTS3 = {"real": [(1.95, 0.12, 2.20), (5.55, 0.12, 2.20), (3.75, 0.12, 2.20), (3.75, 1.00, 1.20), (0.5, 0.5, 1.5), (7.0, 0.5, 1.5), (1.95, 0.12, 0.95), (5.55, 0.12, 0.95),
+                   (0.5, 8.6, 1.5), (7.0, 8.6, 1.5), (3.75, 8.8, 1.8), (1.95, 8.88, 2.2), (5.55, 8.88, 2.2), (0.3, 4.85, 1.5), (7.2, 4.85, 1.5), (0.15, 4.85, 2.2), (7.35, 4.85, 2.2),
+                   (0.3, 0.3, 2.2), (7.2, 0.3, 2.2), (3.75, 4.8, 2.6)]}
+# frame: 칠판(3.6 x 1.2m) 테두리를 따라 늘어놓은 안테나 자리. 윗변(2.15m) 12개, 그 위(2.50m) 12개, 분필받이(0.95m) 12개
+SPOTS3["frame"] = [(1.95 + 3.6 * i / 11.0, 0.06, z) for z in (2.15, 2.50, 0.95) for i in range(12)]
+# real2: 스탠드 없이, 손이 닿는 높이에 걸거나 올려 둘 수 있는 곳 (칠판에는 자석, 유리에는 흡착판, 문에는 걸이, 사물함·교탁·창턱에는 올려 둔다)
+SPOTS3["real2"] = [(1.95, 0.10, 1.95), (3.75, 0.10, 1.95), (5.55, 0.10, 1.95), (3.75, 1.15, 1.15), (0.45, 0.45, 1.60), (7.05, 0.45, 1.60),
+                   (0.08, 2.50, 2.00), (0.08, 4.85, 2.00), (0.08, 7.00, 2.00), (0.14, 4.85, 1.05), (7.42, 0.85, 2.00), (7.42, 4.85, 1.95), (7.42, 8.15, 2.00),
+                   (1.50, 8.42, 1.35), (3.75, 8.42, 1.35), (6.00, 8.42, 1.35), (3.75, 8.92, 2.00), (7.42, 2.50, 1.95), (7.42, 7.00, 1.95), (0.08, 1.00, 2.00)]
+# lec2: 대학 강의실(9 x 12m, 72석)에서 손이 닿는 곳
+SPOTS3["lec2"] = [(0.08, 6.4, 2.0), (8.92, 6.4, 2.0), (0.08, 3.5, 2.0), (8.92, 3.5, 2.0), (0.08, 9.5, 2.0), (8.92, 9.5, 2.0), (4.5, 0.10, 1.95), (2.7, 0.10, 1.95), (6.3, 0.10, 1.95)]
+SPOT3_NAMES = {"real": ["칠판 위 왼쪽 끝", "칠판 위 오른쪽 끝", "칠판 위 가운데", "교탁 위", "앞 왼쪽 모서리 1.5m", "앞 오른쪽 모서리 1.5m", "분필받이 왼쪽", "분필받이 오른쪽",
+                        "뒤 왼쪽 모서리 1.5m", "뒤 오른쪽 모서리 1.5m", "뒷벽 가운데 1.8m", "뒷벽 왼쪽 2.2m", "뒷벽 오른쪽 2.2m", "왼쪽 벽 가운데 1.5m", "오른쪽 벽 가운데 1.5m",
+                        "왼쪽 벽 가운데 2.2m", "오른쪽 벽 가운데 2.2m", "앞 왼쪽 모서리 2.2m", "앞 오른쪽 모서리 2.2m", "천장 가운데 2.6m"]}
 
 
 def cpx(x):
@@ -44,12 +60,12 @@ def solve_spot(scene, solver, pos, cams, depth, diff, samples, body_ids):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("name"); ap.add_argument("--h", type=float, nargs="+", default=[2.4]); ap.add_argument("--depth", type=int, default=3)
-    ap.add_argument("--people", type=int, default=999); ap.add_argument("--jitter", type=float, default=0.05); ap.add_argument("--seed", type=int, default=1)
+    ap.add_argument("--people", type=int, default=999); ap.add_argument("--jitter", type=float, default=0.05); ap.add_argument("--pose", type=float, default=0.0); ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--spots", default="exam"); ap.add_argument("--no-diff", action="store_true"); ap.add_argument("--samples", type=int, default=10 ** 6)
     ap.add_argument("--ceil", default="concrete"); ap.add_argument("--out", default="paths"); ap.add_argument("--room", default="kr40")
     a = ap.parse_args(); rng = np.random.default_rng(a.seed); S.set_room(a.room); ns = len(S.SEATS)
     empty = () if a.people >= ns else tuple(rng.choice(ns, ns - a.people, replace=False).tolist())
-    layout = S.people_layout(rng, a.jitter) if a.people > 0 else None
+    layout = S.people_layout(rng, a.jitter, a.pose) if a.people > 0 else None
     scene = S.build(people=a.people > 0, empty_seats=empty, ceil_mat=a.ceil, layout=layout)
     scene.frequency = FC
     arr = rt.PlanarArray(num_rows=1, num_cols=1, pattern="iso", polarization="VH"); scene.tx_array = arr; scene.rx_array = arr
@@ -57,8 +73,8 @@ def main():
     for i, c in enumerate(cams): scene.add(rt.Receiver("c%03d" % i, position=mi.Point3f(*[float(v) for v in c])))
     body_ids = np.array([o.object_id for o in scene.objects.values() if o.radio_material.name == "m_body"])
     mid = [(S.W / 2, S.D * f) for f in (0.53, 0.33, 0.72)]
-    pts = S.exam_spots() if a.spots == "exam" else mid if a.spots == "ceil" else EXTRA[a.spots]
-    spots = [(x, y, h) for h in a.h for (x, y) in pts]
+    pts = S.exam_spots() if a.spots == "exam" else mid if a.spots == "ceil" else EXTRA.get(a.spots, [])
+    spots = SPOTS3[a.spots] if a.spots in SPOTS3 else [(x, y, h) for h in a.h for (x, y) in pts]
     solver = rt.PathSolver(); res = []; t0 = time.time()
     for k, pos in enumerate(spots):
         o, _ = solve_spot(scene, solver, pos, cams, a.depth, not a.no_diff, a.samples, body_ids); res.append(o)

@@ -1,51 +1,45 @@
-"""교실에서 재는 과정을 한 번 돌려, 곳마다의 신호 곡선과 자리 확률을 demo_run.json 에 적는다 (동작 시뮬레이션 영상의 재료).
+"""교실에서 패널 둘이 '사진을 가끔 보내는 카메라'의 자리를 좁혀 가는 과정을 한 번 돌려 demo_run.json 에 적는다 (동작 시뮬레이션 영상의 재료).
 
-    python demo_run.py [--seed 1003] [--kind 책상]
+    python demo_run.py [--seed 1003] [--kind 책상] [--spots 7 17] [--recv ura4x4p37.5h]
 
-rt_eval.trial 과 같은 과정이다. 다만 통계를 내는 대신 한 번의 진행을 그대로 남긴다.
+rt_study 의 계산 그대로다. 사람 자세가 다른 길 묶음(kr40_t_s1..s8)을 '사진을 보낸 순간'으로 차례로 쓴다.
 """
 import os, json, argparse
 import numpy as np
-import rt_eval as R
-from rt_eval import K
+import rt_study as S
+from rt_study import K, post_seat, seat_rc
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+OPT = dict(mount="hinge", tilt=15.0, yaw_sd=2.0, tilt_sd=1.0, pos_sd=0.05)
 
 
-def run(seed, kind, name="kr40_h24_s1", npos=6, plan="tilt18", start=16):
-    R._init(160.0); D = R._load(name); pat, fus, tm = R._G["pat"], R._G["fus"], R._G["tm"]
-    rng = np.random.default_rng(seed); frames = R.PLANS[plan]; seats_xy = D["seats"]; empty = set(D["empty"].tolist()) if "empty" in D else set()
-    while True:
-        seat = int(rng.integers(len(seats_xy)))
-        if seat not in empty:
-            break
-    c = seat * 4 + int(rng.choice(R.KIND[kind])); u = rng.normal(size=3); u /= np.linalg.norm(u)
-    seats = [dict(id=str(k), x=float(x), y=float(y) + 0.225) for k, (x, y) in enumerate(seats_xy)]
-    spots = [dict(name="곳 %d" % i, x=float(p[0]), y=float(p[1]), z=float(p[2])) for i, p in enumerate(D["spots"])]
-    E = K.ExamSession(seats, spots, (0.0, -1.0)); logs = []; tlogs = []; steps = []
-    for k in range(npos):
-        idx = start if k == 0 else E.next_spot(R.post_seat(E.pts, logs))
-        if idx is None:
-            break
-        w = R.RTWorld(rng, D, idx, c, frames, pat, u)
-        both = [w.scan(y, t) for y, t in frames]; curves = [b[0] for b in both]; pcurves = [b[1] for b in both]; obs = fus.read(curves)
-        pose = (w.base + rng.normal(0, R.POSE["pos"], 3) * np.array([1, 1, 0.5]), w.head + rng.normal(0, R.POSE["yaw"]))
-        E.add(pose, obs, frames, None, spot=idx); Xd = K.to_dev(E.pts.X, pose)
-        tlogs.append(K.score_points(Xd, obs, frames, K.SIG_SCALE * (K.SIG_MANY if len(frames) >= K.MANY_N else 1.0)))
-        a, b = tm.score(Xd, [curves, pcurves], frames); logs.append(b[1])
-        p = R.post_seat(E.pts, logs); pt = R.post_seat(E.pts, tlogs); o = np.argsort(-p)
-        lv = [np.where(np.isfinite(pc[1]), pc[1], np.nan).tolist() for pc in pcurves[:3]]
-        steps.append(dict(spot=int(idx), xy=[float(D["spots"][idx][0]), float(D["spots"][idx][1])], post=[round(float(v), 4) for v in p], post_trough=[round(float(v), 4) for v in pt],
-                          top3=[int(i) for i in o[:3]], curves=[[None if (v != v) else round(float(v), 2) for v in row] for row in lv], frames=[[float(a_), float(b_)] for a_, b_ in frames[:3]]))
-    return dict(seed=seed, kind=kind, data=name, seat=seat, cam=[float(v) for v in D["cams"][c]], seats=[[float(x), float(y)] for x, y in seats_xy], empty=sorted(int(e) for e in empty),
-                spots=[[float(p[0]), float(p[1]), float(p[2])] for p in D["spots"]], room=[R.S.W, R.S.D, R.S.CEIL] if hasattr(R, "S") else [7.5, 9.0, 2.7], scans=len(frames), steps=steps)
+def run(seed, kind, spots, recv, sets, period=30.0):
+    S._init(); rng = np.random.default_rng(seed); D0 = S._load(sets[0]); seats_xy = D0["seats"]
+    seat = int(rng.integers(len(seats_xy))); c = seat * 4 + int(rng.choice(S.KIND[kind])); u = rng.normal(size=3); u /= np.linalg.norm(u)
+    seats = [dict(id=str(k), x=float(x), y=float(y) + 0.225) for k, (x, y) in enumerate(seats_xy)]; pts = S.Points(seats); nm = recv[:-1]
+    G = S._G["G"]; logs = []; steps = []
+    for k, name in enumerate(sets):
+        D = S._load(name); ppl = np.load(os.path.join(HERE, "paths", name + ".npz"))["people"]; views = []; now = []
+        for s in spots:
+            r2 = np.random.default_rng([seed, s, k]); P = S.Paths(D, s, c, u); spot = D["spots"][s].astype(float)
+            H, Rw, bore = S.array_snap(r2, P, nm, holo=True, mount=OPT["mount"], tilt=OPT["tilt"])
+            sp, Rw, bore = S.pose_err(r2, spot, Rw, bore, OPT["pos_sd"], OPT["yaw_sd"], OPT["tilt_sd"])
+            sc = S.array_score(H, Rw, bore, sp, pts.X); bg = S.array_score(H, Rw, bore, sp, sp + 6.0 * G); bg = np.where(G @ bore > 0.1, bg, -1e9); d = G[int(np.argmax(bg))]
+            err = S.ang_err(d, P.c_true); now.append(sc); logs.append(sc)
+            views.append(dict(spot=int(s), los=bool(P.los), az=float(np.degrees(np.arctan2(d[1], d[0]))), az_true=float(np.degrees(np.arctan2(P.c_true[1], P.c_true[0]))), err=[round(e, 1) for e in err],
+                              bore=[float(v) for v in bore]))
+        p1 = post_seat(pts, now); pc = post_seat(pts, logs); o = np.argsort(-pc)[:3]
+        steps.append(dict(t=round((k + 1) * period, 1), set=name, views=views, p_now=[round(float(v), 4) for v in p1], p_cum=[round(float(v), 4) for v in pc], top=[int(i) for i in o],
+                          people=[[round(float(v), 3) for v in row[:4]] for row in ppl]))
+        print("%d번째  지금만 %2d (%.0f%%)  모아서 %2d (%.0f%%)  참 %d  직접파 %s  오차 %s" % (k + 1, int(np.argmax(p1)), 100 * p1.max(), o[0], 100 * pc[o[0]], seat,
+                                                                              [v["los"] for v in views], [v["err"][2] for v in views]))
+    return dict(seed=seed, kind=kind, recv=recv, seat=seat, cam=[float(v) for v in D0["cams"][c]], seats=[[float(x), float(y)] for x, y in seats_xy], spots=[[float(v) for v in D0["spots"][s]] for s in spots],
+                spot_names=[S.SPOT_NAMES2[s] for s in spots], room=list(S.ROOM), period=period, steps=steps, rc=[list(seat_rc(xy, seats_xy)) for xy in seats_xy])
 
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(); ap.add_argument("--seed", type=int, default=1003); ap.add_argument("--kind", default="책상"); ap.add_argument("--try", dest="tries", type=int, default=1)
-    a = ap.parse_args()
-    for s in range(a.seed, a.seed + a.tries):
-        r = run(s, a.kind); ok = r["steps"][-1]["top3"][0] == r["seat"]
-        print("seed", s, "자리", r["seat"], "곳", [st["spot"] for st in r["steps"]], "1순위", [st["top3"][0] for st in r["steps"]], "확률", [round(st["post"][r["seat"]], 2) for st in r["steps"]], "맞음" if ok else "틀림", flush=True)
-        if a.tries == 1:
-            json.dump(r, open(os.path.join(HERE, "demo_run.json"), "w"), ensure_ascii=False)
+    ap = argparse.ArgumentParser(); ap.add_argument("--seed", type=int, default=1003); ap.add_argument("--kind", default="책상"); ap.add_argument("--spots", type=int, nargs="+", default=[7, 17])
+    ap.add_argument("--recv", default="ura4x4p37.5h"); ap.add_argument("--n", type=int, default=6); ap.add_argument("--dry", action="store_true")
+    a = ap.parse_args(); out = run(a.seed, a.kind, a.spots, a.recv, ["kr40_t_s%d" % i for i in range(1, a.n + 1)])
+    if not a.dry:
+        json.dump(out, open(os.path.join(HERE, "demo_run.json"), "w"), ensure_ascii=False); print("저장 demo_run.json")

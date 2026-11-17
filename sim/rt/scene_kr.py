@@ -41,14 +41,16 @@ def _quad(p0, p1, p2, p3):
     return trimesh.Trimesh(vertices=np.array([p0, p1, p2, p3], float), faces=[[0, 1, 2], [0, 2, 3]], process=False)
 
 
-def people_layout(rng=None, jitter=0.0):
-    """자리마다 사람: (몸통 가운데 x, y, 앉은 머리 높이, 몸 돌린 각). jitter: 자세 흩어짐 (m)"""
+def people_layout(rng=None, jitter=0.0, pose=0.0):
+    """자리마다 사람: (몸통 가운데 x, y, 앉은 머리 높이, 몸 돌린 각, 머리를 숙인 만큼). jitter: 자세 흩어짐 (m). pose: 0 이면 모두 같은 자세, 1 이면 바로 앉은 사람부터 깊이 숙인 사람까지 섞는다"""
     out = []
     for (x, y) in SEATS:
-        dx = dy = 0.0; h = 1.32; rot = 0.0
+        dx = dy = 0.0; h = 1.32; rot = 0.0; ln = 0.10
         if rng is not None and jitter > 0:
             dx, dy = rng.normal(0, jitter, 2); h = 1.32 + rng.normal(0, 0.05); rot = rng.normal(0, 0.25)
-        out.append((x + dx, y + BODY_DY + dy, h, rot))
+            if pose > 0:
+                ln = rng.uniform(0.05, 0.05 + 0.25 * pose); h -= 0.5 * (ln - 0.10)          # 숙일수록 머리가 낮아진다
+        out.append((x + dx, y + BODY_DY + dy, h, rot, ln))
     return out
 
 
@@ -104,11 +106,12 @@ def build(people=True, rng=None, jitter=0.0, empty_seats=(), ceil_mat="concrete"
         add(_box((x - 0.27, y - 0.19, DESK_H - 0.14), (x + 0.27, y + 0.19, DESK_H - 0.135)), "metal")
     # 사람: 몸통(팔각 기둥, 폭 0.42 x 깊이 0.24) + 머리(앞으로 조금 숙임)
     if people:
-        for k, (bx, by, h, rot) in enumerate(layout if layout is not None else people_layout(rng, jitter)):
+        for k, (bx, by, h, rot, *ln) in enumerate(layout if layout is not None else people_layout(rng, jitter)):
             if k in empty_seats: continue
+            lk = ln[0] if ln else lean
             sh = h - 0.27                                    # 어깨 높이
             add(_prism(bx, by, 0.21, 0.12, 0.44, sh, 8, rot), "body")
-            add(_prism(bx, by - lean, 0.085, 0.10, sh, h, 8, rot), "body")
+            add(_prism(bx, by - lk, 0.085, 0.10, sh, h, 8, rot), "body")
             add(_box((bx - 0.19, by - 0.42, 0.44), (bx + 0.19, by, 0.60)), "body")     # 허벅지 (책상 밑)
     scene.edit(add=objs)
     return scene
@@ -119,10 +122,11 @@ def cam_points(layout=None, lean=LEAN):
     P = np.zeros((len(SEATS), 4, 3))
     for k, (x, y) in enumerate(SEATS):
         bx, by, h = (layout[k][0], layout[k][1], layout[k][2]) if layout is not None else (x, y + BODY_DY, 1.32)
+        lk = layout[k][4] if layout is not None and len(layout[k]) > 4 else lean
         P[k, 0] = (x - 0.15, y - 0.05, 0.80)                 # 책상 위 왼쪽 (필통)
         P[k, 1] = (x + 0.20, y + 0.05, 0.78)                 # 책상 위 오른쪽
         P[k, 2] = (bx, by - 0.12 - 0.03, h - 0.30)           # 가슴 (단추): 몸통 앞면에서 3cm
-        P[k, 3] = (bx, by - lean - 0.10 - 0.02, h - 0.11)    # 안경: 머리 앞면에서 2cm, 눈높이
+        P[k, 3] = (bx, by - lk - 0.10 - 0.02, h - 0.11)      # 안경: 머리 앞면에서 2cm, 눈높이
     return P
 
 

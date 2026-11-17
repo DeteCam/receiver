@@ -61,7 +61,7 @@ def system():
     ax.text(7.55, 4.22, "라즈베리파이 3B+", fontsize=9, color="#B9C7D3", ha="center", va="center")
     ax.text(6.72, 3.2, "· 탐지 (의심 점수)\n· 세기 → 위상 → 방향\n· 두 패널, 전송마다 겹치기\n· 폰이 부르는 API", fontsize=9, color="white", va="center", linespacing=1.6)
     box(ax, 4.0, 0.7, 4.55, 0.9, None, "탐지 동글 (모든 채널을 엿듣는다)  ·  통신 동글 (폰과 잇는 Wi-Fi)\n보조배터리 (콘센트 없이 동작)", fc=WARM, ec=AMBER)
-    arrow(ax, (6.05, 4.2), (6.55, 4.2)); arrow(ax, (6.05, 2.6), (6.55, 2.6)); ax.text(6.3, 3.4, "세기 값\n(USB ·\nESP-NOW)", fontsize=7.5, color=NAVY, ha="center", va="center", linespacing=1.3)
+    arrow(ax, (6.05, 4.2), (6.55, 4.2)); arrow(ax, (6.05, 2.6), (6.55, 2.6)); ax.text(6.3, 3.4, "세기 값\nUSB ·\nESP-NOW", fontsize=6.8, color=NAVY, ha="center", va="center", linespacing=1.3)
     arrow(ax, (3.1, 3.75), (4.0, 4.2), color=RED, lw=1.2); arrow(ax, (3.1, 3.05), (4.0, 2.6), color=RED, lw=1.2)
     box(ax, 9.95, 3.3, 2.35, 1.9, "스마트폰 앱  app", "수신기 조종\n패널 건 자리 등록 (AR 마커)\n의심 자리 3곳을 AR 로 표시", fc="white", ec=TEAL, tc=TEAL)
     arrow(ax, (8.55, 4.0), (9.95, 4.0), "Wi-Fi · HTTP", both=True, off=(0.1, 0.2))

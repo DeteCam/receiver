@@ -1,7 +1,7 @@
 {
  "data/scan_20261111_225427": {
   "meta": {
-   "mac": "c6:26:06:68:85:83",
+   "mac": "aa:bb:cc:dd:ee:ff",
    "ch": 11,
    "truth": 100,
    "note": "run2: Pi upright, plate centered on angle, 10cm from wifi module, 1m room"
@@ -110,9 +110,9 @@
  },
  "data/scan_20261111_230202_blind": {
   "meta": {
-   "mac": "c6:26:06:68:85:83",
+   "mac": "aa:bb:cc:dd:ee:ff",
    "ch": 11,
-   "note": "run3 blind: camera moved, truth unknown to the analyst; Pi upright; hands not removed"
+   "note": "run3 blind: camera moved, truth not told to the analyst; Pi upright; hands not removed"
   },
   "rows": [
    {

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """자동 스캔: 파이의 모터를 움직이며 CSI 를 받고, 끝나면 카메라 방향을 계산한다. 노트북에서 실행.
 
-  .venv/bin/python firmware/host/scan3.py --ch 11 --mac c6:26:06:68:85:83
+  .venv/bin/python firmware/host/scan3.py --ch 11 --mac aa:bb:cc:dd:ee:ff
   .venv/bin/python firmware/host/scan3.py --ch 11 --mac .. --plan up+tilt3 --truth 35 -40
   .venv/bin/python firmware/host/scan3.py --dry --truth 35 -40       장치 없이 흐름만 (가짜 데이터)
 

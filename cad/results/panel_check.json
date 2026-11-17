@@ -1,0 +1,95 @@
+{
+ "overlaps": [],
+ "gaps": {
+  "board_side": 0.4,
+  "board_seat_width": 2.5,
+  "patch_to_cover": 3.0,
+  "behind_board": 16.0,
+  "xiao_side": 0.25,
+  "cell_fence": 0.3,
+  "usb_window": [
+   9.6,
+   3.8
+  ],
+  "foot_to_tray": 0.3,
+  "battery_to_deck": 3.0,
+  "pi_to_lid": 3.4
+ },
+ "sizes": {
+  "tray": [
+   164.8,
+   224.8,
+   27.6
+  ],
+  "bezel": [
+   164.8,
+   224.8,
+   4.2
+  ],
+  "mount_plate": [
+   112.0,
+   128.0,
+   6.0
+  ],
+  "foot": [
+   80.0,
+   99.7,
+   125.6
+  ],
+  "hub_box": [
+   164.8,
+   86.8,
+   56.4
+  ],
+  "hub_lid": [
+   164.8,
+   86.8,
+   5.4
+  ],
+  "panel_with_plate": [
+   164.8,
+   224.8,
+   37.8
+  ],
+  "hub": [
+   164.8,
+   86.8,
+   58.8
+  ]
+ },
+ "problems": [],
+ "mass_g": {
+  "panel_with_plate": 638,
+  "panel_with_foot": 634,
+  "printed_panel": 285
+ },
+ "centre_mm": [
+  -2.7,
+  -14.1,
+  -10.4
+ ],
+ "tip_deg": {
+  "forward": 19.3,
+  "backward": 39.5,
+  "sideways": 20.5
+ },
+ "magnet": {
+  "count": 4,
+  "pull_each_kgf": 3.0,
+  "thin_steel_factor": 0.5,
+  "friction": [
+   0.2,
+   0.3
+  ],
+  "slide_hold_kg": [
+   1.2,
+   1.8
+  ],
+  "panel_kg": 0.64,
+  "margin": [
+   1.9,
+   2.8
+  ],
+  "note": "당기는 힘과 마찰은 어림값이다. 실물에서 잰다"
+ }
+}

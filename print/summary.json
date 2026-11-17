@@ -429,22 +429,22 @@
      0
     ]
    ],
-   "sec": 13875,
-   "model_sec": 13289,
-   "g": 136.66,
-   "m": 45.82,
+   "sec": 14102,
+   "model_sec": 13516,
+   "g": 137.43,
+   "m": 46.08,
    "layers": 150,
    "max_z": 30.0,
    "features": {
     "Custom": 2,
-    "Inner wall": 1773,
-    "Outer wall": 1819,
+    "Inner wall": 1993,
+    "Outer wall": 2039,
     "Bottom surface": 8,
-    "Gap infill": 662,
-    "Internal solid infill": 181,
-    "Sparse infill": 874,
-    "Floating vertical shell": 91,
-    "Bridge": 30,
+    "Gap infill": 664,
+    "Internal solid infill": 186,
+    "Sparse infill": 865,
+    "Floating vertical shell": 95,
+    "Bridge": 36,
     "Top surface": 38,
     "Overhang wall": 20
    },
@@ -1316,23 +1316,23 @@
      0
     ]
    ],
-   "sec": 10713,
-   "model_sec": 10128,
-   "g": 117.73,
-   "m": 39.47,
+   "sec": 10939,
+   "model_sec": 10354,
+   "g": 118.49,
+   "m": 39.73,
    "layers": 150,
    "max_z": 30.0,
    "features": {
     "Custom": 2,
-    "Inner wall": 1194,
-    "Outer wall": 1214,
+    "Inner wall": 1414,
+    "Outer wall": 1434,
     "Bottom surface": 1,
-    "Internal solid infill": 60,
-    "Sparse infill": 542,
-    "Bridge": 5,
+    "Internal solid infill": 64,
+    "Sparse infill": 528,
+    "Floating vertical shell": 35,
+    "Bridge": 11,
+    "Gap infill": 305,
     "Top surface": 20,
-    "Gap infill": 304,
-    "Floating vertical shell": 32,
     "Overhang wall": 15
    },
    "settings": {
@@ -1481,49 +1481,130 @@
    "printer_model_id": "BL-P001",
    "problems": [],
    "desc": "큰 받침의 덮개 (지름 186), 큰 받침용 랜선 홈 마개"
+  },
+  "선택_스탠드받이": {
+   "name": "선택_스탠드받이",
+   "ok": true,
+   "infill": 100,
+   "items": [
+    [
+     "23_stand_mount",
+     128.0,
+     132.0,
+     0
+    ]
+   ],
+   "sec": 7234,
+   "model_sec": 6649,
+   "g": 82.72,
+   "m": 27.74,
+   "layers": 60,
+   "max_z": 12.0,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 425,
+    "Outer wall": 474,
+    "Bottom surface": 1,
+    "Internal solid infill": 43,
+    "Sparse infill": 80,
+    "Floating vertical shell": 12,
+    "Gap infill": 9,
+    "Top surface": 6,
+    "Overhang wall": 1,
+    "Bridge": 1
+   },
+   "settings": {
+    "layer_height": "0.2",
+    "initial_layer_print_height": "0.2",
+    "wall_loops": "3",
+    "sparse_infill_density": "100%",
+    "sparse_infill_pattern": "zig-zag",
+    "top_shell_layers": "5",
+    "bottom_shell_layers": "3",
+    "enable_support": "0",
+    "nozzle_temperature": "220",
+    "nozzle_temperature_initial_layer": "220",
+    "textured_plate_temp": "55",
+    "curr_bed_type": "Textured PEI Plate",
+    "printer_model": "Bambu Lab X1 Carbon",
+    "filament_type": "PLA",
+    "brim_type": "auto_brim",
+    "printer_settings_id": "Bambu Lab X1 Carbon 0.4 nozzle",
+    "print_settings_id": "0.20mm Standard @BBL X1C",
+    "filament_settings_id": "\"Generic PLA\"",
+    "filament_max_volumetric_speed": "12",
+    "seam_position": "aligned"
+   },
+   "placed": [
+    {
+     "name": "23_stand_mount",
+     "bbox": [
+      58.01,
+      62.0,
+      197.99,
+      202.0
+     ],
+     "dev": 0.0
+    }
+   ],
+   "extent": [
+    58.22,
+    62.21,
+    197.77,
+    201.79,
+    12.0
+   ],
+   "gap_min": null,
+   "edge_min": 54.0,
+   "notices": [
+    "bed_temperature_too_high_than_filament"
+   ],
+   "printer_model_id": "BL-P001",
+   "problems": [],
+   "desc": "시험장에서 수신기를 스탠드 위에 올릴 때 쓰는 스탠드 받이. 윗면(평평한 면)을 바닥에 두고 받침 없이 뽑는다. 채움 100%"
   }
  },
  "parts": {
   "01_base_tub_L": {
-   "sec": 10713,
-   "model_sec": 10128,
-   "g": 117.73,
-   "m": 39.47,
+   "sec": 10940,
+   "model_sec": 10354,
+   "g": 118.49,
+   "m": 39.73,
    "infill": 15,
    "layers": 150,
    "features": {
     "Custom": 2,
-    "Inner wall": 1194,
-    "Outer wall": 1214,
+    "Inner wall": 1414,
+    "Outer wall": 1434,
     "Bottom surface": 1,
-    "Internal solid infill": 60,
-    "Sparse infill": 542,
-    "Bridge": 5,
+    "Internal solid infill": 64,
+    "Sparse infill": 528,
+    "Floating vertical shell": 35,
+    "Bridge": 11,
+    "Gap infill": 305,
     "Top surface": 20,
-    "Gap infill": 304,
-    "Floating vertical shell": 32,
     "Overhang wall": 15
    },
    "problems": []
   },
   "01_base_tub_S": {
-   "sec": 7304,
-   "model_sec": 6719,
-   "g": 74.66,
-   "m": 25.03,
+   "sec": 7539,
+   "model_sec": 6954,
+   "g": 75.43,
+   "m": 25.29,
    "infill": 15,
    "layers": 150,
    "features": {
     "Custom": 2,
-    "Inner wall": 1194,
-    "Outer wall": 1214,
+    "Inner wall": 1414,
+    "Outer wall": 1434,
     "Bottom surface": 1,
-    "Internal solid infill": 61,
-    "Sparse infill": 538,
-    "Bridge": 5,
+    "Internal solid infill": 68,
+    "Sparse infill": 527,
+    "Floating vertical shell": 35,
+    "Bridge": 12,
+    "Gap infill": 307,
     "Top surface": 20,
-    "Gap infill": 305,
-    "Floating vertical shell": 30,
     "Overhang wall": 15
    },
    "problems": []
@@ -2152,6 +2233,28 @@
     "Gap infill": 9,
     "Internal solid infill": 6,
     "Top surface": 1
+   },
+   "problems": []
+  },
+  "23_stand_mount": {
+   "sec": 7234,
+   "model_sec": 6649,
+   "g": 82.72,
+   "m": 27.74,
+   "infill": 100,
+   "layers": 60,
+   "features": {
+    "Custom": 2,
+    "Inner wall": 425,
+    "Outer wall": 474,
+    "Bottom surface": 1,
+    "Internal solid infill": 43,
+    "Sparse infill": 80,
+    "Floating vertical shell": 12,
+    "Gap infill": 9,
+    "Top surface": 6,
+    "Overhang wall": 1,
+    "Bridge": 1
    },
    "problems": []
   }

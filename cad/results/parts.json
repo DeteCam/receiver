@@ -10,12 +10,12 @@
    140.0,
    30.0
   ],
-  "volume_cm3": 67.2,
+  "volume_cm3": 66.9,
   "watertight": true,
-  "faces": 3072,
+  "faces": 3328,
   "bodies": 1,
-  "overhang_mm2": 28,
-  "flat_overhang_mm2": 13,
+  "overhang_mm2": 48,
+  "flat_overhang_mm2": 34,
   "ok": true
  },
  {
@@ -29,12 +29,12 @@
    190.0,
    30.0
   ],
-  "volume_cm3": 106.1,
+  "volume_cm3": 105.8,
   "watertight": true,
-  "faces": 3080,
+  "faces": 3336,
   "bodies": 1,
-  "overhang_mm2": 28,
-  "flat_overhang_mm2": 13,
+  "overhang_mm2": 48,
+  "flat_overhang_mm2": 34,
   "ok": true
  },
  {
@@ -586,6 +586,25 @@
   "bodies": 1,
   "overhang_mm2": 0,
   "flat_overhang_mm2": 0,
+  "ok": true
+ },
+ {
+  "file": "23_stand_mount.stl",
+  "ko": "스탠드 받이",
+  "qty": 1,
+  "pick": "시험장에서 수신기를 스탠드 위에 올릴 때. 받침 통 밑에 M3 x 10 나사 4개로 붙이고, 가운데에 1/4인치 너트를 넣는다. 윗면(평평한 면)을 바닥에. 채움 100%",
+  "infill": 100,
+  "size": [
+   140.0,
+   140.0,
+   12.0
+  ],
+  "volume_cm3": 67.9,
+  "watertight": true,
+  "faces": 3562,
+  "bodies": 1,
+  "overhang_mm2": 77,
+  "flat_overhang_mm2": 77,
   "ok": true
  },
  {

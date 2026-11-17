@@ -1,648 +1,154 @@
 [
  {
-  "file": "01_base_tub_S.stl",
-  "ko": "받침 통 (작은 것, 지름 140)",
-  "qty": 1,
-  "pick": "배터리 106×71×22 이하",
-  "infill": 15,
-  "size": [
-   140.0,
-   140.0,
-   30.0
-  ],
-  "volume_cm3": 66.9,
-  "watertight": true,
-  "faces": 3328,
-  "bodies": 1,
-  "overhang_mm2": 48,
-  "flat_overhang_mm2": 34,
-  "ok": true
- },
- {
-  "file": "01_base_tub_L.stl",
-  "ko": "받침 통 (큰 것, 지름 190)",
-  "qty": 1,
-  "pick": "배터리 152×76×22 이하",
-  "infill": 15,
-  "size": [
-   190.0,
-   190.0,
-   30.0
-  ],
-  "volume_cm3": 105.8,
-  "watertight": true,
-  "faces": 3336,
-  "bodies": 1,
-  "overhang_mm2": 48,
-  "flat_overhang_mm2": 34,
-  "ok": true
- },
- {
-  "file": "02_base_cover_S.stl",
-  "ko": "받침 덮개 (작은 것)",
-  "qty": 1,
-  "pick": "받침 통과 같은 글자",
-  "infill": 15,
-  "size": [
-   136.0,
-   136.0,
-   20.0
-  ],
-  "volume_cm3": 63.0,
-  "watertight": true,
-  "faces": 10072,
-  "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
-  "ok": true
- },
- {
-  "file": "02_base_cover_L.stl",
-  "ko": "받침 덮개 (큰 것)",
-  "qty": 1,
-  "pick": "받침 통과 같은 글자",
-  "infill": 15,
-  "size": [
-   186.0,
-   186.0,
-   20.0
-  ],
-  "volume_cm3": 100.7,
-  "watertight": true,
-  "faces": 10066,
-  "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
-  "ok": true
- },
- {
-  "file": "03_clip.stl",
-  "ko": "회전판 고리",
-  "qty": 1,
-  "pick": "",
-  "infill": 15,
-  "size": [
-   27.7,
-   32.3,
-   2.0
-  ],
-  "volume_cm3": 0.5,
-  "watertight": true,
-  "faces": 744,
-  "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
-  "ok": true
- },
- {
-  "file": "04_yoke.stl",
-  "ko": "요크 (회전판 + 팔 + 전선 상자)",
-  "qty": 1,
-  "pick": "",
-  "infill": 15,
-  "size": [
-   136.0,
-   134.0,
-   95.6
-  ],
-  "volume_cm3": 160.2,
-  "watertight": true,
-  "faces": 4384,
-  "bodies": 1,
-  "overhang_mm2": 159,
-  "flat_overhang_mm2": 58,
-  "ok": true
- },
- {
-  "file": "05_pinion_fit1.stl",
-  "ko": "작은 기어 10T (맞춤 1)",
+  "file": "01_panel_tray.stl",
+  "ko": "패널 통",
   "qty": 2,
-  "pick": "셋 다 2개씩 뽑아서 모터 축에 맞는 것 2개를 쓴다",
+  "pick": "패널 하나에 1개. 뒷면을 바닥에, 받침 없이",
   "infill": 15,
   "size": [
-   15.7,
-   15.1,
-   5.5
+   164.8,
+   224.8,
+   27.6
   ],
-  "volume_cm3": 0.7,
+  "volume_cm3": 171.1,
   "watertight": true,
-  "faces": 1032,
+  "faces": 4172,
   "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
+  "overhang_mm2": 256,
+  "flat_overhang_mm2": 252,
   "ok": true
  },
  {
-  "file": "05_pinion_fit2.stl",
-  "ko": "작은 기어 10T (맞춤 2)",
+  "file": "02_panel_bezel.stl",
+  "ko": "패널 앞덮개",
   "qty": 2,
-  "pick": "셋 다 2개씩 뽑아서 모터 축에 맞는 것 2개를 쓴다",
+  "pick": "패널 하나에 1개. 겉면을 바닥에, 받침 없이",
   "infill": 15,
   "size": [
-   15.7,
-   15.1,
-   5.5
+   164.8,
+   224.8,
+   4.2
   ],
-  "volume_cm3": 0.6,
+  "volume_cm3": 62.0,
   "watertight": true,
-  "faces": 1032,
+  "faces": 3078,
   "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
+  "overhang_mm2": 127,
+  "flat_overhang_mm2": 127,
   "ok": true
  },
  {
-  "file": "05_pinion_fit3.stl",
-  "ko": "작은 기어 10T (맞춤 3)",
+  "file": "03_mount_plate.stl",
+  "ko": "자석 걸이판",
   "qty": 2,
-  "pick": "셋 다 2개씩 뽑아서 모터 축에 맞는 것 2개를 쓴다",
-  "infill": 15,
-  "size": [
-   15.7,
-   15.1,
-   5.5
-  ],
-  "volume_cm3": 0.6,
-  "watertight": true,
-  "faces": 1032,
-  "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
-  "ok": true
- },
- {
-  "file": "06_sector_gear.stl",
-  "ko": "부채꼴 기어",
-  "qty": 1,
-  "pick": "",
-  "infill": 15,
-  "size": [
-   114.3,
-   94.2,
-   4.5
-  ],
-  "volume_cm3": 19.4,
-  "watertight": true,
-  "faces": 4148,
-  "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
-  "ok": true
- },
- {
-  "file": "07_head_shell.stl",
-  "ko": "머리 몸통",
-  "qty": 1,
-  "pick": "",
-  "infill": 15,
-  "size": [
-   116.5,
-   108.0,
-   35.2
-  ],
-  "volume_cm3": 43.0,
-  "watertight": true,
-  "faces": 5912,
-  "bodies": 1,
-  "overhang_mm2": 167,
-  "flat_overhang_mm2": 94,
-  "ok": true
- },
- {
-  "file": "08_head_lid.stl",
-  "ko": "머리 뚜껑",
-  "qty": 1,
-  "pick": "",
-  "infill": 15,
-  "size": [
-   111.7,
-   108.0,
-   20.2
-  ],
-  "volume_cm3": 18.5,
-  "watertight": true,
-  "faces": 2296,
-  "bodies": 1,
-  "overhang_mm2": 804,
-  "flat_overhang_mm2": 804,
-  "ok": true
- },
- {
-  "file": "09_crown.stl",
-  "ko": "모터 자리",
-  "qty": 1,
-  "pick": "",
+  "pick": "칠판·철문·사물함에 붙이거나 걸이에 거는 패널에. 통에 닿는 면을 바닥에",
   "infill": 15,
   "size": [
    112.0,
-   72.0,
-   21.0
+   128.0,
+   6.0
   ],
-  "volume_cm3": 18.3,
+  "volume_cm3": 72.3,
   "watertight": true,
-  "faces": 3474,
-  "bodies": 1,
-  "overhang_mm2": 472,
-  "flat_overhang_mm2": 472,
-  "ok": true
- },
- {
-  "file": "10_rotor_bar_fit1.stl",
-  "ko": "회전 막대 (판 받이 + 균형추 통, 맞춤 1)",
-  "qty": 1,
-  "pick": "시험 조각 1번 구멍이 맞을 때. 채움 100%",
-  "infill": 100,
-  "size": [
-   170.4,
-   54.0,
-   38.0
-  ],
-  "volume_cm3": 27.3,
-  "watertight": true,
-  "faces": 3116,
-  "bodies": 1,
-  "overhang_mm2": 77,
-  "flat_overhang_mm2": 58,
-  "ok": true
- },
- {
-  "file": "10_rotor_bar_fit2.stl",
-  "ko": "회전 막대 (판 받이 + 균형추 통, 맞춤 2)",
-  "qty": 1,
-  "pick": "시험 조각 2번 구멍이 맞을 때. 채움 100%",
-  "infill": 100,
-  "size": [
-   170.4,
-   54.0,
-   38.0
-  ],
-  "volume_cm3": 27.3,
-  "watertight": true,
-  "faces": 3116,
-  "bodies": 1,
-  "overhang_mm2": 76,
-  "flat_overhang_mm2": 58,
-  "ok": true
- },
- {
-  "file": "10_rotor_bar_fit3.stl",
-  "ko": "회전 막대 (판 받이 + 균형추 통, 맞춤 3)",
-  "qty": 1,
-  "pick": "시험 조각 3번 구멍이 맞을 때. 채움 100%",
-  "infill": 100,
-  "size": [
-   170.4,
-   54.0,
-   38.0
-  ],
-  "volume_cm3": 27.3,
-  "watertight": true,
-  "faces": 3116,
-  "bodies": 1,
-  "overhang_mm2": 76,
-  "flat_overhang_mm2": 58,
-  "ok": true
- },
- {
-  "file": "11_coin_cap.stl",
-  "ko": "균형추 통 마개",
-  "qty": 1,
-  "pick": "회전 막대와 같은 판에서 채움 100%로",
-  "infill": 100,
-  "size": [
-   27.8,
-   38.8,
-   5.4
-  ],
-  "volume_cm3": 2.2,
-  "watertight": true,
-  "faces": 1492,
+  "faces": 3648,
   "bodies": 1,
   "overhang_mm2": 0,
   "flat_overhang_mm2": 0,
   "ok": true
  },
  {
-  "file": "12_coin_spacer.stl",
-  "ko": "채움 조각 (동전 1개 자리)",
-  "qty": 2,
-  "pick": "1T 판이면 동전 12개로 통이 꽉 차서 쓰지 않는다. 동전을 빼서 균형을 맞출 때 그 자리에 넣는다. 2개 뽑아 둔다",
-  "infill": 100,
-  "size": [
-   23.6,
-   23.6,
-   1.6
-  ],
-  "volume_cm3": 0.7,
-  "watertight": true,
-  "faces": 640,
-  "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
-  "ok": true
- },
- {
-  "file": "13_pin_fit1.stl",
-  "ko": "끄덕임 축 핀 (지름 8.0)",
-  "qty": 2,
-  "pick": "셋 다 2개씩 뽑아서 맞는 것 2개를 쓴다",
+  "file": "04_foot.stl",
+  "ko": "받침 발",
+  "qty": 1,
+  "pick": "창턱·교탁·사물함 위에 세우거나 삼각대에 올리는 패널에 (걸이판 대신). 옆으로 눕혀서",
   "infill": 15,
   "size": [
-   14.0,
-   21.0,
-   18.0
+   125.6,
+   99.7,
+   80.0
   ],
-  "volume_cm3": 1.1,
+  "volume_cm3": 89.7,
   "watertight": true,
-  "faces": 556,
+  "faces": 388,
   "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
+  "overhang_mm2": 88,
+  "flat_overhang_mm2": 80,
   "ok": true
  },
  {
-  "file": "13_pin_fit2.stl",
-  "ko": "끄덕임 축 핀 (지름 7.9)",
+  "file": "05_xiao_clip.stl",
+  "ko": "ESP32 누름쇠",
   "qty": 2,
-  "pick": "셋 다 2개씩 뽑아서 맞는 것 2개를 쓴다",
+  "pick": "패널 하나에 1개. 납작한 면을 바닥에",
   "infill": 15,
   "size": [
-   14.0,
-   21.0,
-   18.0
-  ],
-  "volume_cm3": 1.1,
-  "watertight": true,
-  "faces": 556,
-  "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
-  "ok": true
- },
- {
-  "file": "13_pin_fit3.stl",
-  "ko": "끄덕임 축 핀 (지름 7.8)",
-  "qty": 2,
-  "pick": "셋 다 2개씩 뽑아서 맞는 것 2개를 쓴다",
-  "infill": 15,
-  "size": [
-   14.0,
-   21.0,
-   18.0
-  ],
-  "volume_cm3": 1.1,
-  "watertight": true,
-  "faces": 556,
-  "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
-  "ok": true
- },
- {
-  "file": "14_pin_keeper.stl",
-  "ko": "핀 막이",
-  "qty": 2,
-  "pick": "핀을 꽂은 뒤 팔 바깥면에 M3 나사로. 좌우 같은 것",
-  "infill": 15,
-  "size": [
-   17.3,
-   12.2,
-   3.9
+   6.0,
+   31.8,
+   3.1
   ],
   "volume_cm3": 0.4,
   "watertight": true,
-  "faces": 548,
-  "bodies": 1,
-  "overhang_mm2": 21,
-  "flat_overhang_mm2": 21,
-  "ok": true
- },
- {
-  "file": "15_marker_frame.stl",
-  "ko": "마커 틀",
-  "qty": 1,
-  "pick": "AR 마커 종이를 등판에 대고 덮어 M3 나사 4개로",
-  "infill": 15,
-  "size": [
-   109.0,
-   47.5,
-   2.0
-  ],
-  "volume_cm3": 3.2,
-  "watertight": true,
-  "faces": 464,
+  "faces": 276,
   "bodies": 1,
   "overhang_mm2": 0,
   "flat_overhang_mm2": 0,
   "ok": true
  },
  {
-  "file": "16_m2_ring.stl",
-  "ko": "모터 2 맞춤 링",
-  "qty": 1,
-  "pick": "모터 2의 축 둘레 턱에 씌운 다음 작은 기어를 끼운다",
-  "infill": 15,
-  "size": [
-   16.1,
-   16.1,
-   3.9
-  ],
-  "volume_cm3": 0.6,
-  "watertight": true,
-  "faces": 1456,
-  "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
-  "ok": true
- },
- {
-  "file": "17_lan_cap.stl",
-  "ko": "랜선 홈 마개 (작은 받침용)",
-  "qty": 1,
-  "pick": "랜선을 받침 안으로 넣지 않을 때, 덮개를 덮기 전에 받침 뒤 홈에 끼운다",
-  "infill": 15,
-  "size": [
-   6.4,
-   18.0,
-   12.3
-  ],
-  "volume_cm3": 0.9,
-  "watertight": true,
-  "faces": 150,
-  "bodies": 1,
-  "overhang_mm2": 42,
-  "flat_overhang_mm2": 42,
-  "ok": true
- },
- {
-  "file": "17_lan_cap_L.stl",
-  "ko": "랜선 홈 마개 (큰 받침용)",
-  "qty": 1,
-  "pick": "큰 받침(L)을 쓸 때 17 대신. 큰 받침 덮개와 같은 판에서 뽑는다",
-  "infill": 15,
-  "size": [
-   6.3,
-   18.0,
-   12.3
-  ],
-  "volume_cm3": 0.9,
-  "watertight": true,
-  "faces": 118,
-  "bodies": 1,
-  "overhang_mm2": 42,
-  "flat_overhang_mm2": 42,
-  "ok": true
- },
- {
-  "file": "18_plate_frame.stl",
-  "ko": "판 틀",
-  "qty": 1,
-  "pick": "알루미늄 판(1T)이 들어가는 홈이 있는 한 장짜리 받침판. 판 받이에 M3 x 6 접시머리 4개로 조인다. 뒷면(평평한 면)을 바닥에",
-  "infill": 15,
-  "size": [
-   159.5,
-   104.0,
-   4.6
-  ],
-  "volume_cm3": 13.3,
-  "watertight": true,
-  "faces": 1722,
-  "bodies": 1,
-  "overhang_mm2": 40,
-  "flat_overhang_mm2": 40,
-  "ok": true
- },
- {
-  "file": "19_plate_clamp.stl",
-  "ko": "판 누름쇠",
-  "qty": 1,
-  "pick": "판 위 변을 눌러 잡는다. M3 x 8 접시머리 2개 + 너트(틀 뒷면). 밑면(평평한 면)을 바닥에",
-  "infill": 15,
-  "size": [
-   11.0,
-   61.0,
-   2.4
-  ],
-  "volume_cm3": 1.5,
-  "watertight": true,
-  "faces": 720,
-  "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
-  "ok": true
- },
- {
-  "file": "20_batt_fill.stl",
-  "ko": "배터리 채움 조각 (40 x 15 x 4)",
-  "qty": 6,
-  "pick": "배터리가 자리보다 작아 헐거울 때 뒤·옆 틈에 끼운다. 겹쳐 쓴다",
-  "infill": 15,
-  "size": [
-   40.0,
-   15.0,
-   4.0
-  ],
-  "volume_cm3": 2.4,
-  "watertight": true,
-  "faces": 20,
-  "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
-  "ok": true
- },
- {
-  "file": "21_ant_clip.stl",
-  "ko": "ESP32 안테나 누름판",
-  "qty": 1,
-  "pick": "FPC 안테나를 모터 자리 밑면 홈에 대고 눌러 M2 x 6 나사 2개로. 납작한 면을 바닥에",
-  "infill": 15,
-  "size": [
-   64.4,
-   31.7,
-   1.2
-  ],
-  "volume_cm3": 1.1,
-  "watertight": true,
-  "faces": 326,
-  "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
-  "ok": true
- },
- {
-  "file": "22_xiao_cap.stl",
-  "ko": "ESP32 막음쇠",
-  "qty": 1,
-  "pick": "뚜껑 안쪽 홈 받침에 세워 끼운 XIAO 위를 막는다. M2 x 6 나사 2개",
-  "infill": 15,
-  "size": [
-   6.9,
-   27.0,
-   1.6
-  ],
-  "volume_cm3": 0.3,
-  "watertight": true,
-  "faces": 148,
-  "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
-  "ok": true
- },
- {
-  "file": "23_stand_mount.stl",
-  "ko": "스탠드 받이",
-  "qty": 1,
-  "pick": "시험장에서 수신기를 스탠드 위에 올릴 때. 받침 통 밑에 M3 x 10 나사 4개로 붙이고, 가운데에 1/4인치 너트를 넣는다. 윗면(평평한 면)을 바닥에. 채움 100%",
-  "infill": 100,
-  "size": [
-   140.0,
-   140.0,
-   12.0
-  ],
-  "volume_cm3": 67.9,
-  "watertight": true,
-  "faces": 3562,
-  "bodies": 1,
-  "overhang_mm2": 77,
-  "flat_overhang_mm2": 77,
-  "ok": true
- },
- {
-  "file": "90_test_coupon.stl",
-  "ko": "맞춤 시험 조각",
+  "file": "06_hub_box.stl",
+  "ko": "허브 통",
   "qty": 1,
   "pick": "",
   "infill": 15,
   "size": [
-   62.0,
-   46.0,
-   24.0
+   164.8,
+   86.8,
+   56.4
   ],
-  "volume_cm3": 18.9,
+  "volume_cm3": 113.0,
   "watertight": true,
-  "faces": 2142,
+  "faces": 986,
+  "bodies": 1,
+  "overhang_mm2": 101,
+  "flat_overhang_mm2": 101,
+  "ok": true
+ },
+ {
+  "file": "07_hub_deck.stl",
+  "ko": "허브 선반",
+  "qty": 1,
+  "pick": "배터리 위에 얹고 파이를 올린다",
+  "infill": 15,
+  "size": [
+   159.2,
+   81.2,
+   6.0
+  ],
+  "volume_cm3": 21.7,
+  "watertight": true,
+  "faces": 1052,
   "bodies": 1,
   "overhang_mm2": 0,
   "flat_overhang_mm2": 0,
   "ok": true
  },
  {
-  "file": "91_driver_check.stl",
-  "ko": "보드 구멍 맞춤 판",
+  "file": "08_hub_lid.stl",
+  "ko": "허브 뚜껑",
   "qty": 1,
-  "pick": "드라이버 보드를 얹어 구멍 4개가 맞는지 본다",
+  "pick": "겉면을 바닥에",
   "infill": 15,
   "size": [
-   37.0,
-   34.0,
-   5.0
+   164.8,
+   86.8,
+   5.4
   ],
-  "volume_cm3": 1.6,
+  "volume_cm3": 33.6,
   "watertight": true,
-  "faces": 808,
+  "faces": 1592,
   "bodies": 1,
-  "overhang_mm2": 0,
-  "flat_overhang_mm2": 0,
+  "overhang_mm2": 84,
+  "flat_overhang_mm2": 84,
   "ok": true
  }
 ]

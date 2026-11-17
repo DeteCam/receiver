@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""의심 점수: 둘레 기기마다 증거를 쌓아 점수와 이유를 낸다 (docs/의심 점수.md 4절).
+"""의심 점수: 둘레 기기마다 증거를 쌓아 점수와 이유를 낸다 (ai 저장소의 docs/의심 점수.md 4절).
 버튼 하나('점검 시작')로 몰카(숙소·화장실 등)와 시험장의 부정행위 카메라를 같은 흐름으로 찾는다. 장소를 고르지 않는다:
 환경이 다르면 쌓이는 증거가 달라 결과가 달라진다. 점수는 손으로 정한 시작값이고 실물 실험(S1~S5)으로 고친다.
 수신기(파이)와 시험이 같은 파일을 쓴다. 파이썬 3.7, 표준 라이브러리만.
@@ -35,7 +35,7 @@ import re
 DT = 0.5
 LV_CAMERA, LV_SUSPECT = 5, 3
 NEAR, FAR = -60.0, -75.0
-# 카메라 앱·핫스팟 카메라의 Wi-Fi 이름 (docs/비콘 검토.md 4절의 설명서 예시). 대소문자는 가리지 않는다
+# 카메라 앱·핫스팟 카메라의 Wi-Fi 이름 (docs 저장소의 research/비콘 검토.md 4절의 설명서 예시). 대소문자는 가리지 않는다
 CAM_NAMES = [r"^DDD-", r"^A9_", r"HDWIFICAM", r"HIDVCAM", r"^IPC[-_]", r"^CAM[-_]", r"CAMERA", r"^MINI[-_ ]?CAM", r"^IPCAM", r"^SPY", r"^HD[-_]?CAM", r"^V380", r"^LOOKCAM", r"^YI[-_]"]
 # 개인 핫스팟에 흔한 이름 (폰이 만든 Wi-Fi)
 HOTSPOT_NAMES = [r"IPHONE", r"GALAXY", r"ANDROIDAP", r"ANDROID_?HOTSPOT", r"^SM-", r"HOTSPOT", r"핫스팟", r"\bAP\b"]

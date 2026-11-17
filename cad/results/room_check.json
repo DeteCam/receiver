@@ -122,7 +122,7 @@
    "room": "머리 치마 밖으로 7 mm"
   },
   {
-   "item": "ESP32 (XIAO ESP32-C3)",
+   "item": "ESP32 (XIAO ESP32-C5)",
    "where": "뚜껑 안쪽 왼쪽, 세워서 홈 받침 2개 + 막음쇠 (점퍼선 소켓이 +X, 파이 GPIO 쪽)",
    "size": [
     20.7,

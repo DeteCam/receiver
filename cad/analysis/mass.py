@@ -99,7 +99,7 @@ def report(fill=None, quiet=False):
     add("점퍼선·모터선", 22.0, (20, -12, -45)); add("전원 플러그와 선", 12.0, (-48, -4, -50)); add("나사", 14.0, (0, -8, -30))
     add("버튼 모듈과 선", 5.0, (BTN_X, BTN_PCB_Y, BTN_Z - 8))
     add("무선 동글", 4.0, (BX0 + DONGLE["x"], -PI_T / 2 - DONGLE["up"], BZ0 - 2.0 - (DONGLE["L"] - DONGLE["plug"]) / 2))
-    xb = P._xiao_box(); add("ESP32 (XIAO ESP32-C3, 핀 머리)", 4.0, ((xb[0] + xb[1]) / 2, (xb[2] + xb[3]) / 2, (xb[4] + xb[5]) / 2))
+    xb = P._xiao_box(); add("ESP32 (XIAO ESP32-C5, 핀 머리)", 4.0, ((xb[0] + xb[1]) / 2, (xb[2] + xb[3]) / 2, (xb[4] + xb[5]) / 2))
     add("ESP32 안테나 (FPC + 동축선)", 2.0, (0.0, ESP_ANT["yc"], HZ1 - 15.0)); add("ESP32 점퍼선 4가닥", 5.0, (-5.0, -20.0, -30.0))
     add("탐지 동글", 4.0, (BX0 + DONGLE2["x"], -PI_T / 2 - DONGLE2["up"], BZ0 - 2.0 - (DONGLE2["L"] - DONGLE2["plug"]) / 2))
     def calc(H):

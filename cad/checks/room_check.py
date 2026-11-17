@@ -63,7 +63,7 @@ def main():
         (BTN_PCB_Y - 3.5) - HYL, (BTN_PCB_Y - 5.0) - HY0, gap(bp + bs, pi))))
     rows.append(("랜선 플러그", "파이 아래 단자, 아래로 나온다", bb(P.lan_plug_dummy()), "머리 치마 밖으로 %.0f mm" % (HZ0 - (BZ0 - 27.0))))
     xd = P.xiao_dummy(); fd = P.fpc_dummy()
-    rows.append(("ESP32 (XIAO ESP32-C3)", "뚜껑 안쪽 왼쪽, 세워서 홈 받침 2개 + 막음쇠 (점퍼선 소켓이 +X, 파이 GPIO 쪽)", bb(xd), "파이 부품까지 %.1f, 버튼 모듈까지 %.1f, 점퍼선 소켓 끝에서 GPIO 점퍼선 자리까지 %.1f" % (
+    rows.append(("ESP32 (XIAO ESP32-C5)", "뚜껑 안쪽 왼쪽, 세워서 홈 받침 2개 + 막음쇠 (점퍼선 소켓이 +X, 파이 GPIO 쪽)", bb(xd), "파이 부품까지 %.1f, 버튼 모듈까지 %.1f, 점퍼선 소켓 끝에서 GPIO 점퍼선 자리까지 %.1f" % (
         gap(xd, pi), gap(xd, union(list(P.button_dummy()))), gap(xd, P.gpio_keepout()))))
     rows.append(("ESP32 안테나 (FPC)", "머리 안 천장(모터 자리 밑면), 판 회전축 위 파이 안테나에서 %.1f mm 위" % (HZ1 + ESP_ANT["pocket"] - ESP_ANT["t"] / 2), bb(fd), "파이 기판 윗변까지 %.1f, 뒷벽까지 %.1f" % (gap(fd, pb), gap(fd, shell))))
     a = np.array([-ESP_ANT["L"] / 2 + 3.0, ESP_ANT["yc"], HZ1]); xb = P._xiao_box(); b_ = np.array([xb[0] - 1.5, xb[2] + 4.0, xb[5] - 3.0])

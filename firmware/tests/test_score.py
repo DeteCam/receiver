@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""core/score.py 검사: docs/의심 점수.md 6절의 상황을 가짜 탐지 표로 만들어, 점수·등급·확인 요청이 문서대로 나오는지 본다.
+"""core/score.py 검사: ai 저장소의 docs/의심 점수.md 6절의 상황을 가짜 탐지 표로 만들어, 점수·등급·확인 요청이 문서대로 나오는지 본다.
     python3 tests/test_score.py"""
 import os, random, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, os.path.join(HERE, "..", "core"))

@@ -17,7 +17,8 @@ python3 location/places.py 100          # 곳별 결과를 100번씩 (몇 분)
 | `location/` | 여러 자리를 합쳐 위치를 얼마나 맞히나 | `locate3d.py`, `locate3d_var*.py`, `twopos.py`, `places.py` (변기 칸, 욕실, 모텔 방, 강의실), 그림 `fig_locate.py`·`fig_places.py` |
 | `identify/` | 판별: 몇 초씩 몇 번, 얼마나 잘못 잡나 | `identify_sim.py` → `identify_result.json` |
 | `em/` | 전파 프로그램으로 푼 수신기 (아래) | |
-| `rt/` | 40명이 앉은 교실에서 카메라 자리를 얼마나 맞히나 (전파 경로 계산, Sionna RT) | `rt_paths.py` → `rt_eval.py` → [`rt/README.md`](rt/README.md) (표와 그림) |
+| `rt/` | 40명이 앉은 교실에서 카메라 자리를 얼마나 맞히나, 숙소 방에서 숨긴 카메라를 얼마나 찾나 (전파 경로 계산, Sionna RT) | 패널: `rt_paths.py` → `rt_study.py`, `room_paths.py` → `room_study.py` → [패널 연구](rt/패널%20연구.md). 돌판: `rt_eval.py` → [`rt/README.md`](rt/README.md) |
+| `pre/` | 부품을 사기 전에 알 수 있는 것 | `amp_stability.py` (가진 CSI 기록의 세기가 고른가), `collect.py` → `result.json`, `figs.py` (사전 검증과 숙소 방의 그림) |
 
 결과 json 은 그것을 만든 스크립트 옆에 있고, 그림은 `../docs/images/` 에 씁니다.
 

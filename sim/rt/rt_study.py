@@ -106,7 +106,7 @@ class Paths:
         self.k_db = float(10 * np.log10(pw[nint == 0].sum() / max(pw.sum(), 1e-30) + 1e-9)) if self.los else -99.0
 
 
-def array_snap(rng, P, name, npk=20, dur=0.5, tv=1.0, snr=30.0, cal=(5.0, 0.5), holo=False, mount="aim", tilt=0.0):
+def array_snap(rng, P, name, npk=20, dur=0.5, tv=1.0, snr=30.0, cal=(5.0, 0.5), holo=False, mount="aim", tilt=0.0, imp=None):
     """배열이 받은 CSI. 돌려준다: (H [패킷, 안테나, 서브캐리어] 또는 SAR 이면 Z [안테나, 서브캐리어], 안테나 자리(방 좌표), 패치 보는 쪽 또는 None)"""
     R, patch, seq = geom(name); ex, ey, ez = face(P.spot, mount, tilt) if patch else (np.array([1.0, 0, 0]), np.array([0, 1.0, 0]), np.array([0, 0, 1.0]))
     Rw = R[:, :1] * ex + R[:, 1:2] * ey + R[:, 2:3] * ez; M = len(R)
@@ -124,12 +124,23 @@ def array_snap(rng, P, name, npk=20, dur=0.5, tv=1.0, snr=30.0, cal=(5.0, 0.5), 
         sig = np.median(np.abs(H) ** 2); na = np.sqrt(max(sig, 1e-24) * 10 ** (-snr / 10) / 2)
         return H + na * (rng.normal(size=H.shape) + 1j * rng.normal(size=H.shape))
     if holo:                                                                    # 수신 체인 하나: 기준 안테나 + (위상을 0·90·180·270도 돌린) 안테나 m 을 합쳐 세기만 잰다
-        fbk = fb.reshape(M, 4, -1); Z = np.zeros((M, B.shape[2]), complex); ph = np.exp(1j * np.pi / 2 * np.arange(4))
-        sig = np.median(np.abs(fb @ base) ** 2); na = np.sqrt(max(sig, 1e-24) * 10 ** (-snr / 10) / 2)
+        # imp: 실물에서 생길 흔들림. gjit 패킷마다의 이득 (dB), sjit 서브캐리어마다 (dB), pherr 위상 단계의 오차 (도, 한 번 정해지면 그대로),
+        #      txp·txdb 패킷이 다른 세기로 나올 확률과 그 크기 (dB, 전송 속도가 바뀔 때), q8 CSI 를 이 비트 수의 정수로 받는다, rep 단계마다 여러 번 재서 가운데값
+        im = imp or {}; gj = im.get("gjit", 0.5); sj = im.get("sjit", 0.5); rep = int(im.get("rep", 1)); txp = im.get("txp", 0.0); txdb = im.get("txdb", 2.0); q8 = int(im.get("q8", 0))
+        fbk = fb.reshape(M, 4, -1); Z = np.zeros((M, B.shape[2]), complex); ph = np.exp(1j * (np.pi / 2 * np.arange(4) + np.radians(rng.normal(0, im.get("pherr", 0.0), 4))))
+        sig = np.median(np.abs(fb @ base) ** 2); na = np.sqrt(max(sig, 1e-24) * 10 ** (-snr / 10) / 2); full = 3.0 * np.sqrt(max(sig, 1e-24))
         for k in range(M):
             hk = np.einsum("jp,pf->jf", fbk[k], B[:, k, :]) * ce[k]; hr = fbk[k] @ base                    # [4, F]
-            y = hr + ph[:, None] * hk + na * (rng.normal(size=hk.shape) + 1j * rng.normal(size=hk.shape))
-            I = np.abs(y) ** 2 * 10 ** ((rng.normal(0, 0.5, (4, 1)) + rng.normal(0, 0.5, y.shape)) / 10.0)   # 패킷마다, 서브캐리어마다 0.5dB 흔들림
+            Ir = []
+            for _ in range(rep):
+                y = hr + ph[:, None] * hk + na * (rng.normal(size=hk.shape) + 1j * rng.normal(size=hk.shape))
+                if q8:
+                    lsb = full / 2 ** (q8 - 1); y = np.round(y.real / lsb) * lsb + 1j * np.round(y.imag / lsb) * lsb
+                g = rng.normal(0, gj, (4, 1)) + rng.normal(0, sj, y.shape)
+                if txp > 0:
+                    g = g + txdb * rng.choice([-1.0, 1.0], (4, 1)) * (rng.random((4, 1)) < txp)
+                Ir.append(np.abs(y) ** 2 * 10 ** (g / 10.0))
+            I = np.median(np.stack(Ir), 0) if rep > 1 else Ir[0]
             Z[k] = ((I[0] - I[2]) - 1j * (I[1] - I[3])) / 4.0                                               # = 기준의 켤레 x 안테나 m
         return Z, Rw, (ey if patch else None)
     if seq:                                                                     # 차례로: 안테나 m 은 t_m 에, 기준 안테나(가운데)는 그때마다
@@ -294,7 +305,7 @@ def _trial(args):
             else:
                 nm, _, img = recv.partition("+"); music = nm.endswith("m"); nm = nm[:-1] if music else nm; holo = nm.endswith("h"); nm = nm[:-1] if holo else nm
                 H, Rw, bore = array_snap(r2, P, nm, npk=opt.get("npk", 20), dur=opt.get("dur", 0.5), tv=opt.get("tv", 1.0), snr=opt.get("snr", 30.0), holo=holo,
-                                         mount=opt.get("mount", "aim"), tilt=opt.get("tilt", 0.0))
+                                         mount=opt.get("mount", "aim"), tilt=opt.get("tilt", 0.0), imp=opt.get("imp"))
                 spot, Rw, bore = pose_err(r2, spot, Rw, bore, opt.get("pos_sd", 0.0), opt.get("yaw_sd", 0.0), opt.get("tilt_sd", 0.0))
                 sc[s] = array_score(H, Rw, bore, spot, pts.X, opt.get("neff", 12.0), music, img)
                 if want_b:

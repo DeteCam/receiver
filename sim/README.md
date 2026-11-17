@@ -15,6 +15,7 @@ python3 location/places.py 100          # 곳별 결과를 100번씩 (몇 분)
 | `location/` | 여러 자리를 합쳐 위치를 얼마나 맞히나 | `locate3d.py`, `locate3d_var*.py`, `twopos.py`, `places.py` (변기 칸, 욕실, 모텔 방, 강의실), 그림 `fig_locate.py`·`fig_places.py` |
 | `identify/` | 판별: 몇 초씩 몇 번, 얼마나 잘못 잡나 | `identify_sim.py` → `identify_result.json` |
 | `em/` | 전파 프로그램으로 푼 수신기 (아래) | |
+| `rt/` | 40명이 앉은 교실에서 카메라 자리를 얼마나 맞히나 (전파 경로 계산, Sionna RT) | `rt_paths.py` → `rt_eval.py` → [`rt/README.md`](rt/README.md) (표와 그림) |
 
 결과 json 은 그것을 만든 스크립트 옆에 있고, 그림은 `../docs/images/` 에 씁니다.
 
@@ -44,3 +45,4 @@ OMP_NUM_THREADS=1 python3 em/fdtd/room2d.py      # 방 전체를 gprMax 로 (방
 - `direction/`, `location/` 의 실험은 골 모양을 두 가지로 가정합니다: W = 회절 모형 그대로(나쁜 쪽), V = 손으로 잰 곡선과 비슷한 모양(좋은 쪽). 편파, 파이 기판과 모터가 만드는 반사는 들어 있지 않습니다. 그것은 `em/` 이 봅니다.
 - `em/` 은 파이의 실제 안테나가 어떻게 생겼는지 모릅니다. 모형 넷으로 해 보고 결론이 같은 것만 믿습니다. 어느 모형이 실제와 닮았는지는 `compare_real.py` 로 실물 곡선과 견줘야 압니다.
 - `em/fdtd/room2d.py` 는 2차원이라 판이 위아래로 끝없이 긴 셈입니다. 골이 실제보다 깊게 나오므로, 방의 반사가 골의 자리를 얼마나 흔드는지를 보는 계산입니다. 이 계산에서는 골 하나만 읽는 지금 방법이 방에서 크게 틀렸고, 곡선 전체를 기준 곡선과 맞추면 크게 나아졌습니다 (설계 검토 2절).
+- **교실·강의실은 rt/ 의 결과가 먼저다 (2026-11-17).** `location/` 의 교실 계산(classroom*.py, perimeter*.py 등)은 신호 곡선을 골 하나로 본 단순한 모델이라 낙관적이다. 사람·반사·회절을 넣은 `rt/` 에서는 골을 찾아 읽는 방법이 맞지 않았다.

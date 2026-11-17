@@ -332,13 +332,15 @@ def cases():
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--n", type=int, default=200); ap.add_argument("--only", nargs="*"); ap.add_argument("--jobs", type=int, default=max(1, (os.cpu_count() or 2) - 1))
-    ap.add_argument("--list", action="store_true"); ap.add_argument("--out", default="rt_eval_result.json"); ap.add_argument("--den", type=float, default=160.0); ap.add_argument("--show", default="tmpw")
+    ap.add_argument("--list", action="store_true"); ap.add_argument("--resume", action="store_true"); ap.add_argument("--out", default="rt_eval_result.json"); ap.add_argument("--den", type=float, default=160.0); ap.add_argument("--show", default="tmpw")
     a = ap.parse_args(); C = cases()
     if a.list:
         print("\n".join(C)); return
     names = [k for k in C if (not a.only or any(o in k for o in a.only))]
     have = lambda d: all(os.path.exists(os.path.join(HERE, "paths", x + ".npz")) for x in (d if isinstance(d, (list, tuple)) else [d]))
     f = os.path.join(HERE, a.out); res = json.load(open(f)) if os.path.exists(f) else {}
+    if a.resume:
+        names = [k for k in names if k not in res]                             # 끊긴 뒤 이어서: 이미 있는 경우는 건너뛴다
     import multiprocessing as mp
     _G["den0"] = a.den
     with mp.Pool(a.jobs, initializer=_init, initargs=(a.den,)) as pool:

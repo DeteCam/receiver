@@ -1,5 +1,6 @@
 """교실 장면에서 수신기 자리(출발점) -> 카메라 후보 점 160개의 전파 길을 Sionna RT 로 구해 npz 로 담는다.
-    python rt_paths.py 이름 [--h 2.4] [--depth 3] [--people 40|0|20] [--jitter 0.05] [--pose 0] [--seed 1] [--spots exam|ceil|real|real2|frame] [--no-diff]
+    python rt_paths.py 이름 [--h 2.4] [--depth 3] [--people 40|0|20] [--jitter 0.05] [--pose 0] [--seed 1] [--spots exam|ceil|real|real2|frame|grid] [--spotlist "x,y,z;..."] [--no-diff]
+    grid = 패널 자리 찾기 후보 102곳 (place_spots.py), --spotlist 로 몇 곳만 따로
 길마다: A[2,2] (카메라 편파 V/H x 수신기 편파 V/H), 지연 tau, 수신기에서의 방향(theta_t, phi_t), 카메라에서의 방향(theta_r, phi_r), 몸에 닿았는가, 직접파인가.
 상반성: 수신기를 '송신기'로 두고 한 번 풀면 모든 카메라 점까지의 길이 한꺼번에 나온다."""
 import sys, os, time, argparse
@@ -7,8 +8,9 @@ import numpy as np
 import mitsuba as mi
 import sionna.rt as rt
 import scene_kr as S
+import place_spots as PSP
 
-FC = 2.437e9            # 2.4GHz 6번 채널
+FC = float(os.environ.get("DETECAM_FC", "2.437e9"))   # 2.4GHz 6번 채널 (5G 3.5 GHz 를 볼 때만 DETECAM_FC 로 바꾼다)
 KEEP = 160              # 점마다 센 길부터 이만큼만 담는다
 
 EXAM_SPOTS = [(0.5, 0.5), (7.0, 0.5), (0.5, 8.6), (7.0, 8.6)] + [(0.3, y) for y in (2.5, 4.3, 6.1, 7.6)] + [(7.2, y) for y in (2.5, 4.3, 6.1, 7.6)] + \
@@ -27,6 +29,7 @@ SPOTS3["real2"] = [(1.95, 0.10, 1.95), (3.75, 0.10, 1.95), (5.55, 0.10, 1.95), (
                    (1.50, 8.42, 1.35), (3.75, 8.42, 1.35), (6.00, 8.42, 1.35), (3.75, 8.92, 2.00), (7.42, 2.50, 1.95), (7.42, 7.00, 1.95), (0.08, 1.00, 2.00)]
 # lec2: 대학 강의실(9 x 12m, 72석)에서 손이 닿는 곳
 SPOTS3["lec2"] = [(0.08, 6.4, 2.0), (8.92, 6.4, 2.0), (0.08, 3.5, 2.0), (8.92, 3.5, 2.0), (0.08, 9.5, 2.0), (8.92, 9.5, 2.0), (4.5, 0.10, 1.95), (2.7, 0.10, 1.95), (6.3, 0.10, 1.95)]
+SPOTS3["grid"] = PSP.grid_spots()                   # 3차원 자리 찾기: 창·복도·앞·뒷벽의 높이 셋과 천장 (place_spots.py)
 SPOT3_NAMES = {"real": ["칠판 위 왼쪽 끝", "칠판 위 오른쪽 끝", "칠판 위 가운데", "교탁 위", "앞 왼쪽 모서리 1.5m", "앞 오른쪽 모서리 1.5m", "분필받이 왼쪽", "분필받이 오른쪽",
                         "뒤 왼쪽 모서리 1.5m", "뒤 오른쪽 모서리 1.5m", "뒷벽 가운데 1.8m", "뒷벽 왼쪽 2.2m", "뒷벽 오른쪽 2.2m", "왼쪽 벽 가운데 1.5m", "오른쪽 벽 가운데 1.5m",
                         "왼쪽 벽 가운데 2.2m", "오른쪽 벽 가운데 2.2m", "앞 왼쪽 모서리 2.2m", "앞 오른쪽 모서리 2.2m", "천장 가운데 2.6m"]}
@@ -62,7 +65,7 @@ def main():
     ap = argparse.ArgumentParser(); ap.add_argument("name"); ap.add_argument("--h", type=float, nargs="+", default=[2.4]); ap.add_argument("--depth", type=int, default=3)
     ap.add_argument("--people", type=int, default=999); ap.add_argument("--jitter", type=float, default=0.05); ap.add_argument("--pose", type=float, default=0.0); ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--spots", default="exam"); ap.add_argument("--no-diff", action="store_true"); ap.add_argument("--samples", type=int, default=10 ** 6)
-    ap.add_argument("--ceil", default="concrete"); ap.add_argument("--out", default="paths"); ap.add_argument("--room", default="kr40")
+    ap.add_argument("--ceil", default="concrete"); ap.add_argument("--out", default="paths"); ap.add_argument("--room", default="kr40"); ap.add_argument("--spotlist", default="")
     a = ap.parse_args(); rng = np.random.default_rng(a.seed); S.set_room(a.room); ns = len(S.SEATS)
     empty = () if a.people >= ns else tuple(rng.choice(ns, ns - a.people, replace=False).tolist())
     layout = S.people_layout(rng, a.jitter, a.pose) if a.people > 0 else None
@@ -75,6 +78,8 @@ def main():
     mid = [(S.W / 2, S.D * f) for f in (0.53, 0.33, 0.72)]
     pts = S.exam_spots() if a.spots == "exam" else mid if a.spots == "ceil" else EXTRA.get(a.spots, [])
     spots = SPOTS3[a.spots] if a.spots in SPOTS3 else [(x, y, h) for h in a.h for (x, y) in pts]
+    if a.spotlist:                                                          # "x,y,z;x,y,z": 이 곳들만
+        spots = [tuple(float(v) for v in t.split(",")) for t in a.spotlist.split(";") if t.strip()]
     solver = rt.PathSolver(); res = []; t0 = time.time()
     for k, pos in enumerate(spots):
         o, _ = solve_spot(scene, solver, pos, cams, a.depth, not a.no_diff, a.samples, body_ids); res.append(o)

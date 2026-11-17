@@ -204,7 +204,7 @@ def demo_class():
     for i, (x, y) in enumerate(K.SEATS):
         c = i in cams; ax.add_patch(Rectangle((X(x) - 0.19, Y(y) - 0.12), 0.38, 0.24, fc=RED if c else "#DCE4EC", ec="none"))
         if c: ax.text(X(x), Y(y), cams[i][0], fontsize=9, color="white", ha="center", va="center", fontweight="bold")
-    for nm, (px, py) in (("패널 A", (0.08, 4.85)), ("패널 B", (7.42, 2.50))):
+    for nm, (px, py) in (("패널 A", (0.08, 2.50)), ("패널 B", (7.42, 2.50))):          # 2026-11-18: A 를 창 유리 앞쪽으로 (docs/배치 계산.md)
         ax.add_patch(Rectangle((X(px) - 0.07, Y(py) - 0.2), 0.14, 0.4, fc=TEAL, ec="none"))
         ax.text(X(px) + (-0.18 if px < 1 else 0.18), Y(py), nm + "\n높이 2m", fontsize=9, color=TEAL, ha="right" if px < 1 else "left", va="center", fontweight="bold", linespacing=1.3)
         for i in cams: ax.plot([X(px), X(K.SEATS[i][0])], [Y(py), Y(K.SEATS[i][1])], color=TEAL, lw=0.8, alpha=0.5)
@@ -216,7 +216,7 @@ def demo_class():
     y = block(ax, tx, y, "준비물", ["· 수신기 한 벌 (패널 2, 허브 1), 스마트폰", "· 찾을 카메라: 책상 위 필통 속 ①, 가슴 단추 자리 ②,", "  안경 자리 ③ (한 번에 하나씩)", "· 카메라가 붙을 폰 핫스팟 (교실 안 가방 속이나 교실 밖)", "· 자리에 앉아 줄 사람 (없으면 빈 교실에서 먼저)"])
     y = block(ax, tx, y, "순서", ["1. 패널을 걸고 폰으로 패널의 마커를 비춰 자리를 등록한다", "2. 카메라가 영상(또는 30초마다 사진)을 보낸다", "3. 앱에서 찾기: 약 30초 뒤 의심 기기가 뜬다", "4. 패널이 전송마다 재고, 의심 자리 3곳이 뜬다", "5. 카메라를 다른 자리로 옮겨 되풀이한다 (20자리)"])
     y = block(ax, tx, y, "통과 기준", ["· 30초 안에 의심 기기로 올린 비율 90% 이상", "· 그 자리 또는 옆자리를 맞힌 비율 85% 이상 (네 번 쌓아)", "· 찾기부터 자리 후보까지 3분 이하", "· 재는 동안 소리가 나지 않는다"])
-    ax.text(tx, y + 0.08, "계산으로는 전송 한 번에 옆자리까지 81~93%, 네 번 쌓아 94~99%.\n실물 값은 이 데모에서 처음 나온다.", fontsize=9, color=GRAY, va="center", linespacing=1.5)
+    ax.text(tx, y + 0.08, "계산으로는 사진 한 장에 옆자리까지 85~94%, 16장 모아 97~100%.\n실물 값은 이 데모에서 처음 나온다.", fontsize=9, color=GRAY, va="center", linespacing=1.5)
     save(fig, "데모_환경_교실.png")
 
 

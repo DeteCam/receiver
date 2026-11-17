@@ -11,6 +11,8 @@
 | `figs.py` | `docs/images/사전검증_*.png`, `숙소_방_계산.png` |
 | `blind.json` | 사각지대의 숫자: 자리마다 맞힌 비율, 거는 곳 견주기, 패널 셋 (`../rt/blind_study.py`) |
 | `blind_fig.py` | `docs/images/사각지대_자리지도.png` |
+| `place.json` | 패널 자리 찾기(3차원)와 사진 16장의 숫자: 후보 122곳, 고른 배치, 새 카메라로 검증, 사진 1~32장 곡선, 대안 수신기, 나쁜 경우, 5G, 거는 각도 (`../rt/place_study.py`, `place_followup.py`) |
+| `place_fig.py` | `docs/images/배치_*.png`. `collect` 로 `../rt/study/place_*.json` 을 모으고 `figs` 로 그린다 |
 
 ```
 python3 amp_stability.py 기록.pcap --mac 카메라주소      # 기록 파일은 내 기기의 주소가 들어 있어 올리지 않는다

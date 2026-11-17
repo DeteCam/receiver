@@ -8,6 +8,7 @@
   uca8        위상이 맞는 안테나 8개를 반지름 8cm 원에 (수직 쌍극자). cyl16 = 그 원 두 층
   ura4x4 ...  위상이 맞는 패치 안테나 배열을 벽에 걸어 자리 쪽을 보게 (간격 반 파장). ura4x8 = 가로 8 x 세로 4, ura8x8. ura4x4p37 = 간격 37mm
               뒤에 h 를 붙이면 (ura4x4h) 수신 체인 하나로: 기준 안테나와 합쳐 세기만 재서 위상을 되찾는다 (안테나마다 패킷 4개)
+              뒤에 r 을 붙이면 (ura4x4r) 수신 체인 둘로: 한 체인은 기준 안테나, 다른 체인은 스위치로 안테나를 차례로 (안테나마다 패킷 1개, 같은 패킷의 비)
   sar20       안테나 하나를 반지름 20cm 로 돌리고 가운데 기준 안테나로 위상을 맞춘다 (48점, 차례로)
   oracle<s>   직접파 방향을 표준편차 s 도로 안다고 칠 때 (기하만의 한계). oracleaz<s> = 방위각만
 
@@ -22,7 +23,7 @@ import numpy as np                                      # noqa: E402
 import rt_common as K                                   # noqa: E402
 from rt_common import sph, sph_v, rotz, SUB, C0, KIND, REV_S, post_seat, seat_rc   # noqa: E402
 
-HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, "study"); LAM = C0 / 2.437e9
+HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, "study"); LAM = C0 / float(os.environ.get("DETECAM_FC", "2.437e9"))
 AIM = np.array([3.75, 4.85, 0.9])                       # 배열이 바라보는 곳: 자리들의 한가운데
 
 
@@ -56,9 +57,12 @@ def geom(name):
 
 def face(spot, mount="aim", tilt=0.0):
     """배열 좌표축 (ex, ey, ez) 을 방 좌표로.
+    auto  천장(2.6 m 넘게)은 aim, 벽은 hinge
     aim   ey = 자리 한가운데를 똑바로 보는 쪽 (좌우·위아래로 꺾이는 받침)
     hinge 좌우로만 자리 쪽을 보고, 아래로는 tilt 도만 숙인다
     flush 가까운 벽에 등을 붙인다 (벽에서 0.3m 넘게 떨어진 곳은 hinge 와 같다). 아래로 tilt 도"""
+    if mount == "auto":
+        mount = "aim" if float(spot[2]) >= 2.6 else "hinge"
     if mount == "aim":
         ey = AIM - spot; ey = ey / np.linalg.norm(ey)
     else:
@@ -106,9 +110,9 @@ class Paths:
         self.k_db = float(10 * np.log10(pw[nint == 0].sum() / max(pw.sum(), 1e-30) + 1e-9)) if self.los else -99.0
 
 
-def array_snap(rng, P, name, npk=20, dur=0.5, tv=1.0, snr=30.0, cal=(5.0, 0.5), holo=False, mount="aim", tilt=0.0, imp=None):
+def array_snap(rng, P, name, npk=20, dur=0.5, tv=1.0, snr=30.0, cal=(5.0, 0.5), holo=False, mount="aim", tilt=0.0, imp=None, ref=False):
     """배열이 받은 CSI. 돌려준다: (H [패킷, 안테나, 서브캐리어] 또는 SAR 이면 Z [안테나, 서브캐리어], 안테나 자리(방 좌표), 패치 보는 쪽 또는 None)"""
-    R, patch, seq = geom(name); ex, ey, ez = face(P.spot, mount, tilt) if patch else (np.array([1.0, 0, 0]), np.array([0, 1.0, 0]), np.array([0, 0, 1.0]))
+    R, patch, seq = geom(name); seq = seq or ref; ex, ey, ez = face(P.spot, mount, tilt) if patch else (np.array([1.0, 0, 0]), np.array([0, 1.0, 0]), np.array([0, 0, 1.0]))
     Rw = R[:, :1] * ex + R[:, 1:2] * ey + R[:, 2:3] * ez; M = len(R)
     pol = P.cj[:, 0] * (P.th @ ez) + P.cj[:, 1] * (P.ph @ ez)                   # 안테나는 배열의 세로축 편파
     g = np.clip(P.d @ ey, 0.0, None) if patch else np.ones(len(P.d))           # 패치: 앞쪽 반구, 세기 무늬 cos^2
@@ -272,10 +276,13 @@ def _trial(args):
         AIM = np.array([seats_xy[:, 0].mean(), seats_xy[:, 1].mean() + 0.2, 0.9])
     if len(empty) >= len(seats_xy):
         empty = set()
-    while True:
-        seat = int(rng.integers(len(seats_xy)))
-        if seat not in empty:
-            break
+    if opt.get("bal"):                                                          # 자리마다 같은 수의 카메라: 씨앗 차례로 자리를 돈다 (place_study)
+        seat = (seed - int(opt.get("bal0", 0))) % len(seats_xy)
+    else:
+        while True:
+            seat = int(rng.integers(len(seats_xy)))
+            if seat not in empty:
+                break
     c = seat * 4 + int(rng.choice(KIND[kind])); u = rng.normal(size=3); u /= np.linalg.norm(u)
     seats = [dict(id=str(k), x=float(x), y=float(y) + 0.225) for k, (x, y) in enumerate(seats_xy)]; pts = Points(seats); S = len(D["spots"])
     if recv.startswith("ap:"):                                                  # 칠판 테두리 배열: 설치 한 번이 '한 곳'
@@ -294,9 +301,9 @@ def _trial(args):
             da = (az(d) - az(t) - ea + 180) % 360 - 180; de = el(d) - el(t) - ee
             sc[s] = -0.5 * (da * np.cos(np.radians(el(t))) / sig) ** 2 - (0 if az_only else 0.5 * (de / sig) ** 2)
         else:
-            nm, _, img = recv.partition("+"); music = nm.endswith("m"); nm = nm[:-1] if music else nm; holo = nm.endswith("h"); nm = nm[:-1] if holo else nm
+            nm, _, img = recv.partition("+"); music = nm.endswith("m"); nm = nm[:-1] if music else nm; holo = nm.endswith("h"); nm = nm[:-1] if holo else nm; ref = nm.endswith("r"); nm = nm[:-1] if ref else nm
             H, Rw, bore = array_snap(r2, P, nm, npk=opt.get("npk", 20), dur=opt.get("dur", 0.5), tv=opt.get("tv", 1.0), snr=opt.get("snr", 30.0), holo=holo,
-                                     mount=opt.get("mount", "aim"), tilt=opt.get("tilt", 0.0), imp=opt.get("imp"))
+                                     mount=opt.get("mount", "aim"), tilt=opt.get("tilt", 0.0), imp=opt.get("imp"), ref=ref)
             spot, Rw, bore = pose_err(r2, spot, Rw, bore, opt.get("pos_sd", 0.0), opt.get("yaw_sd", 0.0), opt.get("tilt_sd", 0.0))
             sc[s] = array_score(H, Rw, bore, spot, pts.X, opt.get("neff", 12.0), music, img)
             if want_b:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""detect.py 의 5GHz 채널 고르기 검사: iw phy 출력 읽기, 바퀴마다 훑을 채널 (docs/의심 점수.md 8절).   python3 tests/test_band.py"""
+"""detect.py 의 5GHz 채널 고르기 검사: iw phy 출력 읽기, 바퀴마다 훑을 채널 (ai 저장소의 docs/의심 점수.md 8절).   python3 tests/test_band.py"""
 import os, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, os.path.join(HERE, "..", "pi"))
 import detect as D

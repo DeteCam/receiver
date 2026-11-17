@@ -406,7 +406,7 @@ class Node(object):
                 self.tracker.walked(mac, r["verdict"])
         return " / ".join(msgs)
 
-    # ---- 점검: 버튼 하나로 감시하며 기기마다 의심 점수를 매긴다 (core/score.py, docs/의심 점수.md)
+    # ---- 점검: 버튼 하나로 감시하며 기기마다 의심 점수를 매긴다 (core/score.py, ai 저장소의 docs/의심 점수.md)
     def do_watch(self, channels=None, minutes=None, walk=True, cycle=None):
         """처음 한 바퀴가 기준선. 그 뒤 '멈춤'을 누를 때까지 (또는 minutes 분) 채널을 돌며 듣고 점수를 고친다.
         의심 기기가 둘 이상 애매하면 그때만 '걸으며 확인'을 한다 (walk=False 면 하지 않는다: 시험장처럼 사람이 걸을 수 없는 곳).

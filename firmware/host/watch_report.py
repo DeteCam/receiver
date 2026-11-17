@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """점검 기록 읽기: 수신기가 남긴 점검 기록(~/detecam/data/watch_*.jsonl, 바퀴마다의 탐지 표)을 core/score.py 로 다시 계산해
-실험 S1~S5 (docs/의심 점수.md 10절)의 숫자를 낸다. 점수 규칙을 고친 뒤 같은 기록으로 다시 돌려 견줄 수 있다.
+실험 S1~S5 (ai 저장소의 docs/의심 점수.md 10절)의 숫자를 낸다. 점수 규칙을 고친 뒤 같은 기록으로 다시 돌려 견줄 수 있다.
 
   python3 watch_report.py 기록.jsonl [--camera 주소 ...] [--hub 주소 ...] [--mine 주소 ...] [--ignore-walk]
 

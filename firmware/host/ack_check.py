@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """S4 응답 유도 실험 읽기: 주소 필터 없이 받은 nexmon CSI 기록에서 '응답 프레임(ACK)의 CSI'를 세고, 누가 보낸 것인지 가리고,
-판을 손으로 돌린 기록이 있으면 응답 프레임만으로도 골이 같은 곳에 생기는지 본다 (docs/의심 점수.md 10절 S4).
+판을 손으로 돌린 기록이 있으면 응답 프레임만으로도 골이 같은 곳에 생기는지 본다 (ai 저장소의 docs/의심 점수.md 10절 S4).
 
   python3 ack_check.py 폴더 --cam 카메라주소 --peer 상대주소 [--truth 각도]
   python3 ack_check.py csi.pcap --cam 카메라주소 --peer 상대주소

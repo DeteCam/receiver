@@ -420,7 +420,7 @@
    "up": -20.0
   },
   {
-   "name": "ESP32 (XIAO ESP32-C3, 핀 머리)",
+   "name": "ESP32 (XIAO ESP32-C5, 핀 머리)",
    "g": 4.0,
    "back": 0.4,
    "up": 26.5
@@ -716,7 +716,7 @@
    ]
   },
   {
-   "name": "ESP32 (XIAO ESP32-C3, 핀 머리)",
+   "name": "ESP32 (XIAO ESP32-C5, 핀 머리)",
    "g": 4.0,
    "c": [
     -23.4,

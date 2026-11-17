@@ -291,8 +291,8 @@ if "4" in WANT:
     SL = slice_summary()["parts"]
     tw = 400
     names = ["01_base_tub_S", "02_base_cover_S", "03_clip", "04_yoke", "05_pinion_fit2", "16_m2_ring", "06_sector_gear", "07_head_shell", "08_head_lid", "09_crown", "15_marker_frame",
-             "10_rotor_bar_fit2", "11_coin_cap", "12_coin_spacer", "13_pin_fit2", "14_pin_keeper", "17_lan_cap", "18_plate_frame", "19_plate_clamp", "20_batt_fill", "21_ant_clip", "22_xiao_cap", "90_test_coupon", "91_driver_check", "01_base_tub_L", "02_base_cover_L", "17_lan_cap_L"]
-    short = {"01_base_tub_S": "받침 통 S", "02_base_cover_S": "받침 덮개 S", "05_pinion_fit2": "작은 기어 10T", "10_rotor_bar_fit2": "회전 막대", "13_pin_fit2": "끄덕임 축 핀",
+             "10_rotor_bar_fit2", "11_coin_cap", "12_coin_spacer", "13_pin_fit2", "14_pin_keeper", "17_lan_cap", "18_plate_frame", "19_plate_clamp", "20_batt_fill", "21_ant_clip", "22_xiao_cap", "23_stand_mount", "90_test_coupon", "91_driver_check", "01_base_tub_L", "02_base_cover_L", "17_lan_cap_L"]
+    short = {"23_stand_mount": "스탠드 받이 (선택)", "01_base_tub_S": "받침 통 S", "02_base_cover_S": "받침 덮개 S", "05_pinion_fit2": "작은 기어 10T", "10_rotor_bar_fit2": "회전 막대", "13_pin_fit2": "끄덕임 축 핀",
              "01_base_tub_L": "받침 통 L (선택)", "02_base_cover_L": "받침 덮개 L (선택)", "11_coin_cap": "균형추 통 마개", "12_coin_spacer": "동전 채움 조각", "20_batt_fill": "배터리 채움 조각", "14_pin_keeper": "핀 막이", "21_ant_clip": "안테나 누름판", "22_xiao_cap": "ESP32 막음쇠",
              "15_marker_frame": "마커 틀", "18_plate_frame": "판 틀", "19_plate_clamp": "판 누름쇠", "91_driver_check": "보드 구멍 맞춤 판", "04_yoke": "요크", "17_lan_cap": "랜선 홈 마개 S", "17_lan_cap_L": "랜선 홈 마개 L (선택)"}
     spec = {s[0]: s for s in E.SPEC}
@@ -425,7 +425,7 @@ if "6" in WANT:
     by = by + bh2 + 16; bh3 = 240
     d.rounded_rectangle([bx, by, bx + bw_, by + bh3], 18, outline=CE, width=5, fill="#FFFFFF")
     d.ellipse([bx + 24, by + 22, bx + 50, by + 48], fill=CE)
-    d.text((bx + 64, by + 35), "ESP32 · XIAO ESP32-C3", font=font(30, True), fill=INK, anchor="lm")
+    d.text((bx + 64, by + 35), "ESP32 · XIAO ESP32-C5", font=font(30, True), fill=INK, anchor="lm")
     for i, (lab, txt) in enumerate((("5V", "←  2번 핀 (5V)  · 둘로 나눈 선"), ("GND", "←  9번 핀 (GND)"), ("D6 (TX)", "→  10번 핀 (GPIO15, 파이 RX)"), ("D7 (RX)", "←  8번 핀 (GPIO14, 파이 TX)"))):
         ty = by + 82 + i * 32
         d.text((bx + 30, ty), lab, font=font(24, True), fill=INK, anchor="lm"); d.text((bx + 190, ty), txt, font=font(24), fill=INK, anchor="lm")
@@ -541,6 +541,9 @@ if "7" in WANT:
         hm(total_s), total_g, total_g / 10), font=font(27), fill=INK)
     d.text((40, h + 372), "큰 받침(L, 지름 19cm. 잘 안 넘어진다)을 쓰면 1판 대신 통 %s · %.0f g + 덮개 %s · %.0f g 두 판을 뽑는다 (L 용 홈 마개는 덮개 판에 같이 있다). 알루미늄 판, 나사·너트, 100원 동전은 사는 것." % (
         hm(L["sec"]), L["g"], hm(LC["sec"]), LC["g"]), font=font(27), fill=SUB)
+    SM = SUMM.get("선택_스탠드받이")
+    if SM:
+        d.text((40, h + 406), "시험장에서 스탠드 위에 올릴 때는 선택 판 '스탠드 받이'(채움 100%%)를 더 뽑는다: %s · %.0f g." % (hm(SM["sec"]), SM["g"]), font=font(27), fill=SUB)
     sheet.save(OUT + '08_출력판_나누기.png')
     json.dump(dict(plates=[dict(key=k, title=t, files=[it[0] for it in SUMM[k]["items"]], sec=SUMM[k]["sec"], g=SUMM[k]["g"]) for k, t, w in main], total_sec=total_s, total_g=round(total_g, 1),
                    optional=[dict(key=k, sec=SUMM[k]["sec"], g=SUMM[k]["g"]) for k in ("선택_받침통_L", "선택_받침덮개_L")], slicer="Bambu Studio 2.5.1"),

@@ -23,7 +23,9 @@ HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, "stu
 FIVE = (0, 1, 2, 3, 4)
 COMBOS = [("가운데에서 한 쪽만 (창 쪽)", (0,)), ("가운데에 서서 다섯 쪽으로 돌림", FIVE), ("다섯 쪽 + 창턱", FIVE + (6,)), ("다섯 쪽 + 현관 통로", FIVE + (10,)), ("다섯 쪽 + 창턱 + 현관 통로", FIVE + (6, 10)),
           ("책상 위 한 곳 (고정)", (5,)), ("책상 위 + 창턱 (고정 둘)", (5, 6)), ("창턱 + 현관문 안쪽 (고정 둘)", (6, 7)), ("책상 위 + 창턱 + 현관문 안쪽 (고정 셋)", (5, 6, 7)),
-          ("욕실 문 앞에서 한 번", (8,)), ("욕실 안에서 한 번", (9,)), ("욕실 문 앞 + 욕실 안", (8, 9)), ("네 자리 모두 (가운데·창턱·현관 통로·욕실 안)", FIVE + (6, 10, 9))]
+          ("욕실 문 앞에서 한 번", (8,)), ("욕실 안에서 한 번", (9,)), ("욕실 문 앞 + 욕실 안", (8, 9)), ("네 자리 모두 (가운데·창턱·현관 통로·욕실 안)", FIVE + (6, 10, 9)),
+          ("구석 하나 (창-침대 쪽)", (11,)), ("마주 보는 구석 둘 (창-침대 + 현관-옷장)", (11, 13)), ("마주 보는 구석 둘 (창-책상 + 욕실벽-침대)", (12, 14)),
+          ("창 쪽 구석 둘 (창-침대 + 창-책상)", (11, 12)), ("구석 넷", (11, 12, 13, 14)), ("구석 둘 + 욕실 안", (11, 13, 9))]
 _G = {}
 
 
@@ -113,6 +115,8 @@ def table(a):
     print("%-34s %-6s %5s %5s %6s %6s %6s %7s" % ("재는 곳", "대상", "가운데", "80%", "30cm안", "50cm안", "1m안", "후보3 50cm"))
     E = {}
     for nm, combo in COMBOS:
+        if max(combo) >= SC.shape[1]:
+            continue                                          # 이 묶음에는 없는 곳 (구석은 room_c_* 에만)
         e = np.zeros(n); e3 = np.zeros(n); est = np.zeros((n, 3))
         for i in range(n):
             p1, p3 = estimate(SC[i], X, combo, pw=PW[i], mode=a.fuse); e[i] = np.linalg.norm(p1 - cams[i]); e3[i] = np.linalg.norm(p3 - cams[i], axis=1).min(); est[i] = p1
@@ -143,7 +147,7 @@ def table(a):
             e = E[s][0][m]; row.append("%4.2f / %3.0f%%" % (np.median(e), 100 * (e <= 0.5).mean())); out["by_cat"].setdefault(cn, {})[s] = dict(median=float(np.median(e)), in50=float((e <= 0.5).mean()))
         print("%-34s " % cn[:34] + " | ".join("%-20s" % r for r in row))
     json.dump(out, open(os.path.join(OUT, "room_%s.json" % sfx), "w"), ensure_ascii=False, indent=1)
-    np.savez_compressed(os.path.join(OUT, "room_est_%s.npz" % sfx), cams=cams, cat=cat, **{"e%d" % i: E[nm][0] for i, (nm, _) in enumerate(COMBOS)}, **{"p%d" % i: E[nm][1] for i, (nm, _) in enumerate(COMBOS)})
+    np.savez_compressed(os.path.join(OUT, "room_est_%s.npz" % sfx), cams=cams, cat=cat, **{"e%d" % i: E[nm][0] for i, (nm, _) in enumerate(COMBOS) if nm in E}, **{"p%d" % i: E[nm][1] for i, (nm, _) in enumerate(COMBOS) if nm in E})
 
 
 if __name__ == "__main__":

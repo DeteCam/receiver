@@ -42,7 +42,8 @@ def collect():
     if F:
         out["final"] = F
         out["curve"] = {}
-        for tag in ("c32", "r32", "x16", "n16", "o0", "o30", "oa", "q16", "w16", "w16r"):
+        for tag in ("c32", "r32", "x16", "n16", "o0", "o30", "oa", "q16", "w16", "w16r",          # 두 대역 한 판 (다른 방법 검토 5.5)
+                    "d24p375", "d24p33", "d24p289", "d24p55", "d5p375", "d5p33", "d5p55", "e58p375", "e58p33", "e58p289", "e58p258"):
             C = _j("place_%s_curve.json" % tag)
             if C:                                                        # 배치 이름마다 (같은 조합이 두 이름에 들 수 있다)
                 out["curve"][tag] = {key: {k: slim(m) for k, m in C["combos"][",".join(map(str, loc))].items()}

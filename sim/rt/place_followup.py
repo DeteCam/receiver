@@ -9,9 +9,13 @@
 5) 나쁜 것이 모두 겹친 패널 (이득 1 dB, 위상 단계 20도, 세기 튀기, 8비트)          -> study/place_x16_curve.json
 6) 5G (3.55 GHz) 휴대폰을 3.5 GHz 패널(4x4, 반 파장)과 2채널 수신기로             -> study/place_n16_curve.json
 7) 벽 패널을 거는 각도 (경첩 0도·30도 숙이기, 한가운데를 똑바로)                     -> study/place_o0/o30/oa_curve.json
-9) 패널 하나만 걸면: c32 의 순간 1~16 에서 곳마다 사진 1장(평균)과 16장                -> study/place_single.json
 8) 5 GHz Wi-Fi 카메라 (36번 채널 5.18 GHz)를 5 GHz 패널(4x4, 반 파장 28.9 mm)로: 세기 네 단계(h), 수신 체인 둘(r)
                                                                               -> study/place_w16_curve.json, place_w16r_curve.json
+9) 패널 하나만 걸면: c32 의 순간 1~16 에서 곳마다 사진 1장(평균)과 16장                -> study/place_single.json
+10) 두 대역을 한 판으로: 같은 간격(37.5 / 33 / 28.9 mm)의 4x4 와 28.9 mm 5x5 를 2.4 GHz 와 5.18 GHz 에서 (세기 네 단계)
+                                                                              -> study/place_d24p*_curve.json, place_d5p*_curve.json
+11) 같은 판을 5 GHz 윗끝(5.8 GHz, 157~161번 채널 사이)에서: 간격이 반 파장(25.8 mm)보다 넓으면 생기는 가짜 방향(격자 엽)이 가장 센 곳
+                                                                              -> study/place_e58p*_curve.json
 """
 import os, sys, json, subprocess, time
 import numpy as np
@@ -164,12 +168,37 @@ def step_single(fin):
     log("패널 하나", {v["name"]: round(100 * v["k16"]["exact"]) for v in out.values()})
 
 
+def step_dual(fin):
+    runs = (("d24p289", None, "ura4x4p28.9h"), ("d5p375", "5.18e9", "ura4x4p37.5h"), ("d24p375", None, "ura4x4p37.5h"),
+            ("d24p55", None, "ura5x5p28.9h"), ("d5p55", "5.18e9", "ura5x5p28.9h"), ("d24p33", None, "ura4x4p33h"), ("d5p33", "5.18e9", "ura4x4p33h"))
+    for tag, fc, recv in runs:                                      # 5.18 GHz 의 28.9 mm 4x4 는 5ghz 단계의 w16 이다
+        env = {"DETECAM_FC": fc} if fc else None
+        sets = [("kr40_w5_s%d" if fc else "kr40_cv_s%d") % s for s in range(1, 17)]
+        if not os.path.exists(os.path.join(OUT, "place_%s.npz" % tag)):
+            run([PY, "place_study.py", "measure", "--tag", tag, "--recv", recv, "--sets"] + sets + ["--cams", "400", "--seed0", "60000", "--jobs", JOBS, "--full"], env)
+        run([PY, "place_study.py", "curve", "--tag", tag, "--ks", "1", "4", "16", "--combos"] + combos_local(fin), env)
+
+
+def step_dual58(fin, measure=True):
+    env = {"DETECAM_FC": "5.8e9"}                                   # 37.5 mm 는 0.73 파장, 33 mm 는 0.64 파장
+    for s in range(1, 17):                                          # 사람 자세와 카메라는 5.18 GHz 와 같은 씨앗
+        if not os.path.exists(os.path.join(PATHS, "kr40_w58_s%d.npz" % s)):
+            run([PY, "rt_paths.py", "kr40_w58_s%d" % s, "--spotlist", spotlist(fin), "--seed", str(100 + s), "--jitter", "0.07", "--pose", "1"], env)
+    if not measure:
+        return
+    sets = ["kr40_w58_s%d" % s for s in range(1, 17)]
+    for tag, recv in (("e58p375", "ura4x4p37.5h"), ("e58p289", "ura4x4p28.9h"), ("e58p258", "ura4x4p25.8h"), ("e58p33", "ura4x4p33h")):
+        if not os.path.exists(os.path.join(OUT, "place_%s.npz" % tag)):
+            run([PY, "place_study.py", "measure", "--tag", tag, "--recv", recv, "--sets"] + sets + ["--cams", "400", "--seed0", "60000", "--jobs", JOBS, "--full"], env)
+        run([PY, "place_study.py", "curve", "--tag", tag, "--ks", "1", "4", "16", "--combos"] + combos_local(fin), env)
+
+
 def main():
     cmd = sys.argv[1] if len(sys.argv) > 1 else "all"
     log("# 시작", cmd)
     if cmd in ("all", "validate"):
         step_validate()
-    fin = step_final() if cmd in ("all", "final", "curve", "5g", "orient", "5ghz", "single") else None
+    fin = step_final() if cmd in ("all", "final", "curve", "5g", "orient", "5ghz", "single", "dual", "dual58", "dual58paths") else None
     if cmd in ("all", "curve"):
         step_curve(fin)
     if cmd in ("all", "5g"):
@@ -180,6 +209,10 @@ def main():
         step_5ghz(fin)
     if cmd in ("all", "single"):
         step_single(fin)
+    if cmd in ("all", "dual"):
+        step_dual(fin)
+    if cmd in ("all", "dual58", "dual58paths"):
+        step_dual58(fin, measure=(cmd != "dual58paths"))
     log("FOLLOWDONE", cmd)
 
 

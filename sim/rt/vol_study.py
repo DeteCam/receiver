@@ -25,7 +25,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, "stu
 OLD = os.path.abspath(os.path.join(HERE, "..", "..", "..", "receiver-legacy", "sim", "rt"))
 Q = np.geomspace(0.002, 0.8, 24)                                         # 델타 / (최고 - 가운데값)
 STEP = float(os.environ.get("VOL_STEP", "2"))                         # 방향 격자 간격 (도)
-TAG = "" if STEP == 2.0 else "_d%g" % STEP
+TAG = ("" if STEP == 2.0 else "_d%g" % STEP) + ("" if os.environ.get("VOL_ROTMODE", "full") == "full" else "_" + os.environ["VOL_ROTMODE"])
 
 # ---------- 장면마다: 길 묶음, 칸, 곳, 조합 ----------
 LEC_PLACES = [("앞", (2.5, 1.6, 1.3)), ("가운데", (3.375, 4.85, 1.3)), ("뒤", (3.75, 8.2, 1.3))]
@@ -101,7 +101,24 @@ SC = {
                          ("두 옆벽 가운데 (4.85 m)", {"panel": (2, 3), "plate": (2, 3)}, "모두"),
                          ("넷 모두", {"panel": (2, 3, 4, 5), "plate": (2, 3, 4, 5)}, "모두")]),
 }
-KS = (1, 4, 8)                                                          # exam: 사진 몇 장을 모으나 (패널만. 돌판은 한 번에 110초 이어진 신호가 있어야 해서 1)
+KS = (1, 4, 8)
+ROT = 8                                                                 # panelrot: 받침을 돌려 45도마다 + 천장 쪽 하나
+
+
+ROTMODE = os.environ.get("VOL_ROTMODE", "full")                        # full: 수평 8 + 천장 1, flat: 받침만 돌림(수평 8, 기울임 0), tilt<도>: 받침만 돌림, 위로 기울임
+
+
+def rot_aims(spot):
+    x, y, z = spot
+    if ROTMODE.startswith("tilt"):
+        t = np.tan(np.radians(float(ROTMODE[4:])))
+        A = [(x + 2.0 * np.cos(np.radians(a)), y + 2.0 * np.sin(np.radians(a)), z + 2.0 * t) for a in np.arange(ROT) * 360.0 / ROT]
+        return A + [A[0]]
+    if ROTMODE == "flat":
+        A = [(x + 2.0 * np.cos(np.radians(a)), y + 2.0 * np.sin(np.radians(a)), z) for a in np.arange(ROT) * 360.0 / ROT]
+        return A + [A[0]]
+    A = [(x + 2.0 * np.cos(np.radians(a)), y + 2.0 * np.sin(np.radians(a)), max(z - 0.3, 0.5)) for a in np.arange(ROT) * 360.0 / ROT]
+    return A + [(x + 0.01, y + 0.3, z + 3.0)]                                                          # exam: 사진 몇 장을 모으나 (패널만. 돌판은 한 번에 110초 이어진 신호가 있어야 해서 1)
 
 
 # ---------- 방향 격자 ----------
@@ -148,9 +165,11 @@ def _vox_index(spot):
     return _G["idx"][key]
 
 
-def _panel_dir(D, s, c, u, r2):
+def _panel_dir(D, s, c, u, r2, aim=None):
     import rt_study as S
-    if "aims" in D:
+    if aim is not None:
+        S.AIM = np.asarray(aim, float)
+    elif "aims" in D:
         S.AIM = D["aims"][s].astype(float)
     else:
         S.AIM = np.array([3.75, 4.85, 0.9])
@@ -222,13 +241,21 @@ def _metrics(t, cam, seats=None, seat_true=None):
 
 
 def _trial(args):
-    scene, dev, c, rep = args; cfg = SC[scene]; spots = cfg[dev]; sets = cfg["sets"][: (cfg["k"] if dev == "panel" else 1)] if scene == "exam" else [cfg["sets"][c[0]]]
+    scene, dev, c, rep = args; cfg = SC[scene]; spots = cfg["plate" if dev == "panelrot" else dev]; sets = cfg["sets"][: (cfg["k"] if dev.startswith("panel") else 1)] if scene == "exam" else [cfg["sets"][c[0]]]
     cam_i = c[1] if scene != "exam" else c; seed = 7000 + 97 * (cam_i if scene == "exam" else c[0] * 1000 + c[1]) + rep
     rng = np.random.default_rng(seed); u = rng.normal(size=3); u /= np.linalg.norm(u)
     per_set = []
     for name in sets:
         D = _load(name); vox = {}; pw = {}
         for s in spots:
+            if dev == "panelrot":
+                sp = D["spots"][s].astype(float)
+                for k, aim in enumerate(rot_aims(sp)):
+                    r2 = np.random.default_rng([seed, s, k, len(per_set)])
+                    v, p, _ = _panel_dir(D, s, cam_i, u, r2, aim)
+                    if v is None: continue
+                    vox[s * 100 + k] = v[_vox_index(sp)]; pw[s * 100 + k] = p
+                continue
             r2 = np.random.default_rng([seed, s, len(per_set)])
             v, p, _ = (_panel_dir if dev == "panel" else _plate_dir)(D, s, cam_i, u, r2)
             if v is None: continue
@@ -239,10 +266,13 @@ def _trial(args):
     if scene == "exam":
         seats = D0["seats"] + np.array([0.0, 0.225]); seat_true = cam_i // 4
     for nm, combos, _ in cfg["combos"]:
-        combo = combos[dev]
-        ks = KS if (scene == "exam" and dev == "panel") else (1,)
+        if dev == "panelrot":
+            combo = tuple(s * 100 + k for s in combos["plate"] for k in range(ROT + 1)); groups = [tuple(s * 100 + k for k in range(ROT + 1)) for s in combos["plate"]]
+        else:
+            combo = combos[dev]; groups = cfg["groups"]
+        ks = KS if (scene == "exam" and dev.startswith("panel")) else (1,)
         for K_ in ks:
-            t = sum(_fuse(vx, p, combo, cfg["groups"]) for vx, p in per_set[:K_])
+            t = sum(_fuse(vx, p, combo, groups) for vx, p in per_set[:K_])
             out[(nm, K_)] = _metrics(t, cam, seats, seat_true)
     return out
 
@@ -294,13 +324,13 @@ def table(a):
     if a.scene == "exam":
         hdr += " %6s %6s %6s" % ("자리", "옆자리", "3자리")
     print(hdr)
-    for dev in ("panel", "plate"):
+    for dev in ("panel", "panelrot", "plate"):
         f = os.path.join(OUT, "vol_%s_%s%s.npz" % (a.scene, dev, TAG))
         if not os.path.exists(f):
             continue
         Z = np.load(f); cats = [str(c) for c in Z["cats"]]; cat = Z["cat"]; room_m, bath_m = _bath_mask(a.scene, cats, cat)
         for nm, _, tgt in cfg["combos"]:
-            for K_ in (KS if (a.scene == "exam" and dev == "panel") else (1,)):
+            for K_ in (KS if (a.scene == "exam" and dev.startswith("panel")) else (1,)):
                 key = "%s|%d" % (nm, K_)
                 if key + "__gap" not in Z.files:
                     continue
@@ -313,7 +343,7 @@ def table(a):
                     r = dict(name=nm, dev=dev, target=lab, k=K_, n=int(m.sum()), q=float(Q[k]), cover=float(cov[k]), ext=float(np.median(ext[m, k])), ext80=float(np.percentile(ext[m, k], 80)),
                              vol_l=float(np.median(vol[m, k]) * 1000), e1=float(np.median(e1[m])), in50=float((e1[m] <= 0.5).mean()), top3=float((e3[m] <= 0.5).mean()),
                              cover_by_q=cov.tolist(), ext_by_q=np.median(ext[m], 0).tolist())
-                    line = "%-34s %-5s %-4s %6d %8.2f %8.0f %6.2f %6.0f%% %6.0f%%" % (nm[:34], "패널" if dev == "panel" else "돌판", lab, K_, r["ext"], r["vol_l"], r["e1"], 100 * r["in50"], 100 * r["top3"])
+                    line = "%-34s %-5s %-4s %6d %8.2f %8.0f %6.2f %6.0f%% %6.0f%%" % (nm[:34], {"panel": "패널", "panelrot": "돌림", "plate": "돌판"}[dev], lab, K_, r["ext"], r["vol_l"], r["e1"], 100 * r["in50"], 100 * r["top3"])
                     if a.scene == "exam":
                         for f_ in ("seat1", "seat_nb", "seat3"):
                             r[f_] = float(Z[key + "__" + f_][m].mean())
@@ -321,7 +351,7 @@ def table(a):
                     print(line); out["rows"].append(r)
     # 숨긴 곳마다 (가장 많이 쓰는 조합: 둘째 조합, 사진 1장)
     nm = cfg["combos"][1 if a.scene != "exam" else 0][0]; print("\n-- 숨긴 곳마다: %s (최고점 오차 가운데값 m / 50 cm 안)" % nm); out["by_cat"] = {}
-    for dev in ("panel", "plate"):
+    for dev in ("panel", "panelrot", "plate"):
         f = os.path.join(OUT, "vol_%s_%s%s.npz" % (a.scene, dev, TAG))
         if not os.path.exists(f):
             continue
@@ -331,7 +361,7 @@ def table(a):
             if m.any():
                 out["by_cat"].setdefault(cn, {})[dev] = dict(e1=float(np.median(e1[m])), in50=float((e1[m] <= 0.5).mean()))
     for cn, d in out["by_cat"].items():
-        print("%-34s " % cn[:34] + " | ".join("%s %4.2f / %3.0f%%" % ("패널" if k == "panel" else "돌판", v["e1"], 100 * v["in50"]) for k, v in d.items()))
+        print("%-34s " % cn[:34] + " | ".join("%s %4.2f / %3.0f%%" % ({"panel": "패널", "panelrot": "돌림", "plate": "돌판"}[k], v["e1"], 100 * v["in50"]) for k, v in d.items()))
     json.dump(out, open(os.path.join(OUT, "vol_%s%s.json" % (a.scene, TAG)), "w"), ensure_ascii=False, indent=1)
 
 
@@ -370,7 +400,7 @@ def paths(a):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("cmd"); ap.add_argument("--scene", required=True, choices=list(SC)); ap.add_argument("--dev", default="panel", choices=["panel", "plate"])
+    ap = argparse.ArgumentParser(); ap.add_argument("cmd"); ap.add_argument("--scene", required=True, choices=list(SC)); ap.add_argument("--dev", default="panel", choices=["panel", "plate", "panelrot"])
     ap.add_argument("--jobs", type=int, default=max(1, (os.cpu_count() or 2) - 1)); ap.add_argument("--rep", type=int, default=1); ap.add_argument("--ncam", type=int, default=0)
     a = ap.parse_args(); {"measure": measure, "table": table, "paths": paths}[a.cmd](a)
 

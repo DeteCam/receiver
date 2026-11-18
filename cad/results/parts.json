@@ -7,15 +7,15 @@
   "infill": 15,
   "size": [
    164.8,
-   224.8,
-   27.6
+   214.8,
+   44.5
   ],
-  "volume_cm3": 171.1,
+  "volume_cm3": 197.3,
   "watertight": true,
-  "faces": 4172,
+  "faces": 4594,
   "bodies": 1,
-  "overhang_mm2": 256,
-  "flat_overhang_mm2": 252,
+  "overhang_mm2": 513,
+  "flat_overhang_mm2": 508,
   "ok": true
  },
  {
@@ -26,12 +26,12 @@
   "infill": 15,
   "size": [
    164.8,
-   224.8,
+   214.8,
    4.2
   ],
-  "volume_cm3": 62.0,
+  "volume_cm3": 63.5,
   "watertight": true,
-  "faces": 3078,
+  "faces": 3082,
   "bodies": 1,
   "overhang_mm2": 127,
   "flat_overhang_mm2": 127,
@@ -63,11 +63,11 @@
   "pick": "창턱·교탁·사물함 위에 세우거나 삼각대에 올리는 패널에 (걸이판 대신). 옆으로 눕혀서",
   "infill": 15,
   "size": [
-   125.6,
-   99.7,
+   142.5,
+   94.7,
    80.0
   ],
-  "volume_cm3": 89.7,
+  "volume_cm3": 93.5,
   "watertight": true,
   "faces": 388,
   "bodies": 1,
@@ -149,6 +149,82 @@
   "bodies": 1,
   "overhang_mm2": 84,
   "flat_overhang_mm2": 84,
+  "ok": true
+ },
+ {
+  "file": "09_ant_plate.stl",
+  "ko": "안테나 받침판",
+  "qty": 2,
+  "pick": "패널 하나에 1개. 앞면을 바닥에 (다리가 위로), 받침 없이",
+  "infill": 15,
+  "size": [
+   140.0,
+   140.0,
+   17.5
+  ],
+  "volume_cm3": 39.9,
+  "watertight": true,
+  "faces": 3560,
+  "bodies": 1,
+  "overhang_mm2": 836,
+  "flat_overhang_mm2": 836,
+  "ok": true
+ },
+ {
+  "file": "10_turn_base.stl",
+  "ko": "회전 받침 받침대",
+  "qty": 1,
+  "pick": "숙소용. 밑면을 바닥에 (모터 칸이 위로)",
+  "infill": 15,
+  "size": [
+   110.0,
+   110.0,
+   36.0
+  ],
+  "volume_cm3": 319.7,
+  "watertight": true,
+  "faces": 1586,
+  "bodies": 1,
+  "overhang_mm2": 330,
+  "flat_overhang_mm2": 330,
+  "ok": true
+ },
+ {
+  "file": "11_turn_top.stl",
+  "ko": "회전 받침 돌림판",
+  "qty": 1,
+  "pick": "숙소용. 밑면을 바닥에 (기운 받침이 위로)",
+  "infill": 15,
+  "size": [
+   104.0,
+   109.0,
+   49.2
+  ],
+  "volume_cm3": 263.4,
+  "watertight": true,
+  "faces": 768,
+  "bodies": 1,
+  "overhang_mm2": 272,
+  "flat_overhang_mm2": 198,
+  "ok": true
+ },
+ {
+  "file": "12_turn_hub.stl",
+  "ko": "회전 받침 축 이음쇠",
+  "qty": 1,
+  "pick": "숙소용. 모터 축 ↔ 돌림판. 세워서",
+  "infill": 15,
+  "size": [
+   14.0,
+   16.2,
+   10.9
+  ],
+  "volume_cm3": 1.7,
+  "watertight": true,
+  "faces": 92,
+  "bodies": 1,
+  "overhang_mm2": 15,
+  "flat_overhang_mm2": 15,
   "ok": true
  }
 ]

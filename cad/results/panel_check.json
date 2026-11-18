@@ -1,10 +1,10 @@
 {
  "overlaps": [],
  "gaps": {
-  "board_side": 0.4,
-  "board_seat_width": 2.5,
-  "patch_to_cover": 3.0,
-  "behind_board": 16.0,
+  "plate_side": 10.0,
+  "antenna_to_cover": 3.0,
+  "antenna_to_reflector": 17.5,
+  "behind_reflector": 24.0,
   "xiao_side": 0.25,
   "cell_fence": 0.3,
   "usb_window": [
@@ -18,12 +18,12 @@
  "sizes": {
   "tray": [
    164.8,
-   224.8,
-   27.6
+   214.8,
+   44.5
   ],
   "bezel": [
    164.8,
-   224.8,
+   214.8,
    4.2
   ],
   "mount_plate": [
@@ -33,8 +33,8 @@
   ],
   "foot": [
    80.0,
-   99.7,
-   125.6
+   94.7,
+   142.5
   ],
   "hub_box": [
    164.8,
@@ -48,8 +48,8 @@
   ],
   "panel_with_plate": [
    164.8,
-   224.8,
-   37.8
+   214.8,
+   54.7
   ],
   "hub": [
    164.8,
@@ -59,19 +59,31 @@
  },
  "problems": [],
  "mass_g": {
-  "panel_with_plate": 638,
-  "panel_with_foot": 634,
-  "printed_panel": 285
+  "panel_with_plate": 783,
+  "panel_with_foot": 779,
+  "printed_panel": 329
  },
  "centre_mm": [
-  -2.7,
-  -14.1,
-  -10.4
+  -2.2,
+  -12.3,
+  -18.8
  ],
  "tip_deg": {
-  "forward": 19.3,
-  "backward": 39.5,
-  "sideways": 20.5
+  "forward": 23.3,
+  "backward": 42.8,
+  "sideways": 20.8
+ },
+ "turntable_overlaps": [],
+ "turntable": {
+  "mass_g": 1060,
+  "centre_mm": [
+   1.4,
+   2.3,
+   110.0
+  ],
+  "offset_from_axis_mm": 2.7,
+  "base_radius_mm": 55.0,
+  "tip_deg_worst": 19.7
  },
  "magnet": {
   "count": 4,
@@ -85,10 +97,10 @@
    1.2,
    1.8
   ],
-  "panel_kg": 0.64,
+  "panel_kg": 0.78,
   "margin": [
-   1.9,
-   2.8
+   1.5,
+   2.3
   ],
   "note": "당기는 힘과 마찰은 어림값이다. 실물에서 잰다"
  }

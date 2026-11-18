@@ -38,8 +38,10 @@ PLATES = {
     "3판_걸이판_선반": ("자석 걸이판 2개와 허브 선반", 15, [("03_mount_plate", 61.0, 88.0, 0), ("03_mount_plate", 177.0, 88.0, 0), ("07_hub_deck", 128.0, 200.0, 0)]),
     "4판_받침발_허브뚜껑": ("받침 발(옆으로 눕혀서)과 허브 뚜껑(겉면을 바닥에)", 15, [("08_hub_lid", 128.0, 68.0, 0), ("04_foot", 128.0, 168.0, 0)]),
     "5판_허브통": ("허브 통", 15, [("06_hub_box", 128.0, 132.0, 0)]),
+    "6판_안테나받침판": ("안테나 받침판 1개. 패널이 둘이면 두 번 뽑는다. 앞면을 바닥에", 15, [("09_ant_plate", 128.0, 136.0, 0)]),
+    "7판_회전받침": ("숙소용 회전 받침: 받침대, 돌림판, 축 이음쇠", 15, [("10_turn_base", 70.0, 128.0, 0), ("11_turn_top", 186.0, 128.0, 0), ("12_turn_hub", 70.0, 210.0, 0)]),
 }
-ORDER = ["1판_패널통", "2판_패널앞덮개", "3판_걸이판_선반", "4판_받침발_허브뚜껑", "5판_허브통"]
+ORDER = ["1판_패널통", "2판_패널앞덮개", "3판_걸이판_선반", "4판_받침발_허브뚜껑", "5판_허브통", "6판_안테나받침판", "7판_회전받침"]
 FULL = ("__none__",)                                                # 채움 100% 로 뽑는 부품은 없다
 
 
@@ -212,7 +214,10 @@ def slice_plate(name, infill, items, stl_dir, out, keep=True):
                features=f["features"], settings=st, placed=placed, extent=f["extent"], gap_min=gap_min, edge_min=edge_min, notices=[w[0] for w in warns], printer_model_id=model_id, problems=probs)
     if keep:
         shutil.copy(proj, os.path.join(out, "project", name + ".3mf")); shutil.copy(gc, os.path.join(out, "gcode", name + ".gcode.3mf"))
-        open(os.path.join(out, "preview", name + ".png"), "wb").write(z.read("Metadata/plate_%d.png" % i))
+        try:                                                   # 미리보기 그림은 화면(OpenGL)이 있을 때만 생긴다
+            open(os.path.join(out, "preview", name + ".png"), "wb").write(z.read("Metadata/plate_%d.png" % i))
+        except KeyError:
+            print("  (미리보기 그림 없음: %s)" % name)
         try:
             open(os.path.join(out, "preview", name + "_위에서.png"), "wb").write(z.read("Metadata/top_%d.png" % i))
         except KeyError:

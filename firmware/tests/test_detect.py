@@ -122,6 +122,8 @@ def main(save=False):
     ap = R[(AP1, "ap")]; assert ap["candidate"] and ap["mean_len"] == 1400 and "공유기" in ap["note"], ap
     ph = R[(PHONE, "sta")]; assert not ph["candidate"] and ph["random"] and ph["ch"] == 11 and ph["mean_len"] == 150, ph
     far = R[(FAR, "sta")]; assert far["candidate"] and far["weak"] and far["ch"] == 1, far
+    assert cam["locate"] and far["locate"] and ph["locate"], "2.4GHz 기기는 위치를 잰다"
+    assert D.LOCATE_CH == tuple(range(1, 14)) and 36 not in D.LOCATE_CH and 149 not in D.LOCATE_CH, "5GHz 는 위치를 재지 않는다"
     assert [r["mac"] for r in rows if r["candidate"] and r["role"] == "sta"] == [CAM, FAR]
     # 3) 판별에 쓰는 '한 기기가 보낸 것' 뽑기
     tt, nn = D.sent_by(fr, CAM); f6 = [h for h in hops if h[3] == "focus" and h[2] == 6][0]

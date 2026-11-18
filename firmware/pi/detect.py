@@ -38,6 +38,7 @@ SNAP = 200                     # 프레임 앞부분만 받는다 (길이는 pca
 SETTLE = 0.12                  # 채널을 바꾼 뒤 자리 잡는 시간 (초)
 MON_OK = ("rt2800usb", "mt7601u", "ath9k_htc", "mt76x0u", "mt76x2u")        # 모니터 모드가 된다고 알려진 드라이버 (파이 커널 5.4 에 모듈로 들어 있다)
 MON_BAD = ("rtl8192cu", "rtl8xxxu", "r8188eu", "8192cu", "r8712u", "brcmfmac")
+LOCATE_CH = tuple(range(1, 14))                     # 패널의 안테나 판(2.4 GHz 용)으로 위치를 잴 수 있는 채널. 5 GHz 기기는 탐지만 한다 (core/panel.py 의 can_locate 와 같게)
 LINK_NAME, MON_NAME = "wlink0", "wmon0"       # link_setup.sh 가 붙이는 이름
 PCAP = "/tmp/detecam_mon.pcap"
 
@@ -222,7 +223,10 @@ def analyse(frames, hops=None, beacons=True):
         if m[0] & 2:
             note.append("임의 주소 (폰·노트북에 많다)")
         seen.add(mac)
-        rows.append(dict(mac=mac_str(mac), role=role, bssid=mac_str(bssid), ssid=ssid, ch=int(apch or ch or 0), n=int(n), per_s=round(per_s, 1), kbps=round(tot * 8 / dur / 1000.0, 1),
+        chn = int(apch or ch or 0)
+        if chn > 14:
+            note.append("5GHz: 위치는 재지 않는다 (판이 2.4GHz 용)")
+        rows.append(dict(mac=mac_str(mac), role=role, bssid=mac_str(bssid), ssid=ssid, ch=chn, locate=chn in LOCATE_CH, n=int(n), per_s=round(per_s, 1), kbps=round(tot * 8 / dur / 1000.0, 1),
                          mean_len=int(round(mean)), rssi=None if rssi is None else round(rssi, 1), candidate=bool(cand), weak=bool(rssi is not None and rssi < WEAK_RSSI),
                          random=bool(m[0] & 2), heard=kind, note=" · ".join(note), beacon_only=False, series=series_of(frames, mac, t0, t1)))
     if beacons:
@@ -236,7 +240,7 @@ def analyse(frames, hops=None, beacons=True):
         for bssid, (k, rsum, rn) in bs.items():
             ssid, apch = aps.get(bssid, ("", None)); rssi = round(rsum / rn, 1) if rn else None; m = bytearray(bssid)
             note = ["비컨만 들림"] + (["이름을 숨김"] if ssid == "" else []) + (["임의 주소 (폰 핫스팟에 많다)"] if m[0] & 2 else [])
-            rows.append(dict(mac=mac_str(bssid), role="ap", bssid=mac_str(bssid), ssid=ssid, ch=int(apch or 0), n=0, per_s=0.0, kbps=0.0, mean_len=0, rssi=rssi,
+            rows.append(dict(mac=mac_str(bssid), role="ap", bssid=mac_str(bssid), ssid=ssid, ch=int(apch or 0), locate=int(apch or 0) in LOCATE_CH, n=0, per_s=0.0, kbps=0.0, mean_len=0, rssi=rssi,
                              candidate=False, weak=bool(rssi is not None and rssi < WEAK_RSSI), random=bool(m[0] & 2), heard="beacon", note=" · ".join(note),
                              beacon_only=True, series=[]))
     rows.sort(key=lambda r: (not (r["candidate"] and r["role"] == "sta"), not r["candidate"], r["beacon_only"], -r["kbps"]))

@@ -15,6 +15,29 @@ import numpy as np
 C0 = 299792458.0
 STEPS = np.array([0.0, 90.0, 180.0, 270.0])      # 기준 길의 위상 단계 (도). 실물의 값은 calibrate_steps 로 잰다
 Q_BAD = 0.15                                     # 한 번 잰 것이 통째로 틀릴 가능성 (가려서 돌아온 전파)
+BAND = (2.400e9, 2.4835e9)                       # 안테나 판(CHW1010-ANT2)의 패치와 16갈래 스위치가 받는 대역 (Hz)
+
+
+def ch_freq(ch):
+    """Wi-Fi 채널 번호 -> 가운데 주파수 (Hz). 1~13: 2.4 GHz, 14: 2484 MHz, 32~177: 5 GHz"""
+    ch = int(ch)
+    if 1 <= ch <= 13:
+        return (2407 + 5 * ch) * 1e6
+    if ch == 14:
+        return 2484e6
+    if 32 <= ch <= 177:
+        return (5000 + 5 * ch) * 1e6
+    raise ValueError("모르는 채널: %r" % ch)
+
+
+def can_locate(ch, band=BAND):
+    """이 채널의 기기를 지금 판으로 잴 수 있나. 판이 받지 못하는 대역(5 GHz)의 기기는 재지 않는다:
+    재면 틀린 자리가 그럴듯한 점수와 함께 나온다 (sim/pre/band5_check.py). 채널을 모르면(0, None) 재지 않는다"""
+    try:
+        f = ch_freq(ch)
+    except (TypeError, ValueError):
+        return False
+    return band[0] <= f - 10e6 and f + 10e6 <= band[1] + 1e6
 
 
 def grid(rows=4, cols=4, pitch=0.0375):
@@ -59,9 +82,12 @@ def steer(X, spot, Rw, bore, lam):
     return np.exp(2j * np.pi * d.dot(Rw.T) / lam) * np.clip(d.dot(bore), 0.05, None)[:, None]
 
 
-def score(Z, R, bore, spot, X, fc=2.437e9, neff=12.0, cal=None):
+def score(Z, R, bore, spot, X, fc=2.437e9, neff=12.0, cal=None, band=BAND):
     """후보 점마다의 로그 점수 [N]. Z [안테나, 서브캐리어], R = grid() 의 자리, bore = 패널이 보는 쪽 (방 좌표), spot = 패널 자리.
-    그 방향에서 온다고 볼 때 설명되는 세기의 비율 rho 로 -neff log(1 - rho). cal [안테나] = 안테나마다의 보정 (복소수)"""
+    그 방향에서 온다고 볼 때 설명되는 세기의 비율 rho 로 -neff log(1 - rho). cal [안테나] = 안테나마다의 보정 (복소수)
+    band: 판이 받는 대역. fc 가 그 밖이면 셈하지 않는다 (5 GHz 기기의 위치는 재지 않는다). 다른 판을 계산할 때만 None"""
+    if band is not None and not (band[0] <= fc <= band[1]):
+        raise ValueError("판이 받지 못하는 주파수 %.3f GHz: 위치를 재지 않는다 (판은 %.1f~%.1f MHz 용)" % (fc / 1e9, band[0] / 1e6, band[1] / 1e6))
     ex, ey, ez = axes(bore); Rw = R[:, :1] * ex + R[:, 1:2] * ey + R[:, 2:3] * ez
     Z = np.asarray(Z) if cal is None else np.asarray(Z) / np.asarray(cal)[:, None]
     Rm = Z.dot(Z.conj().T) / Z.shape[1]; a = steer(X, spot, Rw, ey, C0 / fc)

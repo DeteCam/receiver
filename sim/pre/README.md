@@ -13,6 +13,7 @@
 | `blind_fig.py` | `docs/images/사각지대_자리지도.png` |
 | `place.json` | 패널 자리 찾기(3차원)와 사진 16장의 숫자: 후보 122곳, 고른 배치, 새 카메라로 검증, 사진 1~32장 곡선, 대안 수신기, 나쁜 경우, 5G, 거는 각도 (`../rt/place_study.py`, `place_followup.py`) |
 | `dual_band.py`, `dual_band.json` | 두 대역을 한 판으로 쓸 때의 위상 선 길이 고르기와 위상 단계 재기 (다른 방법 검토 5.5). scipy 가 있어야 해서 `../../../.venv-rt/bin/python` 으로 돌린다 |
+| `band5_check.py`, `band5_check.json` | 지금 판(2.4 GHz 용)으로 5 GHz 기기를 재면 어떻게 되나: 막음 없이 · 주파수만 맞춤 · 가장 좋게 (다른 방법 검토 5.6). `python3 band5_check.py` (약 30초) |
 | `place_fig.py` | `docs/images/배치_*.png`. `collect` 로 `../rt/study/place_*.json` 을 모으고 `figs` 로 그린다 |
 
 ```

@@ -114,11 +114,24 @@ HIDE = {
 }
 CATS = list(HIDE)
 
+# 겉면에 붙지 않은 곳 (물건 속, 공중). 부피 계산(vol_study.py)에서만 쓴다 (2026-11-19)
+HIDE_FREE = {
+    "책상 위 물건 (겉면에서 10~40 cm 위)": lambda r: (r.uniform(3.15, 3.50), r.uniform(2.7, 4.1), r.uniform(0.85, 1.15)),
+    "침대 옆 협탁 위 물건": lambda r: (r.uniform(0.20, 0.60), r.uniform(2.35, 2.90), r.uniform(0.50, 0.90)),
+    "걸어 둔 옷·가방 (공중)": lambda r: (r.uniform(2.50, 3.30), r.uniform(0.60, 1.80), r.uniform(0.90, 1.70)),
+    "바닥에 둔 가방·상자": lambda r: (r.uniform(1.00, 3.20), r.uniform(2.40, 3.00), r.uniform(0.15, 0.45)),
+}
 
-def hide_points(rng, per=16):
-    """숨긴 카메라 점 [C,3] 과 그 종류 번호 [C]"""
-    P = [HIDE[c](rng) for c in CATS for _ in range(per)]
-    return np.array(P, float), np.repeat(np.arange(len(CATS)), per)
+
+def hide_points(rng, per=16, free=False):
+    """숨긴 카메라 점 [C,3] 과 그 종류 번호 [C]. free: 겉면에 붙지 않은 곳도 넣는다 (종류 이름은 all_cats(True))"""
+    H = dict(HIDE, **HIDE_FREE) if free else HIDE
+    P = [H[c](rng) for c in H for _ in range(per)]
+    return np.array(P, float), np.repeat(np.arange(len(H)), per)
+
+
+def all_cats(free=False):
+    return list(HIDE) + (list(HIDE_FREE) if free else [])
 
 
 def surface_grid(step=0.2, off=0.04):

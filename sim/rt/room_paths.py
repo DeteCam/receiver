@@ -11,11 +11,11 @@ from rt_paths import solve_spot, FC
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("name"); ap.add_argument("--seed", type=int, default=1); ap.add_argument("--per", type=int, default=16)
-    ap.add_argument("--depth", type=int, default=3); ap.add_argument("--samples", type=int, default=10 ** 6); ap.add_argument("--door-open", action="store_true"); ap.add_argument("--out", default="paths")
+    ap.add_argument("--depth", type=int, default=3); ap.add_argument("--samples", type=int, default=10 ** 6); ap.add_argument("--door-open", action="store_true"); ap.add_argument("--free", action="store_true"); ap.add_argument("--out", default="paths")
     a = ap.parse_args(); rng = np.random.default_rng(a.seed)
     scene = R.build(door_open=a.door_open); scene.frequency = FC
     arr = rt.PlanarArray(num_rows=1, num_cols=1, pattern="iso", polarization="VH"); scene.tx_array = arr; scene.rx_array = arr
-    cams, cat = R.hide_points(rng, a.per)
+    cams, cat = R.hide_points(rng, a.per, a.free)
     for i, c in enumerate(cams): scene.add(rt.Receiver("c%03d" % i, position=mi.Point3f(*[float(v) for v in c])))
     solver = rt.PathSolver(); res = []; t0 = time.time(); none = np.array([-1])
     for k, (nm, pos, aim) in enumerate(R.PLACES):
@@ -25,7 +25,7 @@ def main():
     def pad(x):
         return np.pad(x, [(0, 0), (0, P - x.shape[1])] + [(0, 0)] * (x.ndim - 2))
     np.savez_compressed(os.path.join(a.out, a.name + ".npz"), spots=np.array([p for _, p, _ in R.PLACES]), aims=np.array([q for _, _, q in R.PLACES]), names=np.array([n for n, _, _ in R.PLACES]),
-                        cams=cams, cat=cat, cats=np.array(R.CATS), fc=FC, meta=str(vars(a)), **{k: np.stack([pad(o[k]) for o in res]) for k in res[0]})
+                        cams=cams, cat=cat, cats=np.array(R.all_cats(a.free)), fc=FC, meta=str(vars(a)), **{k: np.stack([pad(o[k]) for o in res]) for k in res[0]})
     print("저장", a.name, "%.0f초" % (time.time() - t0))
 
 

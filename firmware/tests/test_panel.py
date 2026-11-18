@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """패널 계산의 검사 (장치 없이).  python3 tests/test_panel.py
 1) 세기 네 번에서 '기준의 켤레 x 안테나'가 나오는가  2) 위상 단계가 틀어져 있어도 스스로 재서 맞추는가
-3) 직접파 + 반사파에서 방향 오차  4) 패널 둘 + 전송 여러 번으로 자리를 맞히는가"""
+3) 직접파 + 반사파에서 방향 오차  4) 패널 둘 + 전송 여러 번으로 자리를 맞히는가  5) 5 GHz 는 위치를 재지 않는가"""
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "core"))
 import numpy as np
@@ -63,5 +63,20 @@ for t in range(N):
             hh, rr = field(c, sp, bo, paths); ses.add(P.score(P.demod(measure(hh, rr)), R, bo, sp, S.X))
     ok += ses.top(1)[0][0] == k
 assert ok >= 0.8 * N, ok
-print("패널 계산: 복원 오차 %.3f, 위상 단계 오차 %.1f도, 방향 오차(가운데값) %.1f도, 자리 %d/%d" % (e1, e2, e3, ok, N))
+# 5) 판이 받지 못하는 대역 (5 GHz) 은 위치를 재지 않는다
+assert all(P.can_locate(c) for c in range(1, 14)) and not P.can_locate(14), [c for c in range(1, 15) if not P.can_locate(c)]
+assert not any(P.can_locate(c) for c in (36, 40, 100, 149, 161, 165, 0, None))
+assert abs(P.ch_freq(6) - 2.437e9) < 1 and abs(P.ch_freq(36) - 5.18e9) < 1 and abs(P.ch_freq(149) - 5.745e9) < 1
+Zs = P.demod(measure(*field(cam, spot, bore, [(1.0, d0, 13e-9)])))
+for fc in (5.18e9, 5.745e9):
+    try:
+        P.score(Zs, R, bore, spot, S.X, fc=fc); raise AssertionError("5 GHz 를 받았다: %g" % fc)
+    except ValueError:
+        pass
+    try:
+        P.bearing(Zs, R, bore, spot, fc=fc); raise AssertionError("5 GHz 방향을 냈다: %g" % fc)
+    except ValueError:
+        pass
+P.score(Zs, R, bore, spot, S.X, fc=5.18e9, band=None)                    # 다른 판을 계산할 때만 막음을 끈다
+print("패널 계산: 복원 오차 %.3f, 위상 단계 오차 %.1f도, 방향 오차(가운데값) %.1f도, 자리 %d/%d, 5 GHz 는 재지 않음" % (e1, e2, e3, ok, N))
 print("OK")

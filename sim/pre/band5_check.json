@@ -1,0 +1,285 @@
+{
+ "made": "2026-11-18",
+ "note": "firmware/core/panel.py 의 계산(demod, bearing, score, Session)을 그대로 쓰고, 받는 전파만 5 GHz 로 바꾼다. 지금 panel.py 는 판의 대역 밖 주파수를 받지 않으므로(can_locate, score 의 band) 여기서는 그 막음을 끄고(band=None) 잰다. 안테나·스위치·합침기는 5 GHz 에서도 2.4 GHz 처럼 잘 받는다고 '좋게' 친다. 실물의 CHW1010-ANT2 는 패치와 16갈래 스위치가 2400~2483 MHz 용이라 5 GHz 에서는 더 나쁘다 (이 계산에 넣지 못한 것). 그래서 여기 숫자는 '가장 좋게 쳐도'의 숫자다.",
+ "steps": {
+  "2.4 GHz 6번": [
+   0.0,
+   88.4,
+   176.8,
+   265.3
+  ],
+  "5 GHz 36번": [
+   0.0,
+   188.0,
+   15.9,
+   203.9
+  ],
+  "5 GHz 100번": [
+   0.0,
+   199.6,
+   39.1,
+   238.7
+  ],
+  "5 GHz 149번": [
+   0.0,
+   208.5,
+   56.9,
+   265.4
+  ],
+  "5 GHz 161번": [
+   0.0,
+   210.6,
+   61.3,
+   271.9
+  ]
+ },
+ "rows": [
+  {
+   "ch": "2.4 GHz 6번",
+   "way": "막음 없이",
+   "steps_used": [
+    0.0,
+    90.0,
+    180.0,
+    270.0
+   ],
+   "fc_used": 2437000000.0,
+   "bearing_med": 3.0,
+   "bearing_p90": 7.0,
+   "over20": 0.0,
+   "rho_med": 0.908,
+   "seat_exact": 93.8,
+   "seat_top3": 100.0,
+   "seat_far_med_m": 0.0,
+   "seat_p1_med": 100.0
+  },
+  {
+   "ch": "5 GHz 36번",
+   "way": "막음 없이",
+   "steps_used": [
+    0.0,
+    90.0,
+    180.0,
+    270.0
+   ],
+   "fc_used": 2437000000.0,
+   "bearing_med": 57.8,
+   "bearing_p90": 113.5,
+   "over20": 88.3,
+   "rho_med": 0.294,
+   "seat_exact": 3.8,
+   "seat_top3": 6.2,
+   "seat_far_med_m": 3.96,
+   "seat_p1_med": 35.5
+  },
+  {
+   "ch": "5 GHz 36번",
+   "way": "채널만 맞춤",
+   "steps_used": [
+    0.0,
+    90.0,
+    180.0,
+    270.0
+   ],
+   "fc_used": 5180000000.0,
+   "bearing_med": 31.4,
+   "bearing_p90": 69.0,
+   "over20": 67.5,
+   "rho_med": 0.38,
+   "seat_exact": 52.5,
+   "seat_top3": 76.2,
+   "seat_far_med_m": 0.0,
+   "seat_p1_med": 77.8
+  },
+  {
+   "ch": "5 GHz 36번",
+   "way": "가장 좋게",
+   "steps_used": [
+    0.0,
+    188.0,
+    15.9,
+    203.9
+   ],
+   "fc_used": 5180000000.0,
+   "bearing_med": 2.7,
+   "bearing_p90": 100.7,
+   "over20": 16.7,
+   "rho_med": 0.723,
+   "seat_exact": 100.0,
+   "seat_top3": 100.0,
+   "seat_far_med_m": 0.0,
+   "seat_p1_med": 100.0
+  },
+  {
+   "ch": "5 GHz 100번",
+   "way": "막음 없이",
+   "steps_used": [
+    0.0,
+    90.0,
+    180.0,
+    270.0
+   ],
+   "fc_used": 2437000000.0,
+   "bearing_med": 59.1,
+   "bearing_p90": 116.5,
+   "over20": 91.7,
+   "rho_med": 0.476,
+   "seat_exact": 0.0,
+   "seat_top3": 2.5,
+   "seat_far_med_m": 4.88,
+   "seat_p1_med": 64.3
+  },
+  {
+   "ch": "5 GHz 100번",
+   "way": "채널만 맞춤",
+   "steps_used": [
+    0.0,
+    90.0,
+    180.0,
+    270.0
+   ],
+   "fc_used": 5500000000.0,
+   "bearing_med": 37.6,
+   "bearing_p90": 79.9,
+   "over20": 81.7,
+   "rho_med": 0.548,
+   "seat_exact": 25.0,
+   "seat_top3": 43.8,
+   "seat_far_med_m": 2.91,
+   "seat_p1_med": 86.6
+  },
+  {
+   "ch": "5 GHz 100번",
+   "way": "가장 좋게",
+   "steps_used": [
+    0.0,
+    199.6,
+    39.1,
+    238.7
+   ],
+   "fc_used": 5500000000.0,
+   "bearing_med": 2.0,
+   "bearing_p90": 98.4,
+   "over20": 25.0,
+   "rho_med": 0.863,
+   "seat_exact": 100.0,
+   "seat_top3": 100.0,
+   "seat_far_med_m": 0.0,
+   "seat_p1_med": 100.0
+  },
+  {
+   "ch": "5 GHz 149번",
+   "way": "막음 없이",
+   "steps_used": [
+    0.0,
+    90.0,
+    180.0,
+    270.0
+   ],
+   "fc_used": 2437000000.0,
+   "bearing_med": 57.4,
+   "bearing_p90": 116.0,
+   "over20": 91.7,
+   "rho_med": 0.582,
+   "seat_exact": 0.0,
+   "seat_top3": 5.0,
+   "seat_far_med_m": 5.23,
+   "seat_p1_med": 80.6
+  },
+  {
+   "ch": "5 GHz 149번",
+   "way": "채널만 맞춤",
+   "steps_used": [
+    0.0,
+    90.0,
+    180.0,
+    270.0
+   ],
+   "fc_used": 5745000000.0,
+   "bearing_med": 40.6,
+   "bearing_p90": 76.4,
+   "over20": 84.2,
+   "rho_med": 0.624,
+   "seat_exact": 5.0,
+   "seat_top3": 25.0,
+   "seat_far_med_m": 3.6,
+   "seat_p1_med": 93.6
+  },
+  {
+   "ch": "5 GHz 149번",
+   "way": "가장 좋게",
+   "steps_used": [
+    0.0,
+    208.5,
+    56.9,
+    265.4
+   ],
+   "fc_used": 5745000000.0,
+   "bearing_med": 1.9,
+   "bearing_p90": 92.2,
+   "over20": 28.3,
+   "rho_med": 0.884,
+   "seat_exact": 100.0,
+   "seat_top3": 100.0,
+   "seat_far_med_m": 0.0,
+   "seat_p1_med": 100.0
+  },
+  {
+   "ch": "5 GHz 161번",
+   "way": "막음 없이",
+   "steps_used": [
+    0.0,
+    90.0,
+    180.0,
+    270.0
+   ],
+   "fc_used": 2437000000.0,
+   "bearing_med": 57.2,
+   "bearing_p90": 119.0,
+   "over20": 95.0,
+   "rho_med": 0.564,
+   "seat_exact": 0.0,
+   "seat_top3": 2.5,
+   "seat_far_med_m": 5.24,
+   "seat_p1_med": 74.4
+  },
+  {
+   "ch": "5 GHz 161번",
+   "way": "채널만 맞춤",
+   "steps_used": [
+    0.0,
+    90.0,
+    180.0,
+    270.0
+   ],
+   "fc_used": 5805000000.0,
+   "bearing_med": 39.0,
+   "bearing_p90": 82.5,
+   "over20": 78.3,
+   "rho_med": 0.656,
+   "seat_exact": 5.0,
+   "seat_top3": 20.0,
+   "seat_far_med_m": 3.8,
+   "seat_p1_med": 90.5
+  },
+  {
+   "ch": "5 GHz 161번",
+   "way": "가장 좋게",
+   "steps_used": [
+    0.0,
+    210.6,
+    61.3,
+    271.9
+   ],
+   "fc_used": 5805000000.0,
+   "bearing_med": 1.9,
+   "bearing_p90": 93.2,
+   "over20": 31.7,
+   "rho_med": 0.892,
+   "seat_exact": 100.0,
+   "seat_top3": 100.0,
+   "seat_far_med_m": 0.0,
+   "seat_p1_med": 100.0
+  }
+ ]
+}

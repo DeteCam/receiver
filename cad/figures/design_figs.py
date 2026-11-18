@@ -73,23 +73,24 @@ def system():
 
 def wiring():
     fig, ax = canvas(12.9, 7.3, "패널 배선도", "수신 길이 하나뿐인 ESP32 로 안테나 16개의 위상을 얻는 길: 기준 안테나와 합쳐 세기만 잰다")
-    box(ax, 0.35, 0.95, 3.25, 4.75, fc="white", ec=NAVY, lw=1.6, r=0.14); ax.text(1.97, 5.42, "안테나 배열 보드", fontsize=11.5, fontweight="bold", color=NAVY, ha="center")
-    ax.text(1.97, 5.14, "CHW1010-ANT2 · 150 × 150 mm", fontsize=8.5, color=GRAY, ha="center")
+    box(ax, 0.35, 0.95, 3.25, 4.75, fc="white", ec=NAVY, lw=1.6, r=0.14); ax.text(1.97, 5.42, "두 대역 안테나 판", fontsize=11.5, fontweight="bold", color=NAVY, ha="center")
+    ax.text(1.97, 5.14, "받침판 140 mm + 반사판 (뒤 17.5 mm)", fontsize=8.5, color=GRAY, ha="center")
     for i in range(4):
         for j in range(4):
-            ax.add_patch(Rectangle((0.72 + 0.66 * i, 2.25 + 0.66 * j), 0.5, 0.5, fc="#F5A623", ec="#9A6400", lw=0.8))
-    ax.text(1.97, 2.02, "패치 안테나 16개 (간격 37.5mm)", fontsize=8.5, color=GRAY, ha="center")
-    box(ax, 0.72, 1.15, 2.5, 0.6, "16갈래 스위치", None, fc=PALE, fs=9.5)
-    box(ax, 4.35, 4.75, 1.55, 0.8, "기준 안테나", "ESP32 에 딸려 온 것", fc=WARM, ec=AMBER, fs=10)
+            cx_, cy_ = 0.97 + 0.66 * i, 2.5 + 0.66 * j
+            ax.plot([cx_ - 0.2, cx_ + 0.2], [cy_ - 0.2, cy_ + 0.2], color="#C9A227", lw=4.0, solid_capstyle="butt")
+    ax.text(1.97, 2.02, "필름 안테나 16개 (2.4·5 GHz, 간격 33mm, 45도)", fontsize=8.5, color=GRAY, ha="center")
+    box(ax, 0.72, 1.15, 2.5, 0.6, "16갈래 (HMC7992 넷 + 하나)", None, fc=PALE, fs=9.5)
+    box(ax, 4.35, 4.75, 1.55, 0.8, "기준 안테나", "필름 안테나 하나", fc=WARM, ec=AMBER, fs=10)
     box(ax, 6.45, 4.75, 1.3, 0.8, "스위치 A", "1 → 4", fc=PALE, fs=10); box(ax, 9.25, 4.75, 1.3, 0.8, "스위치 B", "4 → 1", fc=PALE, fs=10)
     arrow(ax, (5.9, 5.15), (6.45, 5.15))
     for dy in (0.27, 0.09, -0.09, -0.27):
         ax.plot([7.75, 9.25], [5.15 + dy, 5.15 + dy], color=NAVY, lw=1.2)
-    ax.text(8.5, 5.72, "길이가 다른 선 넷 (약 21mm 씩)", fontsize=8.5, color=NAVY, ha="center"); ax.text(8.5, 4.6, "0° · 90° · 180° · 270°", fontsize=8.5, color=GRAY, ha="center")
+    ax.text(8.5, 5.72, "길이가 다른 선 넷 (0·11·30·58mm)", fontsize=8.5, color=NAVY, ha="center"); ax.text(8.5, 4.6, "위상 넷 (보정표로 잰다)", fontsize=8.5, color=GRAY, ha="center")
     box(ax, 9.25, 3.05, 1.3, 0.8, "합침기", "둘을 더한다", fc=PALE, fs=10); arrow(ax, (9.9, 4.75), (9.9, 3.85))
     arrow(ax, (3.6, 3.45), (9.25, 3.45), "고른 안테나 하나의 신호", off=(-1.2, 0.17))
     box(ax, 8.95, 1.05, 1.9, 1.15, "XIAO ESP32-C5", "세기만 잰다 (CSI 의 크기)", fc=WARM, ec=AMBER, fs=10.5); arrow(ax, (9.9, 3.05), (9.9, 2.2), "합친 신호", off=(0.55, 0.0))
-    ax.plot([8.95, 6.0, 6.0, 3.6], [1.75, 1.75, 1.45, 1.45], color=TEAL, lw=1.4, ls="--"); ax.text(6.25, 1.92, "안테나 고르기 4가닥 + 켜기·제어 2가닥 (FPC 10핀)", fontsize=8.5, color=TEAL)
+    ax.plot([8.95, 6.0, 6.0, 3.6], [1.75, 1.75, 1.45, 1.45], color=TEAL, lw=1.4, ls="--"); ax.text(6.25, 1.92, "안테나 고르기 4가닥 (첫 단 넷을 같이 2 + 둘째 단 2)", fontsize=8.5, color=TEAL)
     ax.plot([10.85, 11.45, 11.45, 10.55], [1.6, 1.6, 5.15, 5.15], color=TEAL, lw=1.4, ls="--"); ax.plot([7.1, 7.1, 11.45, 11.45], [5.55, 6.02, 6.02, 5.15], color=TEAL, lw=1.4, ls="--")
     ax.text(11.6, 3.4, "위상 고르기\n2가닥\n(A·B 를 같이)", fontsize=8.5, color=TEAL, va="center", linespacing=1.4)
     box(ax, 4.2, 0.42, 4.3, 0.8, None, "전원: USB-C (허브나 충전기) 또는 18650 한 개\n한 번 재기 = 안테나 16 × 위상 4 = 패킷 64개 (약 0.3초)", fc="white", ec=LINE, fs=11)
@@ -139,7 +140,7 @@ def software():
 
 def drawing():
     import panel as P
-    fig, ax = canvas(13.4, 7.4, "패널과 허브의 치수 (mm)", "cad/model/panel.py 의 값. 보드에 맞춘 값([실측])은 부품을 받은 뒤 다시 잰다")
+    fig, ax = canvas(13.4, 7.4, "패널과 허브의 치수 (mm)", "cad/model/panel.py 의 값. 반사판 거리 17.5 는 관문 4 에서 정한다")
     k = 0.019                                                                    # mm -> 그림 단위
     def dim(p0, p1, t, off=(0, 0), color=RED, bg=None):
         ax.annotate("", p0, p1, arrowprops=dict(arrowstyle="<->", color=color, lw=1.0, shrinkA=0, shrinkB=0))
@@ -148,23 +149,23 @@ def drawing():
     # 앞
     cx = 2.75; X = lambda x: cx + x * k
     ax.add_patch(FancyBboxPatch((X(-P.OX), Y(y0)), W * k, H * k, boxstyle="round,pad=0,rounding_size=0.12", fc=BLUE, ec=NAVY, lw=1.4))
-    ax.add_patch(Rectangle((X(-75), Y(-75)), 150 * k, 150 * k, fc="none", ec="white", lw=1.0, ls="--"))
-    for i in range(4):
-        for j in range(4):
-            ax.add_patch(Rectangle((X(-56.25 + 37.5 * i - 13), Y(-56.25 + 37.5 * j - 13)), 26 * k, 26 * k, fc="none", ec="#F5D36B", lw=0.9))
+    h = P.AP / 2; ax.add_patch(Rectangle((X(-h), Y(-h)), P.AP * k, P.AP * k, fc="none", ec="white", lw=1.0, ls="--"))
+    import math; c45 = math.cos(math.radians(P.FILM_ANG)) * P.FILM[0] / 2
+    for (fx, fy) in P.film_centers():
+        ax.plot([X(fx - c45), X(fx + c45)], [Y(fy - c45), Y(fy + c45)], color="#F5D36B", lw=2.2, solid_capstyle="butt")
     mx, my = P.MARK_C; ax.add_patch(Rectangle((X(mx - P.MARK[0] / 2), Y(my - P.MARK[1] / 2)), P.MARK[0] * k, P.MARK[1] * k, fc="white", ec=NAVY, lw=0.8))
     for dx in (-P.MARK_DX, P.MARK_DX):
         ax.add_patch(Rectangle((X(mx + dx - P.MARK_SIZE / 2), Y(my - P.MARK_SIZE / 2)), P.MARK_SIZE * k, P.MARK_SIZE * k, fc=INK, ec="none"))
     for (bx, by) in P.BOSS: ax.add_patch(Circle((X(bx), Y(by)), 0.035, fc="white", ec=NAVY, lw=0.6))
     dim((X(-P.OX), Y(y1) + 0.2), (X(P.OX), Y(y1) + 0.2), "%.1f" % W, (0, 0.15)); dim((X(-P.OX) - 0.22, Y(y0)), (X(-P.OX) - 0.22, Y(y1)), "%.1f" % H, (-0.38, 0))
-    dim((X(-75), Y(0)), (X(75), Y(0)), "보드 150", color="white", bg=BLUE); dim((X(-56.25), Y(56.25) + 0.36), (X(-18.75), Y(56.25) + 0.36), "37.5", (0, 0.13), color="#F5D36B")
+    dim((X(-h), Y(h) + 0.13), (X(h), Y(h) + 0.13), "받침판 %d" % P.AP, color="white", bg=BLUE); dim((X(-1.5 * P.PITCH), Y(h) - 0.08), (X(-0.5 * P.PITCH), Y(h) - 0.08), "%d" % P.PITCH, (0.45, 0), color="#F5D36B")
     ax.text(cx, Y(y0) - 0.3, "앞 (안테나 쪽). 아래 흰 띠는 AR 마커 둘", fontsize=10, color=INK, ha="center")
     # 옆
     sx = 6.1; zf, zb, zm = P.ZC, P.ZO, P.ZO - P.MT_T
     ax.add_patch(Rectangle((sx + zb * k, Y(y0)), (zf - zb) * k, H * k, fc=DARK, ec=NAVY, lw=1.2)); ax.add_patch(Rectangle((sx + zm * k, Y(-P.MT_W / 2)), P.MT_T * k, P.MT_W * k, fc="#E0703A", ec="#8A3C12", lw=1.0))
-    ax.add_patch(Rectangle((sx - 3.6 * k, Y(-75)), 3.6 * k, 150 * k, fc="#F5D36B", ec="none"))
+    ax.add_patch(Rectangle((sx - P.AP_T * k, Y(-P.AP / 2)), P.AP_T * k, P.AP * k, fc="#F5D36B", ec="none")); ax.add_patch(Rectangle((sx + P.ZR * k, Y(-P.AP / 2)), 1.0 * k + 0.01, P.AP * k, fc="#C3C8CF", ec="none"))
     dim((sx + zm * k, Y(y1) + 0.2), (sx + zf * k, Y(y1) + 0.2), "%.1f" % (zf - zm), (0, 0.15)); dim((sx + zb * k, Y(y0) - 0.14), (sx + zf * k, Y(y0) - 0.14), "%.1f" % (zf - zb), (0, -0.15))
-    ax.text(sx + (zf + zm) / 2 * k, Y(y0) - 0.58, "옆. 통 + 덮개 %.1f,\n자석 걸이판(주황) %d" % (zf - zb, P.MT_T), fontsize=10, color=INK, ha="center", va="center", linespacing=1.4)
+    ax.text(sx + (zf + zm) / 2 * k, Y(y0) - 0.58, "옆. 통 + 덮개 %.1f, 회색 = 반사판\n자석 걸이판(주황) %d" % (zf - zb, P.MT_T), fontsize=10, color=INK, ha="center", va="center", linespacing=1.4)
     # 뒤
     bx0 = 8.75; XB = lambda x: bx0 + x * k
     ax.add_patch(FancyBboxPatch((XB(-P.OX), Y(y0)), W * k, H * k, boxstyle="round,pad=0,rounding_size=0.12", fc=DARK, ec=NAVY, lw=1.4))
@@ -181,7 +182,7 @@ def drawing():
     dim((hx, hy + hw * k * q + 0.18), (hx + hl * k * q, hy + hw * k * q + 0.18), "%.1f" % hl, (0, 0.15)); dim((hx + hl * k * q + 0.14, hy), (hx + hl * k * q + 0.14, hy + hw * k * q), "%.1f" % hw, (0.3, 0))
     dim((hx + hl * k * q + 0.14, hy - 1.45), (hx + hl * k * q + 0.14, hy - 1.45 + hh * k * q), "%.1f" % hh, (0.3, 0))
     ax.text(hx + hl * k * q / 2, hy - 1.78, "허브 (위, 옆)\n줄여 그림", fontsize=10, color=INK, ha="center", va="center", linespacing=1.4)
-    ax.text(0.35, 0.3, "패널 약 0.6kg.  출력 부품 8종, 약 22시간, 필라멘트 0.8kg.  거는 법: 자석(칠판) · 흡착 걸이(유리) · 받침 발(창턱, 교탁, 삼각대).", fontsize=9, color=GRAY)
+    ax.text(0.35, 0.3, "패널 약 0.8kg (어림).  출력 부품 12종 7판, 약 31시간, 필라멘트 1.16kg (회전 받침 포함).  거는 법: 자석(칠판) · 흡착 걸이(유리) · 받침 발(창턱, 교탁, 회전 받침).", fontsize=9, color=GRAY)
     save(fig, "도면_패널.png")
 
 

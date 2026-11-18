@@ -72,7 +72,7 @@ class Scene:
         def add(name, m, col, **k2):
             A[name] = p.add_mesh(to_pv(m), color=col, **(k2 or kw))
         add("tray", up(P.tray()), P.PRINTED); add("bezel", up(P.bezel()), P.LIGHT); add("mount", up(P.mount_plate()), P.HOT); add("foot", up(P.foot()), P.HOT)
-        add("clip", up(P.xiao_clip()), P.HOT); add("board", up(P.board()), P.PCB); add("patches", up(P.patches()), P.GOLD, **st); add("xiao", up(P.xiao()), P.DARK)
+        add("clip", up(P.xiao_clip()), P.HOT); add("board", up(P.ant_plate() + P.reflector()), "#4A5BA8"); add("patches", up(P.films()), P.GOLD, **st); add("xiao", up(P.xiao()), P.DARK)
         add("cell", up(P.cell()), P.STEEL, **st); add("rf", up(P.rf_modules()), P.STEEL, **st); add("ref", up(P.ref_antenna()), P.GOLD, **st); add("magnets", up(P.magnets()), P.STEEL, **st)
         for i, (x, y) in enumerate(P.BOSS):
             add("fs%d" % i, screw_front(x, y), P.STEEL, **st)
@@ -108,12 +108,12 @@ class Scene:
         if k == 0:                                                                      # 1. 완성 모습과 치수
             for n in PANEL: show[n] = True
             az = -125 + 95 * ease(u); self.cam(az, 12, 760, wp(0, yc, -16))
-            cap = ("패널: 모터가 없는 수신기", "안테나 16개를 전자 스위치로 차례로 고른다 · 돌아가는 것이 없어 소리가 나지 않는다 · 한 번 재는 데 0.3초")
+            cap = ("패널: 두 대역 판 수신기", "두 대역 필름 안테나 16개를 전자 스위치로 차례로 고른다 · 2.4 · 5 GHz · 한 번 재는 데 0.3초")
             if u < 0.5:
                 dims = [(wp(-P.OX, P.OY0 - 8, P.ZC), wp(P.OX, P.OY0 - 8, P.ZC), "가로 %.0f" % (2 * P.OX)), (wp(P.OX + 8, P.OY0, P.ZC), wp(P.OX + 8, P.OY1, P.ZC), "세로 %.0f" % (P.OY1 - P.OY0))]
             else:
                 dims = [(wp(P.OX, P.OY1 + 6, P.ZO - P.MT_T), wp(P.OX, P.OY1 + 6, P.ZC), "두께 %.0f" % (P.ZC - P.ZO + P.MT_T))]
-                note = "뽑는 부품 %.0f g + 보드·RF 모듈·배터리 = 약 0.6 kg" % self.g_panel
+                note = "뽑는 부품 %.0f g + 안테나·반사판·RF 모듈·배터리 = 약 0.8 kg (어림)" % self.g_panel
         elif k == 1:                                                                    # 2. 통 뒤에 자석 걸이판
             show.update(tray=True, mount=True, magnets=True); um = ease(tt / 2.0); M["mount"] = M["magnets"] = Tm(60 * (1 - um) * -fwd)
             for i in range(4):
@@ -127,28 +127,28 @@ class Scene:
             for n, t0 in (("rf", 0.3), ("cell", 2.2), ("xiao", 3.6), ("clip", 5.2)):
                 un = ease((tt - t0) / 1.3); M[n] = Tm(70 * (1 - un) * fwd); show[n] = tt > t0 - 0.1
             self.cam(-62, 16, 720, wp(0, yc, -10))
-            cap = ("② 통 안에 부품을 넣는다", "RF 스위치 2개와 합침기를 묶음끈으로 · 18650 배터리 홀더 · ESP32-C5(XIAO)는 오른쪽 벽에, 누름쇠와 M2 × 8 나사 2개")
+            cap = ("② 통 안에 부품을 넣는다", "RF 모듈 8개(스위치 7 + 합침기)를 바닥 고리에 묶음끈으로 · 반사판을 기둥에 · 18650 홀더 · XIAO 는 오른쪽 벽에, 누름쇠와 M2 × 8 나사 2개")
             if tt > 6.4:
                 dims = [(wp(P.XIAO_C[0] - 10.5, P.XIAO_C[1] - 14, P.XIAO_Z + 3), wp(P.XIAO_C[0] + 10.5, P.XIAO_C[1] - 14, P.XIAO_Z + 3), "21 × 17.8")]; note = "USB-C 는 오른쪽 벽으로 나온다"
         elif k == 3:                                                                    # 4. 보드
             show.update(tray=True, mount=True, magnets=True, rf=True, xiao=True, cell=True, clip=True, board=True, patches=True)
             ub = ease(tt / 2.4); M["board"] = M["patches"] = Tm(90 * (1 - ub) * fwd); self.cam(-62 + 14 * ease(u), 16, 720, wp(0, yc, -6))
-            cap = ("③ 안테나 배열 보드를 턱에 얹는다", "보드 가장자리 2.5 mm 만 닿는다 (보드에 구멍이 없어도 된다) · 패치 16개, 스위치 칩은 보드 뒷면에")
+            cap = ("③ 안테나 받침판을 반사판 위에 얹는다", "필름 안테나 16개를 45도로 홈에 붙이고, 선은 둘레 틈으로 뒤의 스위치에 · 다리 넷이 반사판까지 17.5 mm 를 띄운다")
             if tt > 2.6:
-                dims = [(wp(-75, -75 - 5, 0.5), wp(75, -75 - 5, 0.5), "보드 150"), (wp(-1.5 * P.PITCH, 1.5 * P.PITCH + 20, 0.5), wp(-0.5 * P.PITCH, 1.5 * P.PITCH + 20, 0.5), "간격 %.1f" % P.PITCH)]
+                dims = [(wp(-70, -70 - 5, 0.5), wp(70, -70 - 5, 0.5), "받침판 140"), (wp(-1.5 * P.PITCH, 1.5 * P.PITCH + 20, 0.5), wp(-0.5 * P.PITCH, 1.5 * P.PITCH + 20, 0.5), "간격 %.0f" % P.PITCH)]
         elif k == 4:                                                                    # 5. 앞덮개
             for n in ("tray", "mount", "magnets", "rf", "xiao", "cell", "clip", "board", "patches", "bezel", "ref"): show[n] = True
             ub = ease(tt / 2.2); M["bezel"] = M["ref"] = Tm(80 * (1 - ub) * fwd)
             for i in range(6):
                 us = ease((tt - 2.5 - 0.5 * i) / 0.6); show["fs%d" % i] = tt > 2.4; x, y = P.BOSS[i]; M["fs%d" % i] = Tm(45 * (1 - us) * fwd, spin=720 * us, about=wp(x, y, 0))
             self.cam(-48 - 20 * ease(u), 14, 740, wp(0, yc, -4))
-            cap = ("④ 앞덮개를 덮는다", "기준 안테나(XIAO 에 딸려 온 것)를 덮개 안쪽 위에 붙이고, M3 × 10 나사 6개 · 패치 앞 빈틈 %.0f mm, 덮개 살 %.1f mm" % (P.AIR, P.SKIN))
+            cap = ("④ 앞덮개를 덮는다", "기준 안테나(필름 안테나 하나)를 받침판 위 띠에 붙이고, M3 × 10 나사 6개 · 안테나 앞 빈틈 %.0f mm, 덮개 살 %.1f mm" % (P.AIR, P.SKIN))
             if tt > 5.6:
                 dims = [(wp(-P.MARK[0] / 2, P.MARK_C[1] + P.MARK[1] / 2 + 3, P.ZC), wp(P.MARK[0] / 2, P.MARK_C[1] + P.MARK[1] / 2 + 3, P.ZC), "AR 마커 띠 %.0f × %.0f" % P.MARK)]
         elif k == 5:                                                                    # 6. 받침 발
             for n in ("tray", "bezel", "foot") + tuple("fs%d" % i for i in range(6)): show[n] = True
             uf = ease(tt / 1.8); M["foot"] = Tm(60 * (1 - uf) * -fwd); self.cam(118 - 60 * ease(u), 12, 820, wp(0, yc - 20, -40))
-            cap = ("창턱·교탁·사물함 위에는 받침 발", "걸이판 대신 단다 (M3 × 8 2개). 통이 발 위에 얹힌다 · 발 밑의 1/4인치 너트로 카메라 삼각대에도 올라간다")
+            cap = ("창턱·교탁·사물함 위에는 받침 발", "걸이판 대신 단다 (M3 × 8 2개). 통이 발 위에 얹힌다 · 발 밑의 1/4인치 너트로 삼각대나 숙소용 회전 받침에 올라간다")
             if tt > 2.0:
                 dims = [(wp(P.FT_W / 2 + 4, P.OY0 - P.FT_GAP - P.FT_T, P.ZO - P.FT_T - P.FT_D), wp(P.FT_W / 2 + 4, P.OY0 - P.FT_GAP - P.FT_T, P.FT_FRONT), "발 %.0f" % (P.FT_D + P.FT_T - P.ZO + P.FT_FRONT))]
         elif k == 6:                                                                    # 7. 허브

@@ -38,7 +38,7 @@ T3_FB_OK = 10.0           # 반사판을 단 뒤 앞뒤 차
 # ---------------------------------------------------------------- 시리얼
 def open_port(port):
     import serial
-    s = serial.Serial(port, 115200, timeout=0.2)
+    s = serial.Serial(port, 921600, timeout=0.2)          # USB-JTAG 보드는 속도를 보지 않고, 변환 칩 보드(uart 판)는 921600
     time.sleep(0.3)
     s.reset_input_buffer()
     return s

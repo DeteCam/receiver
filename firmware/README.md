@@ -1,16 +1,18 @@
 # firmware: 수신기 코드
 
-패널의 계산과, 허브(라즈베리파이)가 쓸 탐지·판별·의심 점수 코드, 그리고 장치 없이 도는 검사다. ESP32-C5 에 올릴 코드와 허브 프로그램(패널에서 받기, 자리 내기, 폰 화면)은 아직 없다 ([스펙 006](../specs/006-panel-receiver/tasks.md)).
+패널의 계산과, 허브(라즈베리파이)가 쓸 탐지·판별·의심 점수 코드, 그리고 장치 없이 도는 검사다. ESP32-C5 에는 빠른 시험용 펌웨어(`c5/csi_probe`)만 있다. 패널 펌웨어와 허브 프로그램(패널에서 받기, 자리 내기, 폰 화면)은 아직 없다 ([스펙 006](../specs/006-panel-receiver/tasks.md)).
 
 | 폴더 | 내용 |
 |---|---|
 | `core/` | `panel.py` (세기 → 위상 → 방향 → 자리), `identify.py` (판별: 움직임에 전송량이 따라오나), `score.py` (의심 점수). `../sim` 의 실험도 이 코드를 쓴다 |
 | `pi/` | `detect.py` (둘레를 엿들어 카메라 후보를 추린다), `link_setup.sh` (허브의 무선: 자기 Wi-Fi 만들기, 탐지 동글을 모니터 모드로) |
 | `host/` | `watch_report.py` (점검 기록을 의심 점수로 다시 계산해 실험 S1~S5 의 숫자를 낸다) |
+| `c5/csi_probe/` | 빠른 시험용 ESP32-C5 펌웨어 (보내는 쪽 / 받는 쪽, USB 명령). 미리 빌드한 `bin/` 과 `flash.sh` |
+| `bench/` | 빠른 시험 도우미 `probe.py` (기록, 안내, 판정), 도안 `도안.pdf` ([빠른 시험](../docs/빠른%20시험.md)) |
 | `tests/` | 장치 없이 도는 검사 |
 
 ```
-python3 tests/test_panel.py && python3 tests/test_score.py && python3 tests/test_detect.py && python3 tests/test_band.py
+python3 tests/test_panel.py && python3 tests/test_score.py && python3 tests/test_detect.py && python3 tests/test_band.py && python3 tests/test_probe.py
 python3 pi/detect.py --check            # 파이에서: 탐지 동글이 모니터 모드로 듣는지
 ```
 

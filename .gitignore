@@ -19,3 +19,10 @@ console/src/node_modules/
 # 옵시디언이 문서 폴더에 만드는 것
 docs/.obsidian/
 docs/.trash/
+# 빠른 시험: 기록과 ESP-IDF 빌드 산물
+firmware/bench/data/
+firmware/c5/*/build/
+firmware/c5/*/managed_components/
+firmware/c5/*/sdkconfig
+firmware/c5/*/sdkconfig.old
+firmware/c5/*/dependencies.lock

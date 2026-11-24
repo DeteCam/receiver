@@ -1,0 +1,26 @@
+== sanity_los.py : pure line of sight (no multipath), same synthesis + repository estimator
+motel 5g      repo MA-PINN+AI  median 0.12  P90 0.41  <=1m 98%   | no AI 0.10 / 0.19 / 100% | capon 0.15 / 0.27 / 100%
+classroom 2g4 repo MA-PINN+AI  median 0.31  P90 0.64  <=1m 98%   | no AI 0.29 / 0.59 / 100% | capon 0.22 / 0.61 / 100%
+
+== check_nano.py : ideal 12-element 84 mm board at the repository's 2 positions, full per-element ray tracing vs single-point model (median / P90 / <=1 m)
+classroom 2g4 (n=80)  full: repo+AI 1.35 / 3.19 / 43.8%, capon 1.37 / 3.17 / 40.0%   single-point: repo+AI 1.05 / 2.84 / 46.2%, capon 1.09 / 2.85 / 46.2%
+classroom 5g  (n=80)  full: repo+AI 0.95 / 3.70 / 52.5%, capon 0.78 / 2.85 / 60.0%   single-point: repo+AI 0.97 / 3.80 / 51.2%, capon 0.78 / 2.81 / 63.7%
+motel 2g4     (n=40)  full: repo+AI 0.62 / 1.57 / 77.5%, capon 0.64 / 2.25 / 72.5%   single-point: repo+AI 0.66 / 1.96 / 65.0%, capon 0.58 / 1.44 / 80.0%
+motel 5g      (n=40)  full: repo+AI 0.39 / 1.69 / 77.5%, capon 0.32 / 1.32 / 80.0%   single-point: repo+AI 0.36 / 1.63 / 77.5%, capon 0.23 / 0.87 / 90.0%
+
+== check_approx.py : 12-element frame at the repository's 2 positions, capon (n=160), full per-element ray tracing vs plane-wave approximation
+classroom 2g4  full 1.19 / 3.09 / 43.1%   approx 0.93 / 2.31 / 52.5%
+classroom 5g   full 1.07 / 3.49 / 47.5%   approx 0.66 / 2.86 / 62.5%
+motel 2g4      full 0.53 / 2.36 / 66.9%   approx 0.31 / 1.58 / 81.9%
+motel 5g       full 0.31 / 2.83 / 71.2%   approx 0.18 / 1.34 / 86.9%
+
+== rt_eval_arm.py : rotating arm, 40 cm circle, 2 nodes at the repository's positions, capon (approximation, n=160)
+motel 2g4      0.19 / 1.97 / 83.8%   single-node bearing error mean 17.0, median 3.7, P90 60.5 deg
+motel 5g       0.23 / 1.90 / 76.2%   mean 15.5, median 1.6, P90 54.7 deg
+classroom 2g4  0.61 / 2.29 / 62.5%   mean 12.3, median 4.9, P90 31.5 deg
+classroom 5g   0.78 / 2.86 / 56.2%   mean 11.6, median 3.2, P90 33.4 deg
+
+== check_sampling.py : per-element channel difference between runs (classroom 2.4 GHz, 12-element frame, 12 cameras)
+100k rays seed 42 vs seed 7 : median -10.7 dB, worst camera -5.6 dB, array-vector correlation median 0.961
+400k rays seed 42 vs seed 7 : median  -9.9 dB, worst camera -6.0 dB, array-vector correlation median 0.951
+100k vs 400k rays (seed 42) : median  -9.5 dB, worst camera -4.9 dB, array-vector correlation median 0.958

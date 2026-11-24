@@ -1,7 +1,8 @@
 # 스펙 목록 (`receiver`)
 
-DeteCam 6.0 (`Nano-2 AI`) 최신 단일 스펙입니다. 이전 세대 스펙은 정리했으며 초기 구형 구조는 [receiver-legacy](https://github.com/DeteCam/receiver-legacy)에 보관되어 있습니다.
+| 번호 | 스펙 | 상태 | 요약 |
+|---|---|---|---|
+| 002 | [`002-switch-ring-receiver`](002-switch-ring-receiver/spec.md) | 명세 · 검증 전 | 지름 약 10 cm 고리 위 막대 안테나 8개 + 기준 안테나, 기성 RF 스위치, Intel AX210. 움직이는 부품과 PCB 외주 없음 |
+| 001 | `001-nano2-receiver` | 폐기 | v6, 84 mm 칩 안테나 PCB 2기. 브랜치 [`archive/v6-nano2`](https://github.com/DeteCam/receiver/tree/archive/v6-nano2)에 남아 있음. 그 숫자는 쓰지 않는다 |
 
-| 번호 | 스펙 | 상태 | 요약 | 핵심 구현 |
-|---|---|---|---|---|
-| 001 | [`001-nano2-receiver`](001-nano2-receiver/spec.md) | 설계·AI학습·10공간검증·슬라이싱 완료 | 포켓 크기(`96×96×36.0 mm`) 단 2기 벽면 스위블 + 무개조 `NanoPi R5C` + `ReconCovNet-v4` + `CamGuard-Net` + Bayesian `MA-PINN` + `AR-OPA-2` + Bambu X1C 단 1판 G코드 | `cad/model/nano2_node.py`, `firmware/core/ai_engine.py`, `sim/*.py` |
+더 이전 구조(돌판 등)는 [receiver-legacy](https://github.com/DeteCam/receiver-legacy)에 있다.

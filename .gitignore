@@ -27,3 +27,9 @@ firmware/c5/*/managed_components/
 firmware/c5/*/sdkconfig
 firmware/c5/*/sdkconfig.old
 firmware/c5/*/dependencies.lock
+# 시뮬레이션 데이터와 결과 배열 (다시 만들 수 있음)
+sim/**/data/
+sim/**/*.npy
+!sim/rt/frame12.npy
+sim/em/*.nec
+sim/em/*.out

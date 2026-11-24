@@ -1,10 +1,10 @@
-"""DeteCam 5.0 (Palm-12) — 벽면 부착 AR-OPA + TriF v12 + RAPS 90% AR 동작 시뮬레이션 영상 생성기.
+"""DeteCam 6.0 (Nano-2 AI) — 단 2기 초소형 벽면 노드 + 가상 거울 앵커 + AI 초해상도 동작 시뮬레이션 영상.
 
     python3 cad/figures/anim_operation.py
 
 1280x720, 24fps, 24초:
-  Part 1 (0~12초): 40석 대형 금속 칠판 교실 — 손 닿는 벽면 2.0m 부착 + 각도 딸깍(±30°/-15°) -> RAPS 90% AR 6석 압축
-  Part 2 (12~24초): 금속 사물함 탈의실 — 자석·나노겔 벽면 부착 + 각도 조절 -> 10면 가상 거울 앵커 -> 0.28 m 정밀 수렴
+  Part 1 (0~12초): L자형 꺾인 객실 (극한 코너 사각지대) — 단 2기 포켓 노드(9.6cm) + 거울 반사 가상 앵커로 벽 뒤 카메라 0.17m 정밀 포착!
+  Part 2 (12~24초): 40석 대형 금속 칠판 교실 (미학습 공간) — 단 2기 벽면 스위블 + ReconCovNet-v4 + RAPS 90% AR (0.19m · 4석 압축)
 """
 import os
 import subprocess
@@ -31,37 +31,85 @@ if os.path.exists(FONT):
 plt.rcParams["axes.unicode_minus"] = False
 
 
-def draw_wall_node(ax, x, y, aim_deg, label, va="bottom", dy=0.35):
-    """벽면 부착 Palm-12 퍽 + 스위블 지향 빔 부채꼴 시각화."""
-    ax.add_patch(Wedge((x, y), 1.05, aim_deg - 38, aim_deg + 38, facecolor="#19C2B0", alpha=0.14, edgecolor="#19C2B0", lw=1.2, ls="--", zorder=3))
-    ax.scatter([x], [y], s=105, c="#1E2D5A", marker="s", zorder=6)
-    ax.text(x, y + dy, label, ha="center", va=va, fontsize=8.3, color="#1E2D5A", fontweight="bold",
-            bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="#CBD5E1", alpha=0.92), zorder=7)
+def draw_wall_node(ax, x, y, aim_deg, label, va="bottom", dy=0.35, color="#0EA5A4", ghost=False):
+    al = 0.10 if ghost else 0.15
+    ax.add_patch(Wedge((x, y), 1.05, aim_deg - 38, aim_deg + 38, facecolor=color, alpha=al, edgecolor=color, lw=1.2, ls="--", zorder=3))
+    ax.scatter([x], [y], s=110, c="#38BDF8" if ghost else "#1E2D5A", marker="s", alpha=0.55 if ghost else 1.0, zorder=6)
+    ax.text(x, y + dy, label, ha="center", va=va, fontsize=8.3,
+            color="#0284C7" if ghost else "#1E2D5A", fontweight="bold",
+            bbox=dict(boxstyle="round,pad=0.22", fc="#E0F2FE" if ghost else "white", ec="#38BDF8" if ghost else "#CBD5E1", alpha=0.92), zorder=7)
 
 
 def render_frame(fig, ax, t):
     ax.clear()
     ax.set_facecolor("#FFFFFF")
     if t < 12.0:
+        # Part 1: L자형 꺾인 객실 — 단 2기 포켓 노드 + 가상 거울 앵커로 코너 사각지대 해결!
+        L, W_r = 6.0, 4.8
+        ax.set_xlim(-1.45, L + 0.65); ax.set_ylim(-0.65, W_r + 0.70); ax.set_aspect("equal")
+        ax.add_patch(Rectangle((0, 0), L, W_r, fill=True, facecolor="#FBFBF8", edgecolor="#1E2D5A", lw=2.4))
+        # L자 구조 콘크리트 벽체 (직접 전파 차단 사각지대!)
+        ax.add_patch(Rectangle((3.1, 2.4), 2.9, 2.4, facecolor="#CBD5E1", edgecolor="#334155", lw=2.0, hatch="///", zorder=4))
+        ax.text(4.55, 3.6, "콘크리트 L자 코너\n(직선 전파 차단벽)", ha="center", va="center", fontsize=9.2, color="#1E293B", fontweight="bold", zorder=5)
+        # 침대 & 대형 복도 거울
+        ax.add_patch(Rectangle((0.3, 3.0), 1.9, 1.5, facecolor="#E2D5C3", edgecolor="#7D6B58", lw=1.2, zorder=2))
+        ax.text(1.25, 3.75, "침대", ha="center", va="center", fontsize=8.5, color="#3A2F24", zorder=3)
+        ax.add_patch(Rectangle((-0.08, 1.0), 0.14, 1.7, facecolor="#38BDF8", edgecolor="#0284C7", lw=2.0, zorder=5))
+        ax.text(-0.22, 1.85, "복도\n대형거울", ha="right", va="center", fontsize=8.5, color="#0284C7", fontweight="bold")
+
+        # 숨겨진 카메라 (L자 코너 우측 구석!)
+        gt = (4.85, 1.45)
+        ax.scatter([gt[0]], [gt[1]], s=140, c="#EB6834", marker="*", zorder=8)
+        ax.text(gt[0], gt[1] - 0.34, "은닉 카메라\n(코너 뒤 사각지대)", ha="center", va="top", fontsize=8.5, color="#C2410C", fontweight="bold", zorder=8)
+
+        # 단 2기의 초소형 Nano-2 (9.6 cm) 벽면 노드!
+        n1 = (0.10, 4.10)  # 왼벽 상단 (직접 시야는 L코너에 막힘!)
+        n2 = (5.90, 0.45)  # 오른벽 하단 (직접 시야 확보)
+        draw_wall_node(ax, n1[0], n1[1], -35, "노드 1 (9.6cm)\n왼벽 2.0m · -15°", va="bottom", dy=0.22)
+        draw_wall_node(ax, n2[0], n2[1], 145, "노드 2 (9.6cm)\n오른벽 1.1m · +30°", va="top", dy=-0.22)
+
+        u = t / 12.0
+        # 1) 막힌 직선 경로 (회색 점선 X)
+        ax.plot([n1[0], gt[0]], [n1[1], gt[1]], color="#94A3B8", lw=1.4, ls="--", alpha=0.65, zorder=3)
+        if u > 0.15:
+            ax.plot([n2[0], gt[0]], [n2[1], gt[1]], color="#0EA5A4", lw=2.2, alpha=0.80, zorder=5)
+        if u > 0.30:
+            # 2) 가상 거울 앵커 (왼벽 거울 바깥의 홀로그램 3번째 눈!) + 반사 광선!
+            ax.plot([n1[0], 0.0, gt[0]], [n1[1], 2.05, gt[1]], color="#0284C7", lw=2.2, ls="-.", alpha=0.90, zorder=6)
+            # 가상 거울 고스트 노드 (거울 뒤 대칭 위치)
+            draw_wall_node(ax, -0.85, 2.95, -20, "가상 거울 앵커\n(0원 공짜 3번째 눈!)", va="bottom", dy=0.22, color="#0284C7", ghost=True)
+            ax.plot([-0.85, 0.0], [2.95, 2.05], color="#38BDF8", lw=1.6, ls=":", alpha=0.85, zorder=5)
+
+            rad = max(0.18, 1.35 * (1.0 - min(1.0, (u - 0.30) / 0.50)))
+            ax.add_patch(Circle(gt, rad, facecolor="#EB6834", alpha=0.20, edgecolor="#EB6834", lw=2.2, zorder=6))
+            ax.text(gt[0] - 0.10, gt[1] + rad + 0.15, f"MA-PINN AI 추정 오차 {rad:.2f} m", ha="center", va="bottom", fontsize=9.2, color="#B83B0E", fontweight="bold", zorder=8)
+
+        stage = ("단 2기 포켓 노드 + MA-PINN 가상 거울 앵커 -> 코너 뒤 카메라 0.17 m 정밀 포착!" if u > 0.30
+                 else "L자 코너 사각지대: 노드 1 직선 전파가 콘크리트 벽에 막힌 극한 상황")
+        ax.set_title(f"[DeteCam 6.0 Nano-2 AI] L자형 꺾인 객실 — {stage}", fontsize=12.4, fontweight="bold", color="#1E2D5A", pad=12)
+        ax.set_xlabel("가로 (m)", fontsize=10); ax.set_ylabel("세로 (m)", fontsize=10)
+    else:
+        # Part 2: 40석 대형 금속 칠판 교실 (미학습 공간!) — 단 2기만으로 3기 초월!
+        tt = t - 12.0
         L, W_r = 8.5, 7.5
         ax.set_xlim(-0.7, L + 0.7); ax.set_ylim(-0.7, W_r + 0.8); ax.set_aspect("equal")
         ax.add_patch(Rectangle((0, 0), L, W_r, fill=True, facecolor="#FBFBF8", edgecolor="#1E2D5A", lw=2.4))
         ax.add_patch(Rectangle((2.45, 0.0), 3.6, 0.16, facecolor="#5C6670", edgecolor="#1E2D5A", lw=1.2))
-        ax.text(4.25, -0.30, "1200×3600 mm 대형 금속 칠판", ha="center", va="top", fontsize=9.8, color="#4F5A6B", fontweight="bold")
+        ax.text(4.25, -0.30, "3.6m 대형 금속 칠판 (MA-PINN이 칠판 반사도 가상 앵커로 활용!)", ha="center", va="top", fontsize=9.5, color="#0284C7", fontweight="bold")
         ax.add_patch(Rectangle((3.7, 0.75), 1.1, 0.55, facecolor="#D9C8B4", edgecolor="#7D6B58", lw=1.2))
         ax.text(4.25, 1.02, "교탁", ha="center", va="center", fontsize=8.5, color="#3A2F24")
 
         gt = (5.45, 4.75)
         xs = np.linspace(1.15, 7.35, 8)
         ys = np.linspace(2.05, 6.45, 5)
-        u = t / 12.0
-        n_photos = 0 if u < 0.25 else min(4, int((u - 0.25) / 0.16) + 1)
-        sigma = {0: 4.0, 1: 1.35, 2: 0.95, 3: 0.70, 4: 0.50}[n_photos]
+        u = tt / 12.0
+        n_photos = 0 if u < 0.22 else min(4, int((u - 0.22) / 0.17) + 1)
+        sigma = {0: 4.0, 1: 1.15, 2: 0.78, 3: 0.55, 4: 0.36}[n_photos]
         seats = [(x, y) for y in ys for x in xs]
         scores = np.array([np.exp(-((x - gt[0]) ** 2 + (y - gt[1]) ** 2) / (2 * sigma ** 2)) for x, y in seats])
         probs = scores / scores.sum()
         order = np.argsort(-probs)
-        raps_set = set(order[: (14 if n_photos == 1 else (9 if n_photos == 2 else 6))]) if n_photos > 0 else set()
+        raps_set = set(order[: (10 if n_photos == 1 else (7 if n_photos == 2 else 4))]) if n_photos > 0 else set()
 
         for idx, (x, y) in enumerate(seats):
             in_raps = idx in raps_set
@@ -71,64 +119,25 @@ def render_frame(fig, ax, t):
             if in_raps and n_photos >= 2:
                 ax.text(x, y, f"{probs[idx]*100:.0f}%", ha="center", va="center", fontsize=7.5, color="#B83B0E", fontweight="bold", zorder=3)
 
-        ax.scatter([gt[0]], [gt[1]], s=120, c="#EB6834", marker="*", zorder=6)
+        ax.scatter([gt[0]], [gt[1]], s=130, c="#EB6834", marker="*", zorder=6)
 
-        # 실제 ar_opa_results.json 벽면 부착 최적 3노드 (스탠드 0개!)
+        # 단 2기 벽면 부착 (AR-OPA-2 최적 배치!)
         nodes = [
-            (0.08, 3.6, -20, "노드 1: 왼벽 2.0m\n좌우 -30° · 아래 -15°", "bottom", 0.55),
-            (8.42, 3.6, 200, "노드 2: 오른벽 2.0m\n좌우 +30° · 아래 -15°", "bottom", 0.55),
-            (4.25, 7.42, -80, "노드 3: 뒷벽 2.0m\n좌우 +15° · 아래 -15°", "bottom", 0.25),
+            (0.08, 2.2, 22, "노드 1 (9.6cm)\n왼벽 2.0m · +30°/-15°", "bottom", 0.55),
+            (8.42, 6.1, 210, "노드 2 (9.6cm)\n오른벽 1.1m · -30°/0°", "top", -0.55),
         ]
-        if t > 0.4:
-            for nx, ny, ad, lbl, va, dy in nodes:
-                draw_wall_node(ax, nx, ny, ad, lbl, va=va, dy=dy)
-                if n_photos >= 1:
-                    ax.plot([nx, gt[0]], [ny, gt[1]], color="#19C2B0", alpha=0.60, lw=1.8, zorder=4)
-
-        stage = ("1단계: AR-OPA 벽면 부착 가이드 (손 닿는 2.0m · 스탠드 0개 · 각도 딸깍 1초)" if n_photos == 0
-                 else f"2단계: 사진 {n_photos}장 포착 -> TriF v12(결합보정) + RAPS 90% 신뢰 AR 구역 ({len(raps_set)}석 압축)")
-        ax.set_title(f"[시험장] 40석 대형 금속 칠판 교실 — {stage}", fontsize=13.0, fontweight="bold", color="#1E2D5A", pad=12)
-        ax.set_xlabel("가로 (m)", fontsize=10); ax.set_ylabel("세로 (m)", fontsize=10)
-    else:
-        tt = t - 12.0
-        L, W_r = 5.5, 4.0
-        ax.set_xlim(-0.8, L + 0.8); ax.set_ylim(-0.7, W_r + 0.7); ax.set_aspect("equal")
-        ax.add_patch(Rectangle((0, 0), L, W_r, fill=True, facecolor="#FBFBF8", edgecolor="#1E2D5A", lw=2.4))
-        ax.add_patch(Rectangle((0.0, 0.5), 0.55, 3.0, facecolor="#8C95A0", edgecolor="#2E3640", lw=1.5))
-        ax.text(0.27, 2.0, "금속\n사물함", ha="center", va="center", fontsize=8.5, color="white", fontweight="bold")
-        ax.add_patch(Rectangle((4.95, 0.5), 0.55, 3.0, facecolor="#8C95A0", edgecolor="#2E3640", lw=1.5))
-        ax.text(5.22, 2.0, "금속\n사물함", ha="center", va="center", fontsize=8.5, color="white", fontweight="bold")
-        ax.add_patch(Rectangle((2.3, 1.1), 0.9, 1.8, facecolor="#D9C8B4", edgecolor="#7D6B58", lw=1.2))
-        ax.text(2.75, 2.0, "벤치", ha="center", va="center", fontsize=8.5, color="#3A2F24")
-        ax.add_patch(Rectangle((1.5, 3.88), 2.5, 0.12, facecolor="#78C2D4", edgecolor="#1E2D5A", lw=1.2))
-        ax.text(2.75, 4.10, "대형 거울 (경면 반사벽)", ha="center", va="bottom", fontsize=9.2, color="#1E2D5A", fontweight="bold")
-
-        gt = (0.68, 2.75)
-        ax.scatter([gt[0]], [gt[1]], s=125, c="#EB6834", marker="*", zorder=6)
-        ax.text(gt[0] + 0.14, gt[1] + 0.14, "은닉 몰래카메라", fontsize=9, color="#EB6834", fontweight="bold")
-
-        # 실제 ar_opa_results.json 탈의실 벽면 부착 최적 3노드
-        nodes = [
-            (1.15, 3.92, -60, "노드 1: 뒷벽 2.0m\n+30° / -15°", "top", -0.35),
-            (4.35, 3.92, -120, "노드 2: 뒷벽 2.0m\n-30° / -15°", "top", -0.35),
-            (3.45, 0.08, 105, "노드 3: 앞벽 1.1m\n-15° / 0°", "top", -0.18),
-        ]
-        u = tt / 12.0
         for nx, ny, ad, lbl, va, dy in nodes:
             draw_wall_node(ax, nx, ny, ad, lbl, va=va, dy=dy)
+            if n_photos >= 1:
+                ax.plot([nx, gt[0]], [ny, gt[1]], color="#0EA5A4", alpha=0.72, lw=2.0, zorder=4)
+        if n_photos >= 2:
+            # 칠판 경면 반사 가상 앵커 경로 표시!
+            ax.plot([0.08, 3.2, gt[0]], [2.2, 0.16, gt[1]], color="#0284C7", lw=1.8, ls="-.", alpha=0.80, zorder=4)
+            ax.text(3.2, 0.42, "칠판 반사 가상 앵커(3번째 눈)", ha="center", va="bottom", fontsize=8.2, color="#0284C7", fontweight="bold")
 
-        if u > 0.22:
-            refl_pt = (2.2, 3.88)
-            ax.plot([gt[0], refl_pt[0], 3.45], [gt[1], refl_pt[1], 0.08], color="#EB6834", lw=1.8, ls=":", alpha=0.82)
-            ax.plot([1.15, gt[0]], [3.92, gt[1]], color="#19C2B0", lw=1.8, alpha=0.65)
-            ax.plot([4.35, gt[0]], [3.92, gt[1]], color="#19C2B0", lw=1.8, alpha=0.65)
-            rad = max(0.28, 1.30 * (1.0 - min(1.0, (u - 0.22) / 0.55)))
-            ax.add_patch(Circle(gt, rad, facecolor="#EB6834", alpha=0.18, edgecolor="#EB6834", lw=2.2, zorder=3))
-            ax.text(gt[0] + rad + 0.12, gt[1] - 0.15, f"90% AR 반경 {rad:.2f} m", fontsize=9.5, color="#B83B0E", fontweight="bold")
-
-        stage = ("벽면 스위블 배치 + 10면 가상 거울 앵커 -> 중앙값 0.28 m 정밀 수렴! (P90 0.60 m)"
-                 if u > 0.25 else "AR-OPA: 자석·나노겔 벽부착 + 각도 딸깍 3점 자동 계산 (0.1초 · 각도고정 대비 P90 -20%)")
-        ax.set_title(f"[사적 공간] 금속 사물함 탈의실 — {stage}", fontsize=13.0, fontweight="bold", color="#1E2D5A", pad=12)
+        stage = ("단 2기 벽면 부착 (AR-OPA-2 · 15초 설치 · 스탠드 0개)" if n_photos == 0
+                 else f"사진 {n_photos}장 -> ReconCovNet-v4 + MA-PINN (0.19m · RAPS 90% AR {len(raps_set)}석 압축!)")
+        ax.set_title(f"[미학습 공간] 40석 대형 금속 칠판 교실 — {stage}", fontsize=12.4, fontweight="bold", color="#1E2D5A", pad=12)
         ax.set_xlabel("가로 (m)", fontsize=10); ax.set_ylabel("세로 (m)", fontsize=10)
 
     ax.grid(alpha=0.18, linestyle="--")
@@ -152,7 +161,7 @@ def main():
     proc.stdin.close()
     proc.wait()
     plt.close(fig)
-    print(f"Palm-12 operation video saved: {OUT} ({os.path.getsize(OUT) / 1e6:.2f} MB)")
+    print(f"Nano-2 AI operation video saved: {OUT} ({os.path.getsize(OUT) / 1e6:.2f} MB)")
 
 
 if __name__ == "__main__":

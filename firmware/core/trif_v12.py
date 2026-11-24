@@ -1,34 +1,41 @@
 # -*- coding: utf-8 -*-
-"""DeteCam 5.0 (Palm-12) — High-DOF TriF v12 + 상호결합 보정(C⁻¹) + RAPS Conformal AR 위치 추정 엔진.
+"""DeteCam 6.0 (Nano-2 AI) — TriF v13 + 상호결합 보정(C⁻¹) + ReconCovNet-v4 + MA-PINN + RAPS Conformal AR 엔진.
 
-7대 순수 SW 혁신:
-  1. 이중 체인 비(H_B/H_A) + RCLPA 180° 위상 반전 안전 복구 (AX210 flip <= 20% 면역)
-  2. 손바닥 크기(112x112 mm) 소형 배열용 상호결합 역행렬 보정 C⁻¹ (1회 턴테이블 캘리브레이션 -> 2.45GHz 1.68° / 5.2GHz 0.57°)
-  3. 12소자 High-DOF 저부하 Capon (load=0.10) 2D AoA
-  4. 시간축 보행 가림 감쇠 필터 (w_temp)
-  5. P_tx 불변 서브캐리어 주파수 평탄도 (CV_f) + 0-LoS 소프트 이상치 캡
-  6. 10면 경면 반사 가상 거울 앵커 조건부 자동 활성화 (e_tri > 11° & min CV_f > 0.055)
-  7. RAPS (Regularized Adaptive Prediction Sets) 90% 통계 보장 Conformal AR 신뢰 구역
+핵심 SW/AI 파이프라인:
+  1. 이중 체인 비(H_B/H_A) + CM-RCLPA 180° 위상 반전 안전 복구 (AX210 flip <= 20% 면역)
+  2. 초소형 포켓 배열(84x84 mm, d_min=20.1 mm < λ/2 @ 5GHz) 상호결합 역행렬 C⁻¹ + ReconCovNet-v4 초해상도 복원
+  3. 12소자 High-DOF Capon + 광대역 다중 서브밴드 공분산 분리
+  4. 시간축 보행 가림 감쇠 필터 (w_temp) + P_tx 불변 주파수 평탄도 (CV_f) + Delta P_12 전력비 융합
+  5. Bayesian Log-Sum-Exp MA-PINN 6면/10면 가상 거울 앵커 (단 2대 노드로 L자 코너·기둥 사각지대 돌파)
+  6. RAPS (Regularized Adaptive Prediction Sets) 90% 통계 보장 Conformal AR 신뢰 구역
 """
 import numpy as np
 
 C0 = 299792458.0
 
-# DeteCam Palm-12 확정 12소자 테두리 배열 3D 좌표 (m, 패널 좌표: x 오른쪽, y 정면(방 안쪽), z 위)
-# cad/model/palm_node.py 및 sim/palm_array_results.json (Palm-12-Edge) 와 0.1 mm 일치
+# DeteCam 6.0 Nano-2 확정 12소자 포켓 테두리 배열 3D 좌표 (m, 84x84 mm PCB, d_min=20.1 mm < λ/2 @ 5.85 GHz!)
+NANO12_EDGE_M = np.array([
+    [-0.0252, 0.0,  0.0390],  # Top #1
+    [-0.0045, 0.0,  0.0390],  # Top #2
+    [ 0.0238, 0.0,  0.0390],  # Top #3
+    [-0.0225, 0.0, -0.0390],  # Bot #1
+    [ 0.0008, 0.0, -0.0390],  # Bot #2
+    [ 0.0218, 0.0, -0.0390],  # Bot #3
+    [-0.0390, 0.0, -0.0265],  # Left #1
+    [-0.0390, 0.0, -0.0058],  # Left #2
+    [-0.0390, 0.0,  0.0212],  # Left #3
+    [ 0.0390, 0.0, -0.0272],  # Right #1
+    [ 0.0390, 0.0, -0.0030],  # Right #2
+    [ 0.0390, 0.0,  0.0268],  # Right #3
+], dtype=float)
+REF_NANO12_M = np.array([0.0320, 0.0, 0.0320], dtype=float)
+
+# v5.0 Palm-12 레거시 호환 기준 좌표 (112x112 mm PCB)
 PALM12_EDGE_M = np.array([
-    [-0.0338, 0.0,  0.0530],  # Top #1
-    [-0.0063, 0.0,  0.0530],  # Top #2
-    [ 0.0322, 0.0,  0.0530],  # Top #3
-    [-0.0301, 0.0, -0.0530],  # Bot #1
-    [-0.0009, 0.0, -0.0530],  # Bot #2
-    [ 0.0293, 0.0, -0.0530],  # Bot #3
-    [-0.0530, 0.0, -0.0356],  # Left #1
-    [-0.0530, 0.0, -0.0084],  # Left #2
-    [-0.0530, 0.0,  0.0280],  # Left #3
-    [ 0.0530, 0.0, -0.0367],  # Right #1
-    [ 0.0530, 0.0, -0.0042],  # Right #2
-    [ 0.0530, 0.0,  0.0361],  # Right #3
+    [-0.0338, 0.0,  0.0530], [-0.0063, 0.0,  0.0530], [ 0.0322, 0.0,  0.0530],
+    [-0.0301, 0.0, -0.0530], [-0.0009, 0.0, -0.0530], [ 0.0293, 0.0, -0.0530],
+    [-0.0530, 0.0, -0.0356], [-0.0530, 0.0, -0.0084], [-0.0530, 0.0,  0.0280],
+    [ 0.0530, 0.0, -0.0367], [ 0.0530, 0.0, -0.0042], [ 0.0530, 0.0,  0.0361],
 ], dtype=float)
 REF_PALM12_M = np.array([0.0460, 0.0, 0.0460], dtype=float)
 
@@ -143,9 +150,9 @@ def rclpa_repair_phase_flips(H, elem_local_m, fc_hz, bore=(0.0, 1.0, 0.0), C_mat
     return H_fix
 
 
-def capon_score(H, node_pos, bore, candidate_pts, fc_hz, elem_local_m=PALM12_EDGE_M,
-                C_inv=None, load=0.10, repair_flips=True):
-    """Palm-12 High-DOF Capon (load=0.10) + CM-RCLPA + 상호결합 보정 C⁻¹ + CV_f 소프트 캡."""
+def capon_score(H, node_pos, bore, candidate_pts, fc_hz, elem_local_m=NANO12_EDGE_M,
+                C_inv=None, load=0.08, repair_flips=True):
+    """Nano-12 High-DOF Capon + CM-RCLPA + 상호결합 보정 C⁻¹ + CV_f 소프트 캡."""
     H_in = np.asarray(H, dtype=np.complex128)
     C_mat = np.linalg.inv(C_inv) if C_inv is not None else None
     if repair_flips:

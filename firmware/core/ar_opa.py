@@ -99,8 +99,9 @@ def _guide_text(wall_ko, z_m, pan_deg, tilt_deg):
     return f"{wall_ko} {z_m:.1f}m ({mount_txt}) → 좌우 {pan_txt}, 상하 {tilt_txt}"
 
 
-def recommend_placement(room_dims, obstacles, roi_pts, k=3):
-    """AR 스캔 방 치수와 장애물에서 최적 3노드 벽면 부착 위치 + Pan/Tilt 클릭 각도 실시간(<0.3초) 추천."""
+def recommend_placement(room_dims, obstacles, roi_pts, k=2, mirror_aware=True):
+    """DeteCam 6.0 AR-OPA-2: AR 스캔 방·장애물로부터 최적 2노드(k=2) 벽면 부착 위치 + Pan/Tilt 클릭 각도 계산.
+    직접 가시선(LoS)뿐 아니라 L자 코너·중앙 기둥·칸막이 너머 1차 가상 거울 반사 가시성까지 동시 최적화!"""
     L, W, H = [float(v) for v in room_dims]
     roi = np.asarray(roi_pts, dtype=float)
     center = roi.mean(axis=0)
@@ -135,15 +136,45 @@ def recommend_placement(room_dims, obstacles, roi_pts, k=3):
                         ob_c = np.array([0.5*(ob.b[0]+ob.b[1]), 0.5*(ob.b[2]+ob.b[3]), 0.5*(ob.b[4]+ob.b[5])])
                         rel = ob_c - p
                         behind = float(np.dot(rel / max(np.linalg.norm(rel), 1e-6), bore)) < -0.35
-                        refl_pen += (0.25 if behind else 1.0) * ob.refl * ((0.45 - d_ob) / 0.45) ** 2
+                        refl_pen += (0.20 if behind else 0.70) * ob.refl * ((0.45 - d_ob) / 0.45) ** 2
             cands.append((p, bore, refl_pen, wall_ko, pan, tilt))
 
     nc, nr = len(cands), len(roi)
     F = np.zeros((nc, nr, 3, 3))
     LoS = np.zeros((nc, nr), dtype=bool)
+    Vis = np.zeros((nc, nr), dtype=bool)
+    planes = [(0, 0.0), (0, L), (1, 0.0), (1, W)]
+
     for i, c in enumerate(cands):
+        p, bore = c[0], c[1]
         for j, q in enumerate(roi):
-            F[i, j], LoS[i, j] = _aoa_fim(c[0], c[1], q, obstacles)
+            F[i, j], LoS[i, j] = _aoa_fim(p, bore, q, obstacles)
+            Vis[i, j] = LoS[i, j]
+            if mirror_aware and not LoS[i, j]:
+                # 1차 가상 거울 반사 경로가 사각지대(L자 코너·기둥 뒤)를 비추는지 검사!
+                for ax, pval in planes:
+                    q_img = q.copy(); q_img[ax] = 2.0 * pval - q_img[ax]
+                    den = q_img[ax] - p[ax]
+                    if abs(den) < 1e-5:
+                        continue
+                    t = (pval - p[ax]) / den
+                    if not (0.02 < t < 0.98):
+                        continue
+                    hit = p + t * (q_img - p)
+                    if not (0.0 <= hit[0] <= L and 0.0 <= hit[1] <= W and 0.0 <= hit[2] <= H):
+                        continue
+                    um = (hit - p) / max(float(np.linalg.norm(hit - p)), 1e-6)
+                    cm = float(np.dot(um, bore))
+                    if cm < 0.20:
+                        continue
+                    mloss = sum(ob.loss_db for ob in obstacles if _hits_box(p, hit, ob) or _hits_box(hit, q, ob))
+                    if mloss < 4.5:
+                        rm = max(float(np.linalg.norm(q_img - p)), 0.4)
+                        sig_m = np.radians(4.0 / max(cm, 0.30) * (1.0 + 0.03 * rm))
+                        um_r = um.copy(); um_r[ax] = -um_r[ax]
+                        F[i, j] += 0.45 * (np.eye(3) - np.outer(um_r, um_r)) / ((rm * sig_m) ** 2)
+                        Vis[i, j] = True
+                        break
 
     def eval_set(idxs):
         Fs = F[idxs].sum(axis=0) + 1e-4 * np.eye(3)[None, :, :]
@@ -151,22 +182,24 @@ def recommend_placement(room_dims, obstacles, roi_pts, k=3):
         invF = np.linalg.inv(Fs)
         crlb = np.sqrt(np.clip(np.trace(invF, axis1=1, axis2=2), 1e-9, 100.0))
         p90 = float(np.percentile(crlb, 90))
-        los2 = float(np.mean(LoS[idxs].sum(axis=0) >= 2))
+        vis_cov = float(np.mean(Vis[idxs].sum(axis=0) >= min(2, len(idxs))))
+        vis_any = float(np.mean(Vis[idxs].any(axis=0)))
         rpen = sum(cands[i][2] for i in idxs)
         min_d = min(
             (float(np.linalg.norm(cands[idxs[a]][0] - cands[idxs[b]][0]))
              for a in range(len(idxs)) for b in range(a + 1, len(idxs))),
             default=2.0,
         )
-        z_div = 0.25 if (max(cands[i][0][2] for i in idxs) - min(cands[i][0][2] for i in idxs) >= 0.65) else 0.0
-        return float(np.mean(ld)) - 1.6 * p90 + 1.2 * los2 - 1.3 * rpen - 3.0 * max(0.0, 1.4 - min_d) + z_div, p90, los2
+        z_div = 0.35 if (len(idxs) >= 2 and max(cands[i][0][2] for i in idxs) - min(cands[i][0][2] for i in idxs) >= 0.65) else 0.0
+        wall_div = 0.35 * len(set(cands[i][3] for i in idxs))
+        return float(np.mean(ld)) - 1.4 * p90 + 1.6 * vis_cov + 1.8 * vis_any - 1.0 * rpen - 3.0 * max(0.0, 1.5 - min_d) + z_div + wall_div, p90, vis_any
 
     chosen = []
     for _ in range(k):
         best_i = max((i for i in range(nc) if i not in chosen), key=lambda i: eval_set(chosen + [i])[0])
         chosen.append(best_i)
 
-    best_val, p90, los2 = eval_set(chosen)
+    best_val, p90, vis_any = eval_set(chosen)
     improved = True
     while improved:
         improved = False
@@ -176,9 +209,9 @@ def recommend_placement(room_dims, obstacles, roi_pts, k=3):
                     continue
                 trial = chosen.copy()
                 trial[pos] = i
-                v, p90_t, los2_t = eval_set(trial)
+                v, p90_t, vis_t = eval_set(trial)
                 if v > best_val + 1e-4:
-                    best_val, p90, los2, chosen, improved = v, p90_t, los2_t, trial, True
+                    best_val, p90, vis_any, chosen, improved = v, p90_t, vis_t, trial, True
 
     return dict(
         nodes=[
@@ -195,7 +228,7 @@ def recommend_placement(room_dims, obstacles, roi_pts, k=3):
             for idx, c in enumerate(chosen)
         ],
         expected_p90_crlb_m=round(p90, 3),
-        los2_coverage_pct=round(100.0 * los2, 1),
+        virtual_mirror_coverage_pct=round(100.0 * vis_any, 1),
     )
 
 

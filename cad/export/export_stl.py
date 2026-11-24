@@ -1,4 +1,4 @@
-"""DeteCam 5.0 (Palm-12) 6종 출력 부품 STL 내보내기 + 수밀성/크기/오버행 자동 검사."""
+"""DeteCam 6.0 (Nano-2 AI) 6종 출력 부품 STL 내보내기 + 수밀성/크기/오버행 자동 검사."""
 import json
 import os
 import sys
@@ -7,7 +7,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [HERE] + [os.path.join(os.path.dirname(HERE), d) for d in ("model", "checks")]
 import numpy as np
 import trimesh
-import palm_node as P
+import nano2_node as P
 import paths
 
 OUT = paths.STL
@@ -15,11 +15,11 @@ RES = paths.RES
 
 # (파일 이름, 형상 함수, 출력 방향 회전 [rx, ry, rz], 노드당 수량, 한글 이름, 설명, 채움 %)
 SPEC = [
-    ("01_rf_shell",    P.rf_shell,    [180, 0, 0], 1, "전면 RF 레이돔 쉘",     "전면 레이돔 바닥 배치, 12mm RF 공극, 서포트 0", 15),
-    ("02_sbc_chassis", P.sbc_chassis, [180, 0, 0], 1, "중앙 SBC·차폐 섀시",    "Ni-Cu 격벽 바닥 배치, ROCK 3A/X4 베이, 서포트 0", 15),
-    ("03_rear_cover",  P.rear_cover,  [180, 0, 0], 1, "후면 방열·틸트 커버",   "내측 바닥 배치, 104x104 인셋 + X축 틸트 귀, 서포트 0", 15),
+    ("01_rf_shell",    P.rf_shell,    [180, 0, 0], 1, "전면 RF 레이돔 쉘",     "96x96 포켓 전면 레이돔, 8.6mm RF 공극, 서포트 0", 15),
+    ("02_sbc_chassis", P.sbc_chassis, [180, 0, 0], 1, "중앙 NanoPi·차폐 섀시",  "Ni-Cu 격벽 바닥 배치, 무개조 NanoPi R5C + AX210 베이, 서포트 0", 15),
+    ("03_rear_cover",  P.rear_cover,  [180, 0, 0], 1, "후면 방열·틸트 커버",   "82x82 인셋 커버 + X축 틸트 귀, 서포트 0", 15),
     ("04_swivel_yoke", P.swivel_yoke, [0, 0, 0],   1, "2축 스위블 짐벌 요크",  "평탄 바닥 배치, 좌우 Pan±30° + 상하 Tilt-25°, 서포트 0", 15),
-    ("05_wall_base",   P.wall_base,   [0, 0, 0],   1, "벽면 부착 마운트 판",   "벽면 접촉면 바닥 배치, 자석4 + 나노겔 + 키홀, 서포트 0", 15),
+    ("05_wall_base",   P.wall_base,   [0, 0, 0],   1, "벽면 부착 마운트 판",   "66x66 벽면판, 자석4 + 나노겔 + 키홀, 서포트 0", 15),
     ("06_thumb_knob",  P.thumb_knob,  [0, 0, 0],   2, "M4 손조임 잠금 노브",   "공구 없이 팬/틸트 각도 고정 (노드당 2개), 서포트 0", 15),
 ]
 
@@ -90,7 +90,7 @@ def main():
             and abs(back.volume - m.volume()) < max(2.0, 1e-3 * m.volume())
         )
         rows.append(dict(
-            file=name + ".stl", ko=ko, qty_per_node=qty, qty_3nodes=qty * 3,
+            file=name + ".stl", ko=ko, qty_per_node=qty, qty_2nodes=qty * 2,
             note=note, infill=infill, size_mm=[round(s, 1) for s in size],
             volume_cm3=round(m.volume() / 1000.0, 1), watertight=bool(back.is_watertight),
             faces=int(len(back.faces)), bodies=len(m.decompose()),

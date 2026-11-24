@@ -1,53 +1,8 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DeteCam 5.0 (Palm-12) — 3D 조립·벽면 각도 조절 &amp; 동작 시뮬레이션</title>
-  <style>
-    body { font-family: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; background: #F7F6F2; color: #1E2D5A; line-height: 1.6; }
-    .wrap { max-width: 1080px; margin: 0 auto; padding: 36px 20px 64px; }
-    h1 { margin: 0 0 8px; font-size: 28px; }
-    .sub { color: #4F5A6B; margin: 0 0 28px; font-size: 15px; }
-    .card { background: #fff; border-radius: 14px; padding: 22px; margin-bottom: 26px; box-shadow: 0 4px 18px rgba(30,45,90,0.06); }
-    .card h2 { margin: 0 0 8px; font-size: 20px; }
-    .card p { margin: 0 0 14px; color: #4F5A6B; font-size: 14.5px; }
-    video { width: 100%; border-radius: 10px; background: #111827; display: block; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
-    .grid img { width: 100%; border-radius: 10px; border: 1px solid #E5E7EB; }
-    .badge { display: inline-block; background: #19C2B0; color: #fff; font-weight: 700; font-size: 12px; padding: 3px 9px; border-radius: 99px; margin-right: 6px; }
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <span class="badge">DeteCam 5.0</span><span class="badge" style="background:#EB6834">Palm-12 벽면 스위블</span>
-    <h1>손바닥 크기(12 cm) 벽면 부착·각도 조절 12+1소자 수신기 시뮬레이션</h1>
-    <p class="sub">Bambu Lab X1 Carbon 단 1판 출력(4시간 52분, 165 g, 서포트 0%) · 2축 스위블 각도 조절(Pan ±30° / Tilt -25°) · AR-OPA 6대 실공간 검증</p>
-
-    <div class="card">
-      <h2>1. 3D 부품 조립 &amp; 벽면 각도 조절 시뮬레이션</h2>
-      <p>112×112 mm 4층 통합 RF PCB + Ni-Cu 후면 차폐판 + Radxa ROCK 3A/AX210 + 자석·나노겔 벽면 마운트 조립 및 실시간 좌우 Pan(±30°)·상하 Tilt(-25°) 시연입니다.</p>
-      <video controls preload="metadata" poster="../images/palm12_wall_swivel.png">
-        <source src="조립_시뮬레이션.mp4" type="video/mp4">
-      </video>
-    </div>
-
-    <div class="card">
-      <h2>2. 현장 벽면 부착(AR-OPA) &amp; TriF v12 + RAPS 90% AR 동작 시뮬레이션</h2>
-      <p>40석 대형 금속 칠판 교실과 금속 사물함 탈의실에서 대형 스탠드 없이 손 닿는 벽면 2.0 m / 1.1 m에 부착해 각도만 클릭 조절한 뒤 숨은 카메라 위치를 좁혀 가는 과정입니다.</p>
-      <video controls preload="metadata" poster="../images/ar_opa_and_v5_benchmark.png">
-        <source src="배치_동작_시뮬레이션.mp4" type="video/mp4">
-      </video>
-    </div>
-
-    <div class="card">
-      <h2>3. 주요 3D CAD 렌더 &amp; Bambu Studio 1판 슬라이싱</h2>
-      <div class="grid">
-        <img src="../images/palm12_wall_swivel.png" alt="벽면 부착 스위블 CAD">
-        <img src="../images/palm12_exploded.png" alt="Palm-12 분해도">
-        <img src="../../print/preview/1판_손바닥노드_1기전체.png" alt="Bambu Studio 1판 슬라이싱">
-      </div>
-    </div>
-  </div>
-</body>
-</html>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>DeteCam 6.0 (Nano-2 AI) 시뮬레이션 영상</title>
+<style>body{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif;max-width:960px;margin:28px auto;padding:0 18px;background:#f7f6f2;color:#1e2d5a}video{width:100%;border-radius:12px;box-shadow:0 6px 24px rgba(30,45,90,.1);margin-bottom:24px}</style></head><body>
+<h1>DeteCam 6.0 (Nano-2 AI) 3D 조립 &amp; 단 2기 AI 동작 시뮬레이션</h1>
+<h2>1. 9.6 cm 포켓 수신기 조립 &amp; 2축 벽면 스위블 (Pan ±30° / Tilt -25°)</h2>
+<video controls preload="metadata" src="조립_시뮬레이션.mp4"></video>
+<h2>2. 단 2기 벽면 부착 + 가상 거울 앵커 (L자 코너 사각지대 &amp; 미학습 40석 교실)</h2>
+<video controls preload="metadata" src="배치_동작_시뮬레이션.mp4"></video>
+</body></html>

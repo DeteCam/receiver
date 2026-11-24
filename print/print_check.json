@@ -200,5 +200,207 @@
    "non_bridge_in_air_mm2": 0.0
   },
   "sec": 49.0
+ },
+ "1판_포켓노드_1기전체": {
+  "file": "1판_포켓노드_1기전체.gcode.3mf",
+  "problems": [],
+  "notes": [],
+  "file_check": {
+   "missing": [],
+   "md5_ok": true,
+   "printer_model_id": "BL-P001",
+   "nozzle": "0.4",
+   "support_used": "false",
+   "filament_type": "PLA",
+   "used_g": 124.87,
+   "used_m": 41.87,
+   "prediction_s": 14429,
+   "printer": "Bambu Lab X1 Carbon",
+   "bed_type": "Textured PEI Plate",
+   "nozzle_temp": "220",
+   "bed_temp": "55",
+   "layer_height": "0.2",
+   "enable_support": "0",
+   "brim": "auto_brim",
+   "max_flow_setting": "12",
+   "gcode_bytes": 10064396,
+   "warnings": []
+  },
+  "range": {
+   "x": [
+    18.2,
+    237.8
+   ],
+   "y": [
+    25.1,
+    241.8
+   ],
+   "z_max": 39.0,
+   "edge_min": 14.2,
+   "in_exclude": false,
+   "layers": 195
+  },
+  "flow": {
+   "max_p999": 11.8,
+   "by_feature": {
+    "Inner wall": {
+     "flow_p99": 11.8,
+     "speed_max": 147.0,
+     "len_m": 382.8
+    },
+    "Outer wall": {
+     "flow_p99": 11.8,
+     "speed_max": 159.0,
+     "len_m": 199.9
+    },
+    "Gap infill": {
+     "flow_p99": 11.8,
+     "speed_max": 250.0,
+     "len_m": 4.7
+    },
+    "Bottom surface": {
+     "flow_p99": 9.6,
+     "speed_max": 105.0,
+     "len_m": 55.1
+    },
+    "Internal solid infill": {
+     "flow_p99": 11.8,
+     "speed_max": 235.0,
+     "len_m": 340.6
+    },
+    "Bridge": {
+     "flow_p99": 7.1,
+     "speed_max": 50.0,
+     "len_m": 29.5
+    },
+    "Top surface": {
+     "flow_p99": 11.8,
+     "speed_max": 159.0,
+     "len_m": 77.4
+    },
+    "Sparse infill": {
+     "flow_p99": 11.8,
+     "speed_max": 147.0,
+     "len_m": 165.9
+    },
+    "Floating vertical shell": {
+     "flow_p99": 11.8,
+     "speed_max": 194.0,
+     "len_m": 21.5
+    }
+   }
+  },
+  "features_m": {
+   "Inner wall": 382.8,
+   "Outer wall": 199.9,
+   "Gap infill": 4.7,
+   "Bottom surface": 55.1,
+   "Internal solid infill": 340.6,
+   "Bridge": 29.5,
+   "Top surface": 77.4,
+   "Sparse infill": 165.9,
+   "Floating vertical shell": 21.5
+  },
+  "bed": [
+   {
+    "part": "01_rf_shell",
+    "contact_mm2": 8935.0,
+    "islands": 2,
+    "smallest_island_mm2": 936.0,
+    "height": 12.8,
+    "slender": 0.14
+   },
+   {
+    "part": "02_sbc_chassis",
+    "contact_mm2": 8961.0,
+    "islands": 1,
+    "smallest_island_mm2": 9050.0,
+    "height": 23.2,
+    "slender": 0.25
+   },
+   {
+    "part": "03_rear_cover",
+    "contact_mm2": 5707.0,
+    "islands": 1,
+    "smallest_island_mm2": 5845.0,
+    "height": 24.0,
+    "slender": 0.32
+   },
+   {
+    "part": "05_wall_base",
+    "contact_mm2": 4241.0,
+    "islands": 1,
+    "smallest_island_mm2": 4295.0,
+    "height": 26.4,
+    "slender": 0.41
+   },
+   {
+    "part": "04_swivel_yoke",
+    "contact_mm2": 240.0,
+    "islands": 1,
+    "smallest_island_mm2": 252.0,
+    "height": 39.0,
+    "slender": 2.52
+   },
+   {
+    "part": "06_thumb_knob",
+    "contact_mm2": 236.0,
+    "islands": 1,
+    "smallest_island_mm2": 251.0,
+    "height": 8.6,
+    "slender": 0.56
+   },
+   {
+    "part": "06_thumb_knob",
+    "contact_mm2": 236.0,
+    "islands": 1,
+    "smallest_island_mm2": 251.0,
+    "height": 8.6,
+    "slender": 0.56
+   }
+  ],
+  "missing": {
+   "by_part": {
+    "01_rf_shell": {
+     "mm2": 0.0,
+     "share_pct": 0.0
+    },
+    "02_sbc_chassis": {
+     "mm2": 0.0,
+     "share_pct": 0.0
+    },
+    "03_rear_cover": {
+     "mm2": 0.0,
+     "share_pct": 0.0
+    },
+    "05_wall_base": {
+     "mm2": 0.0,
+     "share_pct": 0.0
+    },
+    "04_swivel_yoke": {
+     "mm2": 0.0,
+     "share_pct": 0.0
+    },
+    "06_thumb_knob": {
+     "mm2": 0.0,
+     "share_pct": 0.0
+    }
+   },
+   "spots": [],
+   "n_spots": 0
+  },
+  "unsupported": {
+   "n": 0,
+   "islands": [],
+   "cantilever": [],
+   "bridge": [],
+   "max_bridge_span": 0.0,
+   "max_cantilever": 0.0,
+   "n_island": 0,
+   "n_cantilever": 0,
+   "n_bridge": 0,
+   "non_bridge_in_air_mm2": 0.0
+  },
+  "sec": 54.0
  }
 }

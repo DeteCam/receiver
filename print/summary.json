@@ -1,70 +1,70 @@
 {
  "plates": {
-  "1판_손바닥노드_1기전체": {
-   "name": "1판_손바닥노드_1기전체",
+  "1판_포켓노드_1기전체": {
+   "name": "1판_포켓노드_1기전체",
    "ok": true,
    "infill": 15,
    "items": [
     [
      "01_rf_shell",
-     64.0,
-     192.0,
+     66.0,
+     196.0,
      0
     ],
     [
      "02_sbc_chassis",
-     192.0,
-     192.0,
+     190.0,
+     196.0,
      0
     ],
     [
      "03_rear_cover",
-     196.0,
-     74.0,
+     190.0,
+     82.0,
      0
     ],
     [
      "05_wall_base",
-     64.0,
-     88.0,
+     66.0,
+     92.0,
      0
     ],
     [
      "04_swivel_yoke",
-     40.0,
-     34.0,
+     45.0,
+     36.0,
      0
     ],
     [
      "06_thumb_knob",
-     74.0,
-     34.0,
+     82.0,
+     36.0,
      0
     ],
     [
      "06_thumb_knob",
-     108.0,
-     34.0,
+     118.0,
+     36.0,
      0
     ]
    ],
-   "sec": 17554,
-   "model_sec": 17083,
-   "g": 165.04,
-   "m": 55.33,
-   "layers": 216,
-   "max_z": 43.2,
+   "sec": 14430,
+   "model_sec": 13959,
+   "g": 124.87,
+   "m": 41.87,
+   "layers": 195,
+   "max_z": 39.0,
    "features": {
     "Custom": 2,
-    "Inner wall": 2954,
-    "Outer wall": 2980,
+    "Inner wall": 3097,
+    "Outer wall": 3137,
+    "Gap infill": 1075,
     "Bottom surface": 8,
-    "Internal solid infill": 374,
-    "Bridge": 64,
-    "Sparse infill": 1540,
-    "Gap infill": 681,
-    "Top surface": 425,
-    "Floating vertical shell": 348,
+    "Internal solid infill": 497,
+    "Bridge": 60,
+    "Top surface": 465,
+    "Sparse infill": 1431,
+    "Floating vertical shell": 309,
     "Overhang wall": 36
    },
    "settings": {
@@ -93,216 +93,216 @@
     {
      "name": "01_rf_shell",
      "bbox": [
-      4.0,
-      132.0,
-      124.0,
-      252.0
+      18.0,
+      148.0,
+      114.0,
+      244.0
      ],
      "dev": 0.0
     },
     {
      "name": "02_sbc_chassis",
      "bbox": [
-      132.0,
-      132.0,
-      252.0,
-      252.0
+      142.0,
+      148.0,
+      238.0,
+      244.0
      ],
      "dev": 0.0
     },
     {
      "name": "03_rear_cover",
      "bbox": [
-      144.0,
-      22.0,
-      248.0,
-      126.0
+      150.0,
+      42.0,
+      230.0,
+      122.0
      ],
      "dev": 0.0
     },
     {
      "name": "05_wall_base",
      "bbox": [
-      28.0,
-      52.0,
-      100.0,
-      124.0
+      33.0,
+      59.0,
+      99.0,
+      125.0
      ],
      "dev": 0.0
     },
     {
      "name": "04_swivel_yoke",
      "bbox": [
-      31.34,
-      26.2,
-      48.66,
-      41.8
+      36.94,
+      28.4,
+      53.06,
+      43.6
      ],
      "dev": 0.06
     },
     {
      "name": "06_thumb_knob",
      "bbox": [
-      63.3,
-      24.32,
-      84.7,
-      43.68
+      71.9,
+      26.86,
+      92.1,
+      45.14
      ],
      "dev": 0.0
     },
     {
      "name": "06_thumb_knob",
      "bbox": [
-      97.3,
-      24.32,
-      118.7,
-      43.68
+      107.9,
+      26.86,
+      128.1,
+      45.14
      ],
      "dev": 0.0
     }
    ],
    "extent": [
-    4.21,
-    22.21,
-    251.79,
-    251.79,
-    43.2
+    18.21,
+    27.08,
+    237.79,
+    243.79,
+    39.0
    ],
-   "gap_min": 6.0,
-   "edge_min": 4.0,
+   "gap_min": 13.9,
+   "edge_min": 12.0,
    "notices": [],
    "printer_model_id": "BL-P001",
    "problems": [],
-   "desc": "DeteCam Palm-12 노드 1기 전체 (7개 부품 일괄 출력, 서포트 0%). 3기 제작 시 이 파일 3번 출력"
+   "desc": "DeteCam 6.0 Nano-2 포켓 노드(96x96mm) 1기 전체 (7개 부품 일괄 출력, 서포트 0%). 2기 제작 시 이 파일 2번 출력"
   }
  },
  "parts": {
   "01_rf_shell": {
-   "sec": 5046,
-   "model_sec": 4575,
-   "g": 51.34,
-   "m": 17.21,
+   "sec": 3304,
+   "model_sec": 2833,
+   "g": 30.13,
+   "m": 10.1,
    "infill": 15,
-   "layers": 80,
+   "layers": 64,
    "features": {
     "Custom": 2,
-    "Inner wall": 665,
-    "Outer wall": 674,
+    "Inner wall": 306,
+    "Outer wall": 311,
     "Bottom surface": 2,
+    "Internal solid infill": 38,
     "Bridge": 6,
-    "Internal solid infill": 58,
-    "Sparse infill": 148,
-    "Gap infill": 309,
-    "Top surface": 97,
-    "Floating vertical shell": 13
+    "Sparse infill": 176,
+    "Top surface": 102,
+    "Gap infill": 257,
+    "Floating vertical shell": 20
    },
    "problems": []
   },
   "02_sbc_chassis": {
-   "sec": 6212,
-   "model_sec": 5740,
-   "g": 57.25,
-   "m": 19.2,
+   "sec": 6310,
+   "model_sec": 5839,
+   "g": 53.86,
+   "m": 18.06,
    "infill": 15,
-   "layers": 73,
+   "layers": 116,
    "features": {
     "Custom": 2,
-    "Inner wall": 900,
-    "Outer wall": 921,
+    "Inner wall": 1522,
+    "Outer wall": 1556,
     "Bottom surface": 1,
-    "Internal solid infill": 95,
-    "Sparse infill": 560,
-    "Top surface": 135,
-    "Gap infill": 183,
-    "Floating vertical shell": 126,
-    "Bridge": 41
+    "Internal solid infill": 111,
+    "Gap infill": 595,
+    "Top surface": 165,
+    "Sparse infill": 622,
+    "Floating vertical shell": 115,
+    "Bridge": 34
    },
    "problems": []
   },
   "03_rear_cover": {
-   "sec": 4022,
-   "model_sec": 3550,
-   "g": 27.87,
-   "m": 9.34,
+   "sec": 2940,
+   "model_sec": 2468,
+   "g": 16.83,
+   "m": 5.64,
    "infill": 15,
-   "layers": 135,
+   "layers": 120,
    "features": {
     "Custom": 2,
-    "Inner wall": 497,
-    "Outer wall": 495,
+    "Inner wall": 436,
+    "Outer wall": 437,
+    "Gap infill": 109,
     "Bottom surface": 1,
-    "Internal solid infill": 85,
-    "Sparse infill": 235,
-    "Floating vertical shell": 48,
-    "Bridge": 5,
-    "Gap infill": 70,
-    "Top surface": 74,
+    "Internal solid infill": 159,
+    "Sparse infill": 148,
+    "Floating vertical shell": 23,
+    "Bridge": 7,
+    "Top surface": 75,
     "Overhang wall": 12
    },
    "problems": []
   },
   "04_swivel_yoke": {
-   "sec": 2288,
-   "model_sec": 1817,
-   "g": 6.44,
-   "m": 2.16,
+   "sec": 2108,
+   "model_sec": 1636,
+   "g": 5.59,
+   "m": 1.87,
    "infill": 15,
-   "layers": 216,
+   "layers": 195,
    "features": {
     "Custom": 2,
-    "Inner wall": 274,
-    "Outer wall": 272,
+    "Inner wall": 253,
+    "Outer wall": 251,
     "Bottom surface": 1,
-    "Internal solid infill": 40,
-    "Sparse infill": 270,
-    "Floating vertical shell": 102,
-    "Bridge": 5,
-    "Top surface": 5,
+    "Internal solid infill": 38,
+    "Sparse infill": 250,
+    "Floating vertical shell": 100,
+    "Bridge": 4,
+    "Top surface": 4,
     "Overhang wall": 12,
-    "Gap infill": 2
+    "Gap infill": 1
    },
    "problems": []
   },
   "05_wall_base": {
-   "sec": 2964,
-   "model_sec": 2492,
-   "g": 19.65,
-   "m": 6.59,
+   "sec": 2653,
+   "model_sec": 2182,
+   "g": 16.37,
+   "m": 5.49,
    "infill": 15,
-   "layers": 142,
+   "layers": 132,
    "features": {
     "Custom": 2,
-    "Inner wall": 442,
-    "Outer wall": 440,
+    "Inner wall": 412,
+    "Outer wall": 412,
     "Bottom surface": 1,
-    "Internal solid infill": 80,
-    "Sparse infill": 246,
-    "Gap infill": 68,
-    "Top surface": 69,
-    "Floating vertical shell": 50,
+    "Internal solid infill": 139,
+    "Sparse infill": 159,
+    "Gap infill": 67,
+    "Top surface": 66,
+    "Floating vertical shell": 28,
     "Bridge": 3,
     "Overhang wall": 12
    },
    "problems": []
   },
   "06_thumb_knob": {
-   "sec": 891,
-   "model_sec": 420,
-   "g": 2.23,
-   "m": 0.75,
+   "sec": 867,
+   "model_sec": 395,
+   "g": 2.03,
+   "m": 0.68,
    "infill": 15,
-   "layers": 45,
+   "layers": 43,
    "features": {
     "Custom": 2,
-    "Inner wall": 88,
-    "Outer wall": 89,
+    "Inner wall": 84,
+    "Outer wall": 85,
     "Bottom surface": 1,
     "Internal solid infill": 6,
-    "Sparse infill": 41,
-    "Floating vertical shell": 7,
-    "Bridge": 2,
+    "Sparse infill": 39,
+    "Floating vertical shell": 8,
+    "Bridge": 3,
     "Gap infill": 27,
-    "Top surface": 25
+    "Top surface": 27
    },
    "problems": []
   }

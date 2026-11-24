@@ -1,16 +1,8 @@
-# DeteCam 5.0 (Palm-12) 펌웨어 핵심 엔진 (`firmware/`)
+# DeteCam 6.0 (`Nano-2 AI`) 온디바이스 펌웨어 & PyTorch Edge-AI
 
-`Radxa ROCK 3A` (Linux 6.12 + `VesperCSI` ARM64, 또는 x86 `Radxa X4`)에서 동작하는 DeteCam 5.0 핵심 신호처리·판별·배치 알고리즘 및 자동 검증 테스트입니다.
+`FriendlyElec NanoPi R5C` (RK3568B2 ARM64 + 0.8T NPU)에서 실시간 실행되는 경량 신호처리·PyTorch 추론 코어:
 
-| 파일 | 역할 |
-|---|---|
-| [`core/trif_v12.py`](core/trif_v12.py) | `Palm-12` 12소자 테두리 배열 `TriF v12` (이중 체인 비 + **CM-RCLPA** + **상호결합 역행렬 `C⁻¹`** + Capon + `CV_f` + 10면 가상 거울 앵커 + RAPS 90% AR) |
-| [`core/score.py`](core/score.py) | 3단계 카메라 판별 (수동 무늬 + 5초 인과 자극 `CamLoPA` + 3D 방 경계 필터) + 3노드 `AD8317` LTE/5G 교차 차감 + 무료 BLE 구역 추정 |
-| [`core/ar_opa.py`](core/ar_opa.py) | 손 닿는 벽면(`1.1 m / 2.0 m`) 부착 + 15° 클릭 스위블(`Pan ±30°`, `Tilt 0°/-15°/-25°`) `AR-OPA` 최적 배치 및 3초 `Auto-Verify` |
-| [`tests/test_detecam_v5.py`](tests/test_detecam_v5.py) | 전체 핵심 알고리즘 자동 단위 검증 (`pytest`, 5/5 통과) |
-
-## 테스트 실행
-
-```bash
-pytest -v firmware/tests/test_detecam_v5.py
-```
+- `core/ai_engine.py`: 실제 학습된 `weights/recon_covnet.pt` (`ReconCovNet-v4`) & `weights/camguard_net.pt` (`CamGuard-Net`) 로드 + Bayesian Log-Sum-Exp `MA-PINN` 가상 거울 앵커 + `ΔP_12` 전력비 융합 (`0.024 ms / 0.12 ms`).
+- `core/trif_v12.py`: `NANO12_EDGE_M` (84×84 mm, `d_min=20.1 mm < λ/2 @ 5.85 GHz`), `CM-RCLPA` 180° 위상 반전 복구, `C⁻¹` 상호결합 보정, `RAPS` 90% Conformal AR.
+- `core/ar_opa.py`: `AR-OPA-2` 단 2기 벽면 부착·스위블 각도 최적 배치(직선 LoS + 1차 가상 거울 가시성 동시 최적화) + 3초 `Auto-Verify`.
+- `tests/test_detecam_v6.py`: `pytest` 6/6 통과.

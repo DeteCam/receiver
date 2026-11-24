@@ -1,0 +1,855 @@
+{
+  "per_space": {
+    "motel_std": {
+      "ko": "1. 숙소 원룸 (거울·침대·옷장)",
+      "unseen": false,
+      "dims": [
+        4.5,
+        3.8,
+        2.6
+      ],
+      "bands": {
+        "2.45G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.2,
+            "p90_m": 0.341,
+            "within_1m_pct": 100.0
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.225,
+            "p90_m": 0.548,
+            "within_1m_pct": 100.0
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.189,
+            "p90_m": 0.544,
+            "within_1m_pct": 100.0
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 0.508,
+            "p90_m": 1.779,
+            "within_1m_pct": 75.0
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.197,
+            "p90_m": 0.555,
+            "within_1m_pct": 100.0
+          }
+        },
+        "5.22G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.19,
+            "p90_m": 0.416,
+            "within_1m_pct": 100.0
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.194,
+            "p90_m": 0.57,
+            "within_1m_pct": 96.4
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.147,
+            "p90_m": 0.407,
+            "within_1m_pct": 100.0
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 0.489,
+            "p90_m": 1.32,
+            "within_1m_pct": 75.0
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.152,
+            "p90_m": 0.406,
+            "within_1m_pct": 100.0
+          }
+        }
+      }
+    },
+    "motel_lshape": {
+      "ko": "2. L자형 꺾인 객실 (코너 사각지대)",
+      "unseen": false,
+      "dims": [
+        6.0,
+        4.8,
+        2.6
+      ],
+      "bands": {
+        "2.45G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.157,
+            "p90_m": 0.364,
+            "within_1m_pct": 96.4
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.199,
+            "p90_m": 0.882,
+            "within_1m_pct": 89.3
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.253,
+            "p90_m": 0.781,
+            "within_1m_pct": 100.0
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 0.695,
+            "p90_m": 2.352,
+            "within_1m_pct": 71.4
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.196,
+            "p90_m": 0.631,
+            "within_1m_pct": 100.0
+          }
+        },
+        "5.22G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.154,
+            "p90_m": 0.271,
+            "within_1m_pct": 96.4
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.168,
+            "p90_m": 0.341,
+            "within_1m_pct": 96.4
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.175,
+            "p90_m": 0.422,
+            "within_1m_pct": 100.0
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 1.026,
+            "p90_m": 3.034,
+            "within_1m_pct": 50.0
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.181,
+            "p90_m": 0.378,
+            "within_1m_pct": 100.0
+          }
+        }
+      }
+    },
+    "toilet_cubicle": {
+      "ko": "3. 공중 화장실 (3칸 칸막이·거울)",
+      "unseen": false,
+      "dims": [
+        3.8,
+        2.8,
+        2.5
+      ],
+      "bands": {
+        "2.45G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.161,
+            "p90_m": 0.395,
+            "within_1m_pct": 96.4
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.192,
+            "p90_m": 0.55,
+            "within_1m_pct": 100.0
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.17,
+            "p90_m": 0.453,
+            "within_1m_pct": 100.0
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 0.593,
+            "p90_m": 1.591,
+            "within_1m_pct": 75.0
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.181,
+            "p90_m": 0.456,
+            "within_1m_pct": 100.0
+          }
+        },
+        "5.22G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.158,
+            "p90_m": 2.381,
+            "within_1m_pct": 78.6
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.152,
+            "p90_m": 0.55,
+            "within_1m_pct": 92.9
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.156,
+            "p90_m": 0.371,
+            "within_1m_pct": 96.4
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 0.483,
+            "p90_m": 1.429,
+            "within_1m_pct": 82.1
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.149,
+            "p90_m": 0.379,
+            "within_1m_pct": 100.0
+          }
+        }
+      }
+    },
+    "bathhouse_wet": {
+      "ko": "4. 목욕탕 (습기 타일·중앙 기둥)",
+      "unseen": false,
+      "dims": [
+        6.0,
+        5.0,
+        2.8
+      ],
+      "bands": {
+        "2.45G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.203,
+            "p90_m": 0.375,
+            "within_1m_pct": 100.0
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.284,
+            "p90_m": 0.881,
+            "within_1m_pct": 89.3
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.21,
+            "p90_m": 0.403,
+            "within_1m_pct": 96.4
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 1.589,
+            "p90_m": 4.305,
+            "within_1m_pct": 32.1
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.206,
+            "p90_m": 0.444,
+            "within_1m_pct": 96.4
+          }
+        },
+        "5.22G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.202,
+            "p90_m": 0.406,
+            "within_1m_pct": 92.9
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.207,
+            "p90_m": 0.686,
+            "within_1m_pct": 92.9
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.172,
+            "p90_m": 0.597,
+            "within_1m_pct": 96.4
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 1.047,
+            "p90_m": 2.614,
+            "within_1m_pct": 46.4
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.132,
+            "p90_m": 0.373,
+            "within_1m_pct": 100.0
+          }
+        }
+      }
+    },
+    "locker_metal": {
+      "ko": "5. 금속 사물함 탈의실 (양면 철제)",
+      "unseen": false,
+      "dims": [
+        5.5,
+        4.0,
+        2.6
+      ],
+      "bands": {
+        "2.45G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.173,
+            "p90_m": 0.305,
+            "within_1m_pct": 100.0
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.235,
+            "p90_m": 0.535,
+            "within_1m_pct": 96.4
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.233,
+            "p90_m": 0.891,
+            "within_1m_pct": 92.9
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 0.696,
+            "p90_m": 2.27,
+            "within_1m_pct": 60.7
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.213,
+            "p90_m": 0.429,
+            "within_1m_pct": 100.0
+          }
+        },
+        "5.22G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.177,
+            "p90_m": 0.346,
+            "within_1m_pct": 100.0
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.204,
+            "p90_m": 0.498,
+            "within_1m_pct": 92.9
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.227,
+            "p90_m": 0.946,
+            "within_1m_pct": 89.3
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 0.779,
+            "p90_m": 2.04,
+            "within_1m_pct": 64.3
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.226,
+            "p90_m": 0.552,
+            "within_1m_pct": 96.4
+          }
+        }
+      }
+    },
+    "fitting_room": {
+      "ko": "6. 의류 피팅룸 (협소 밀집 부스·거울)",
+      "unseen": false,
+      "dims": [
+        4.2,
+        3.2,
+        2.6
+      ],
+      "bands": {
+        "2.45G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.184,
+            "p90_m": 0.357,
+            "within_1m_pct": 100.0
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.226,
+            "p90_m": 0.446,
+            "within_1m_pct": 92.9
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.221,
+            "p90_m": 0.292,
+            "within_1m_pct": 100.0
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 0.502,
+            "p90_m": 1.351,
+            "within_1m_pct": 85.7
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.219,
+            "p90_m": 0.304,
+            "within_1m_pct": 100.0
+          }
+        },
+        "5.22G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.194,
+            "p90_m": 0.318,
+            "within_1m_pct": 100.0
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.197,
+            "p90_m": 0.644,
+            "within_1m_pct": 92.9
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.205,
+            "p90_m": 0.34,
+            "within_1m_pct": 100.0
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 0.504,
+            "p90_m": 1.323,
+            "within_1m_pct": 85.7
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.19,
+            "p90_m": 0.348,
+            "within_1m_pct": 100.0
+          }
+        }
+      }
+    },
+    "classroom_40": {
+      "ko": "7. 40석 표준 교실 (금속 칠판·인체)",
+      "unseen": true,
+      "dims": [
+        8.5,
+        7.5,
+        2.8
+      ],
+      "bands": {
+        "2.45G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.416,
+            "p90_m": 1.041,
+            "within_1m_pct": 89.3
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.445,
+            "p90_m": 1.544,
+            "within_1m_pct": 71.4
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.433,
+            "p90_m": 1.304,
+            "within_1m_pct": 82.1
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 1.518,
+            "p90_m": 2.737,
+            "within_1m_pct": 39.3
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.327,
+            "p90_m": 0.991,
+            "within_1m_pct": 89.3
+          }
+        },
+        "5.22G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.339,
+            "p90_m": 0.724,
+            "within_1m_pct": 96.4
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.36,
+            "p90_m": 0.686,
+            "within_1m_pct": 96.4
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.192,
+            "p90_m": 0.529,
+            "within_1m_pct": 100.0
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 0.775,
+            "p90_m": 4.254,
+            "within_1m_pct": 53.6
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.208,
+            "p90_m": 0.616,
+            "within_1m_pct": 96.4
+          }
+        }
+      }
+    },
+    "hall_150": {
+      "ko": "8. 150석 대형 강당 (기둥 2·계단식)",
+      "unseen": true,
+      "dims": [
+        14.0,
+        12.0,
+        3.6
+      ],
+      "bands": {
+        "2.45G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.649,
+            "p90_m": 6.396,
+            "within_1m_pct": 64.3
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.991,
+            "p90_m": 5.17,
+            "within_1m_pct": 50.0
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.824,
+            "p90_m": 2.063,
+            "within_1m_pct": 57.1
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 4.38,
+            "p90_m": 9.868,
+            "within_1m_pct": 14.3
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.358,
+            "p90_m": 1.308,
+            "within_1m_pct": 82.1
+          }
+        },
+        "5.22G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.416,
+            "p90_m": 9.9,
+            "within_1m_pct": 71.4
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.371,
+            "p90_m": 3.019,
+            "within_1m_pct": 82.1
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.45,
+            "p90_m": 2.061,
+            "within_1m_pct": 82.1
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 2.789,
+            "p90_m": 9.167,
+            "within_1m_pct": 17.9
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.481,
+            "p90_m": 1.036,
+            "within_1m_pct": 89.3
+          }
+        }
+      }
+    },
+    "glass_office": {
+      "ko": "9. 통유리 회의실 (유리벽·대형 테이블)",
+      "unseen": true,
+      "dims": [
+        6.5,
+        5.0,
+        2.8
+      ],
+      "bands": {
+        "2.45G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.193,
+            "p90_m": 0.353,
+            "within_1m_pct": 100.0
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.271,
+            "p90_m": 1.121,
+            "within_1m_pct": 82.1
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.25,
+            "p90_m": 0.584,
+            "within_1m_pct": 100.0
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 1.379,
+            "p90_m": 2.627,
+            "within_1m_pct": 39.3
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.344,
+            "p90_m": 0.57,
+            "within_1m_pct": 96.4
+          }
+        },
+        "5.22G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.183,
+            "p90_m": 1.971,
+            "within_1m_pct": 85.7
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.214,
+            "p90_m": 0.903,
+            "within_1m_pct": 92.9
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.142,
+            "p90_m": 0.561,
+            "within_1m_pct": 100.0
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 0.815,
+            "p90_m": 2.99,
+            "within_1m_pct": 57.1
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.141,
+            "p90_m": 0.424,
+            "within_1m_pct": 100.0
+          }
+        }
+      }
+    },
+    "cluttered_dorm": {
+      "ko": "10. 과밀 기숙사 (철제 2층침대·선반)",
+      "unseen": true,
+      "dims": [
+        4.0,
+        3.0,
+        2.5
+      ],
+      "bands": {
+        "2.45G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.174,
+            "p90_m": 0.345,
+            "within_1m_pct": 96.4
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.155,
+            "p90_m": 0.401,
+            "within_1m_pct": 100.0
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.141,
+            "p90_m": 0.396,
+            "within_1m_pct": 100.0
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 0.549,
+            "p90_m": 1.247,
+            "within_1m_pct": 75.0
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.144,
+            "p90_m": 0.414,
+            "within_1m_pct": 100.0
+          }
+        },
+        "5.22G": {
+          "v5_Palm12_3Node_Classic": {
+            "med_m": 0.148,
+            "p90_m": 1.112,
+            "within_1m_pct": 85.7
+          },
+          "Nano2_2Node_Classic": {
+            "med_m": 0.155,
+            "p90_m": 0.355,
+            "within_1m_pct": 100.0
+          },
+          "Nano2_2Node_AI": {
+            "med_m": 0.156,
+            "p90_m": 0.329,
+            "within_1m_pct": 100.0
+          },
+          "Nano1_1Node_AI": {
+            "med_m": 0.431,
+            "p90_m": 1.272,
+            "within_1m_pct": 85.7
+          },
+          "Nano2_2Node_AI_Phone": {
+            "med_m": 0.151,
+            "p90_m": 0.294,
+            "within_1m_pct": 100.0
+          }
+        }
+      }
+    }
+  },
+  "aggregate": {
+    "all_10_spaces": {
+      "2.45G": {
+        "v5_Palm12_3Node_Classic": {
+          "med_m": 0.203,
+          "p90_m": 0.609,
+          "within_1m_pct": 94.3,
+          "n": 280
+        },
+        "Nano2_2Node_Classic": {
+          "med_m": 0.253,
+          "p90_m": 1.146,
+          "within_1m_pct": 87.1,
+          "n": 280
+        },
+        "Nano2_2Node_AI": {
+          "med_m": 0.24,
+          "p90_m": 0.872,
+          "within_1m_pct": 92.9,
+          "n": 280
+        },
+        "Nano1_1Node_AI": {
+          "med_m": 0.791,
+          "p90_m": 2.786,
+          "within_1m_pct": 56.8,
+          "n": 280
+        },
+        "Nano2_2Node_AI_Phone": {
+          "med_m": 0.228,
+          "p90_m": 0.652,
+          "within_1m_pct": 96.4,
+          "n": 280
+        }
+      },
+      "5.22G": {
+        "v5_Palm12_3Node_Classic": {
+          "med_m": 0.196,
+          "p90_m": 0.843,
+          "within_1m_pct": 90.7,
+          "n": 280
+        },
+        "Nano2_2Node_Classic": {
+          "med_m": 0.206,
+          "p90_m": 0.694,
+          "within_1m_pct": 93.6,
+          "n": 280
+        },
+        "Nano2_2Node_AI": {
+          "med_m": 0.19,
+          "p90_m": 0.54,
+          "within_1m_pct": 96.4,
+          "n": 280
+        },
+        "Nano1_1Node_AI": {
+          "med_m": 0.706,
+          "p90_m": 3.063,
+          "within_1m_pct": 61.8,
+          "n": 280
+        },
+        "Nano2_2Node_AI_Phone": {
+          "med_m": 0.188,
+          "p90_m": 0.501,
+          "within_1m_pct": 98.2,
+          "n": 280
+        }
+      }
+    },
+    "unseen_4_spaces": {
+      "2.45G": {
+        "v5_Palm12_3Node_Classic": {
+          "med_m": 0.256,
+          "p90_m": 1.236,
+          "within_1m_pct": 87.5,
+          "n": 112
+        },
+        "Nano2_2Node_Classic": {
+          "med_m": 0.331,
+          "p90_m": 1.859,
+          "within_1m_pct": 75.9,
+          "n": 112
+        },
+        "Nano2_2Node_AI": {
+          "med_m": 0.333,
+          "p90_m": 1.248,
+          "within_1m_pct": 84.8,
+          "n": 112
+        },
+        "Nano1_1Node_AI": {
+          "med_m": 1.304,
+          "p90_m": 5.237,
+          "within_1m_pct": 42.0,
+          "n": 112
+        },
+        "Nano2_2Node_AI_Phone": {
+          "med_m": 0.29,
+          "p90_m": 0.927,
+          "within_1m_pct": 92.0,
+          "n": 112
+        }
+      },
+      "5.22G": {
+        "v5_Palm12_3Node_Classic": {
+          "med_m": 0.24,
+          "p90_m": 1.862,
+          "within_1m_pct": 84.8,
+          "n": 112
+        },
+        "Nano2_2Node_Classic": {
+          "med_m": 0.274,
+          "p90_m": 0.867,
+          "within_1m_pct": 92.9,
+          "n": 112
+        },
+        "Nano2_2Node_AI": {
+          "med_m": 0.213,
+          "p90_m": 0.64,
+          "within_1m_pct": 95.5,
+          "n": 112
+        },
+        "Nano1_1Node_AI": {
+          "med_m": 0.859,
+          "p90_m": 4.589,
+          "within_1m_pct": 53.6,
+          "n": 112
+        },
+        "Nano2_2Node_AI_Phone": {
+          "med_m": 0.208,
+          "p90_m": 0.624,
+          "within_1m_pct": 96.4,
+          "n": 112
+        }
+      }
+    },
+    "nlos_blindspot_cases": {
+      "2.45G": {
+        "v5_Palm12_3Node_Classic": {
+          "med_m": 0.224,
+          "p90_m": 1.343,
+          "within_1m_pct": 87.3,
+          "n": 102
+        },
+        "Nano2_2Node_Classic": {
+          "med_m": 0.345,
+          "p90_m": 1.744,
+          "within_1m_pct": 77.5,
+          "n": 102
+        },
+        "Nano2_2Node_AI": {
+          "med_m": 0.298,
+          "p90_m": 1.058,
+          "within_1m_pct": 87.3,
+          "n": 102
+        },
+        "Nano1_1Node_AI": {
+          "med_m": 0.956,
+          "p90_m": 5.243,
+          "within_1m_pct": 51.0,
+          "n": 102
+        },
+        "Nano2_2Node_AI_Phone": {
+          "med_m": 0.25,
+          "p90_m": 0.802,
+          "within_1m_pct": 96.1,
+          "n": 102
+        }
+      },
+      "5.22G": {
+        "v5_Palm12_3Node_Classic": {
+          "med_m": 0.207,
+          "p90_m": 1.902,
+          "within_1m_pct": 86.3,
+          "n": 102
+        },
+        "Nano2_2Node_Classic": {
+          "med_m": 0.216,
+          "p90_m": 0.887,
+          "within_1m_pct": 92.2,
+          "n": 102
+        },
+        "Nano2_2Node_AI": {
+          "med_m": 0.22,
+          "p90_m": 0.63,
+          "within_1m_pct": 95.1,
+          "n": 102
+        },
+        "Nano1_1Node_AI": {
+          "med_m": 0.857,
+          "p90_m": 4.548,
+          "within_1m_pct": 56.9,
+          "n": 102
+        },
+        "Nano2_2Node_AI_Phone": {
+          "med_m": 0.215,
+          "p90_m": 0.619,
+          "within_1m_pct": 97.1,
+          "n": 102
+        }
+      }
+    }
+  },
+  "runtime_s": 142.5
+}

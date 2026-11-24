@@ -1,7 +1,7 @@
 # SPEC-002: 움직이지 않는 스위치 고리 수신기
 
 - 상태: **명세 (검증 전)**. 실측값 없음. 2026-11-24
-- 기준: [docs/AGENTS.md](https://github.com/DeteCam/docs/blob/main/AGENTS.md) (목표 G1~G3, 요구사항 R1~R8)
+- 기준: [docs/AGENTS.md](https://github.com/DeteCam/docs/blob/main/AGENTS.md) (목표 G1~G3, 요구사항 R1~R9)
 - 대체하는 스펙: 001-nano2-receiver (v6, 브랜치 `archive/v6-nano2`). 독립 검증에서 성능이 떨어지고 PCB 외주가 필요해 내렸다.
 
 ## 1. 무엇을, 왜
@@ -30,6 +30,7 @@
 | NFR-3 | 크기 (AGENTS.md R8) | 1기 전체(안테나 · 호스트 포함, 전원 제외)가 가로 · 세로 12 cm 이하, 높이 20 cm 이하 | 조립품을 자로 잰다 |
 | NFR-4 | 제작 | PCB 외주 · 납땜 없음 (SMA · 볼트 · 3D 프린트) | 조립 순서 |
 | NFR-5 | 독립 동작 | 노트북 없이 배터리로 동작, 폰으로 조종 | V6 |
+| NFR-6 | 무선 연결 (AGENTS.md R9) | 다른 수신기 · 허브 · 폰과는 무선으로만 연결. 연결용 무선은 AX210이 재는 채널을 방해하지 않음 | V3 · V6 |
 
 ## 4. 범위 밖
 

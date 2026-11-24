@@ -1,26 +1,7 @@
-# cad: 3D 모델과 검사
+# DeteCam 5.0 (Palm-12) CAD · STL · Bambu Studio 2.9.1 파이프라인
 
-모델은 파이썬 코드로 만듭니다 (manifold3d). 치수와 부품 모양은 모두 `model/panel.py` 한 파일에 있습니다. 부품을 받은 뒤 재서 고칠 값에는 `[실측]` 이라고 적어 두었습니다.
-
-```
-pip install manifold3d trimesh numpy shapely scipy pillow          # 그림과 영상까지: pyvista matplotlib, ffmpeg, xvfb
-python3 export/export2.py                             # ../stl 다시 만들기 (부품 8개, 다시 읽어 검사)
-python3 checks/panel_check.py                         # 겹침, 틈, 무게, 넘어지는 각, 자석
-```
-
-| 폴더 | 하는 일 | 스크립트 |
-|---|---|---|
-| `model/` | 치수와 부품 모양 | `panel.py` (패널 통·앞덮개·자석 걸이판·받침 발·누름쇠, 허브 통·선반·뚜껑, 사 오는 부품의 모형), `cadlib.py`, `paths.py` |
-| `export/` | 내보내기 | `export2.py` (STL), `partlist.py` (`docs/부품표.md`·`.csv`), `marker_panel.py` (`marker/marker.json`) |
-| `checks/` | 검사 | `panel_check.py` → `results/panel_check.json` |
-| `figures/` | 그림과 영상 | `view_panel.py` (확인용 그림), `anim_panel.py` (`docs/videos/조립_시뮬레이션.mp4`), 그리기는 `render.py`. `xvfb-run -a` 로 돌립니다. `design_figs.py` 는 설계도와 데모 환경의 그림 일곱 장을 그립니다 (화면 없이) |
-| `slicing/` | Bambu Studio 슬라이싱과 검사 | `slice_bambu.py ../stl ../print --parts` (5분), `print_check.py ../stl ../print` (1분) |
-| `results/` | 위 스크립트들이 쓴 숫자 (json) | `parts.json`, `panel_check.json`, `gates.json` (관문마다 사는 것과 값) |
-
-치수를 바꿨으면 `export/export2.py` → `checks/panel_check.py` → 슬라이싱 → `slicing/print_check.py` → `export/partlist.py` → `figures/anim_panel.py` 순서로 돌립니다.
-
-**슬라이싱.** Bambu Studio 를 명령줄로 돌립니다. 화면이 있는 컴퓨터에서는 `BAMBU_STUDIO=/경로/bambu-studio` 를 주면 됩니다. 화면이 없는 리눅스에서는 `slicing/bs.sh` 가 가짜 화면을 띄워 돌립니다: `BAMBU_STUDIO_DIR` 에 AppImage 를 푼 폴더(`squashfs-root`)를 적고, `weston` 과 `libosmesa6` 을 깔고, `gcc -shared -fPIC -o slicing/shim/glshim.so slicing/shim/glshim.c` 를 한 번 해 둡니다.
-
-**마커.** 마커 띠(`../marker/AR_마커.pdf`, 34 mm 마커 둘)는 앞덮개의 아래쪽 표시선 안에 붙입니다. 귀의 좌표는 `../marker/marker.json` 에 있습니다 (패널 좌표).
-
-돌판 수신기의 모델과 검사, 치수(`parts2.py`, `p2.py`, `params.py`, `checks/`, `analysis/`)와 그것을 읽는 계산은 모두 [receiver-legacy](https://github.com/DeteCam/receiver-legacy) 에 있습니다.
+- `model/palm_node.py`: `120 × 120 × 30.6 mm` 손바닥 크기 벽면 부착·직교 2축 스위블 노드 파라메트릭 CAD (`manifold3d`).
+- `export/export_stl.py`: 6종(노드당 7개) 수밀·무처짐(`0.0 mm²`) STL 생성 → `stl/`.
+- `checks/check_palm.py`: `Pan ∈ {-30°, 0°, +30°} × Tilt ∈ {0°, -15°, -25°}` 전 9개 자세 부품 간섭 및 벽면 충돌 `0.0 mm³` 검사 → `cad/results/mech_check.json`.
+- `slicing/slice_bambu.py` & `slicing/print_check.py`: 공식 Bambu Studio 2.9.1 CLI로 **X1 Carbon 단 1판(`4시간 52분`, `165.0 g`, 서포트 0%)** 슬라이싱 및 층별 G코드 무결성 검사 → `print/`.
+- `figures/render_figs.py`, `anim_assembly.py`, `anim_operation.py`: 3D 렌더, 벤치마크 차트, 조립·각도조절 영상 및 현장 동작 영상 생성 → `docs/images/`, `docs/videos/`.

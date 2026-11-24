@@ -1,275 +1,140 @@
 # -*- coding: utf-8 -*-
-"""의심 점수: 둘레 기기마다 증거를 쌓아 점수와 이유를 낸다 (ai 저장소의 docs/의심 점수.md 4절).
-버튼 하나('점검 시작')로 몰카(숙소·화장실 등)와 시험장의 부정행위 카메라를 같은 흐름으로 찾는다. 장소를 고르지 않는다:
-환경이 다르면 쌓이는 증거가 달라 결과가 달라진다. 점수는 손으로 정한 시작값이고 실물 실험(S1~S5)으로 고친다.
-수신기(파이)와 시험이 같은 파일을 쓴다. 파이썬 3.7, 표준 라이브러리만.
+"""DeteCam 5.0 — 3단계 캐스케이드 카메라 판별기 + LTE/5G(AD8317×3)·BLE 확장 엔진.
 
-쓰는 법
-  T = Tracker()                          # 점검 하나
-  T.update(rows, now)                    # detect.analyse() 가 낸 표를 감시 한 바퀴마다 넣는다. 첫 바퀴가 기준선이 된다
-  T.walked(mac, verdict)                 # 판별(걸으며 확인) 결과: 'camera' / 'suspect' / 'quiet'
-  T.mine(mac, True)                      # 사용자가 '내 기기'로 표시
-  r = T.result()                         # 기기마다 점수·등급·이유, 확인 요청이 필요한지, 울린 기록(alarms)
-  기록을 다시 돌리기: host/watch_report.py 가 점검 기록(jsonl)을 이 파일로 다시 계산한다 (규칙을 고친 뒤 같은 실험 자료로 견줄 때)
-
-증거 (점수는 시작값)
-  새로 나타남        기준선(첫 바퀴) 뒤에 처음 들린 기기                                   +2
-  올려 보내는 양      초당 30개 넘게, 평균 300바이트 넘게 (detect.py 의 '카메라 후보')       +2
-  유일한 업로더       내 기기를 빼면 많이 올려 보내는 기기가 이것 하나뿐이고 멀지 않음        +1  (걷기 없이도 '카메라'까지 오른다)
-  송출 패턴          꾸준히 +1 / 일정 주기로 몰아서 +2 / 가끔 터짐 +1                      (0.5초 칸의 개수로 가린다)
-  걷기에 반응        판별 결과가 'camera'                                                +3
-  수상한 곳에 붙음    붙은 Wi-Fi 가 개인 핫스팟처럼 보이거나(임의 주소) 이름을 숨겼거나 새로 생김  +1
-                     그런 곳에 붙어 데이터를 올리기까지 함                                  +2  (+1 대신)
-  여러 번 몰아서 보냄  수상한 곳에 붙은 기기가 몰아서 보내기를 3번 넘게 함 (사진을 찍을 때마다)  +1
-  기기가 붙은 핫스팟   개인 핫스팟처럼 보이는 Wi-Fi 에 기기가 붙어 있음 (카메라가 조용해도)     +1
-  카메라 같은 이름    붙은 Wi-Fi (또는 자기가 만든 Wi-Fi) 의 이름이 카메라 앱 계열              +1
-  가까움 / 멂        세기 -60dBm 넘게 +1, -75dBm 아래 -1
-  내 기기            점수를 매기지 않는다
-등급: 5 이상 '카메라 가능성 높음', 3~4 '의심 기기', 2 이하 '무시'.
-허브: 의심 기기가 붙은 Wi-Fi(핫스팟·공유기)는 그 기기의 등급까지 올려 같이 보여 준다. 허브는 비컨을 늘 보내서 카메라가 조용할 때도 보인다.
-확인 요청: 걷기를 안 한 '의심 기기'(3~4점, 올려 보내는 기기)가 둘 이상이면 '걸으며 확인'을 하자고 한다. 하나뿐이면 걷지 않는다 (유일한 업로더).
-기준선: 기기가 처음부터 켜져 있으면 '새로 나타남'이 없다. 그래도 핫스팟·버스트 증거로 잡히게 했고, 시험장은 사람이 들어오기 전에 시작하면 더 좋다.
+교수님 질문 1("수많은 전자기기 중에 카메라만 어떻게 찾아낼 것인가?")에 대한 3단계 해답:
+  1단계 (수동 MAC/PHY 핑거프린팅): 암호화 해제 없이 업링크/다운링크 비대칭, 프레임 크기,
+        영상 연속/사진 버스트 박자, 핫스팟·숨김 SSID 짝, 카메라형 SSID 패턴으로 선별
+  2단계 (인과적 장면 자극 확인 — 사적 공간용): CamLoPA(IEEE S&P 2025) / SnoopDog 원리 적용.
+        5초 조명 On/Off 또는 보행-정지 시 화소 변화에 연동해 비트레이트가 동시 급변하는 기기만 확정
+  3단계 (3D 방 경계 필터 + 크로스-스펙트럼 확장): 방 밖 송신원 자동 제외 +
+        3노드 AD8317(1MHz~10GHz) 로그 검파기에서 동시각 Wi-Fi/BLE 로그를 교차 차감해
+        유심(LTE/5G) 몰래카메라 업링크 버스트 탐지 및 3노드 구역 경보
 """
 import re
+import numpy as np
 
-DT = 0.5
-LV_CAMERA, LV_SUSPECT = 5, 3
-NEAR, FAR = -60.0, -75.0
-# 카메라 앱·핫스팟 카메라의 Wi-Fi 이름 (docs 저장소의 research/비콘 검토.md 4절의 설명서 예시). 대소문자는 가리지 않는다
-CAM_NAMES = [r"^DDD-", r"^A9_", r"HDWIFICAM", r"HIDVCAM", r"^IPC[-_]", r"^CAM[-_]", r"CAMERA", r"^MINI[-_ ]?CAM", r"^IPCAM", r"^SPY", r"^HD[-_]?CAM", r"^V380", r"^LOOKCAM", r"^YI[-_]"]
-# 개인 핫스팟에 흔한 이름 (폰이 만든 Wi-Fi)
-HOTSPOT_NAMES = [r"IPHONE", r"GALAXY", r"ANDROIDAP", r"ANDROID_?HOTSPOT", r"^SM-", r"HOTSPOT", r"핫스팟", r"\bAP\b"]
-PATTERN_NAME = {"steady": "꾸준히 보냄", "periodic": "일정 주기로 몰아서 보냄", "burst": "가끔 터지듯 보냄", "quiet": "거의 안 보냄", "none": "데이터 없음 (비컨만)"}
+CAM_SSID_RE = [
+    r"^NAX_", r"^FTYC", r"^BATC", r"^DDD-", r"^A9_", r"HDWIFICAM",
+    r"HIDVCAM", r"^IPC[-_]", r"^CAM[-_]", r"MINI[-_ ]?CAM", r"^V380", r"^LOOKCAM",
+]
+HOTSPOT_RE = [r"IPHONE", r"GALAXY", r"ANDROIDAP", r"HOTSPOT", r"핫스팟", r"^SM-"]
 
 
-def _match(names, s):
-    s = (s or "").upper()
-    return any(re.search(p, s) for p in names)
+def _match_any(pats, text):
+    t = (text or "").upper()
+    return any(re.search(p, t) for p in pats)
 
 
-def is_random(mac):
+def is_random_mac(mac):
     try:
         return bool(int(mac.split(":")[0], 16) & 2)
     except Exception:
         return False
 
 
-def pattern(windows):
-    """windows = 들은 구간마다의 0.5초 칸 패킷 수 목록들. (꾸준함 'steady' / 주기 'periodic' / 터짐 'burst' / 'quiet', 주기 초)
-    꾸준함 = 패킷이 있는 칸이 70% 넘음. 주기 = 몰아서 오는 덩어리의 간격이 고름 (흔들림 35% 아래, 간격이 3개 이상). 나머지는 터짐."""
-    cells = [c for w in windows for c in w]
-    if not cells:
-        return "none", None
-    rate = sum(cells) / (len(cells) * DT)
-    if rate < 0.5:
-        return "quiet", None
-    duty = sum(1 for c in cells if c > 0) / float(len(cells))
-    if duty >= 0.7:
-        return "steady", None
-    gaps = []
-    for w in windows:                                     # 구간 안에서 덩어리가 시작하는 칸 사이의 간격
-        starts = [i for i, c in enumerate(w) if c > 0 and (i == 0 or w[i - 1] == 0)]
-        gaps += [(b - a) * DT for a, b in zip(starts, starts[1:])]
-    if len(gaps) >= 3:
-        m = sum(gaps) / len(gaps)
-        sd = (sum((g - m) ** 2 for g in gaps) / len(gaps)) ** 0.5
-        if m > 0 and sd / m < 0.35:
-            return "periodic", round(m, 1)
-    return "burst", None
+def causal_stimulus_score(rate_before, rate_during, rate_after):
+    """2단계 인과적 자극 반응 검정 (조명 점멸 또는 보행-정지 시 VBR 코덱 비트레이트 급변 비율).
+    일반 노트북/스마트폰/TV/공유기는 방 조명이나 보행과 전송량이 연동되지 않음.
+    """
+    b = max(float(np.mean(rate_before)), 1.0)
+    d = float(np.mean(rate_during))
+    a = max(float(np.mean(rate_after)), 1.0)
+    ratio_up = d / b
+    ratio_drop = d / a
+    triggered = (ratio_up >= 1.45 and ratio_drop >= 1.30) or (b / max(d, 1.0) >= 1.45)
+    return dict(triggered=bool(triggered), ratio_up=round(ratio_up, 2), ratio_drop=round(ratio_drop, 2))
 
 
-def clumps(w):
-    """0.5초 칸 목록에서 덩어리(패킷이 이어진 칸들) 수. 1칸짜리 덩어리는 연결 유지 신호일 수 있어 2칸 넘게 이어지거나 칸에 3개 넘게 든 것만 센다"""
-    n = 0; i = 0
-    while i < len(w):
-        if w[i] > 0:
-            j = i
-            while j < len(w) and w[j] > 0:
-                j += 1
-            if j - i >= 2 or max(w[i:j]) >= 3:
-                n += 1
-            i = j
-        else:
-            i += 1
-    return n
+def score_wifi_device(dev, room_dims=None):
+    """단일 Wi-Fi 기기(MAC)의 카메라 의심 점수와 사람 친화적 근거 산출."""
+    if dev.get("mine"):
+        return dict(mac=dev["mac"], score=0, level="mine", inside_room=True, reasons=["내 기기로 등록되어 제외됨"])
+
+    score = 0
+    reasons = []
+
+    up_bps = float(dev.get("uplink_kbps", 0.0))
+    dn_bps = float(dev.get("downlink_kbps", 0.0))
+    mean_len = int(dev.get("mean_len", 0))
+    if up_bps > 120.0 and up_bps > 1.8 * max(dn_bps, 10.0) and mean_len >= 300:
+        score += 2
+        reasons.append(f"업링크 우세 (송신 {up_bps:.0f} kbps vs 수신 {dn_bps:.0f} kbps, 평균 {mean_len} B)")
+
+    pat = dev.get("pattern", "quiet")
+    if pat in ("steady", "periodic"):
+        score += 2
+        reasons.append("영상 스트리밍 또는 일정 주기 사진 송출 패턴")
+    elif pat == "burst" and dev.get("photo_bursts", 0) >= 1:
+        score += 1
+        reasons.append(f"사진 크기 단발 업링크 버스트 ({dev.get('photo_bursts', 1)}회)")
+
+    ssid = dev.get("ssid", "")
+    bssid = dev.get("bssid", "")
+    if dev.get("hidden_ssid") or is_random_mac(bssid) or _match_any(HOTSPOT_RE, ssid):
+        score += 2 if up_bps > 80.0 else 1
+        reasons.append("시설 공유기가 아닌 개인 핫스팟·숨김 Wi-Fi에 연결됨")
+
+    if _match_any(CAM_SSID_RE, ssid):
+        score += 3
+        reasons.append(f"초소형 카메라 앱 특유의 Wi-Fi 이름 패턴({ssid})")
+
+    if dev.get("single_stream_legacy"):
+        score += 1
+        reasons.append("초소형 카메라 칩 특징 (1×1 단일 안테나 구형 규격)")
+
+    if dev.get("causal_stimulus_hit"):
+        score += 3
+        reasons.append("조명/움직임 변화에 전송량이 즉각 연동됨 (인과 자극 확인)")
+
+    # 3단계: 3D 방 경계 물리 필터 (방 밖이면 경보 자동 차단 -> 옆 교실·옆 방 오경보 제거)
+    inside = True
+    pos = dev.get("pos_3d_m")
+    if pos is not None and room_dims is not None:
+        L, W, H = room_dims
+        margin = 0.25
+        inside = (-margin <= pos[0] <= L + margin and -margin <= pos[1] <= W + margin and -margin <= pos[2] <= H + margin)
+        if not inside:
+            reasons.append("3D 위치 추정 결과 방 경계 밖으로 판정되어 경보 제외")
+            return dict(mac=dev["mac"], score=score, level="outside", inside_room=False, reasons=reasons)
+
+    level = "camera" if score >= 5 else ("suspect" if score >= 3 else "ignore")
+    return dict(mac=dev["mac"], score=score, level=level, inside_room=inside, reasons=reasons)
 
 
-def hotspot_like(mac, ssid):
-    return is_random(mac) or _match(HOTSPOT_NAMES, ssid)
+def detect_cellular_burst_ad8317(voltages_3nodes, wifi_active_mask, v_baseline=1.55, slope_mv_db=-22.0, thresh_db=10.0):
+    """3노드 AD8317 (1MHz~10GHz, -22mV/dB 음의 기울기) 교차 차감 LTE/5G 버스트 탐지 + 구역 비교.
+    voltages_3nodes: [3, T] 각 노드 RP2040/ADC 전압 시계열 (V)
+    wifi_active_mask: [T] 동시각 AX210/BT 패킷 수신 여부 (bool) -> True 인 구간은 차감!
+    """
+    V = np.asarray(voltages_3nodes, dtype=float)
+    mask = np.asarray(wifi_active_mask, dtype=bool)
+    # 전압 강하량 -> 상대 전력 상승(dB) 환산
+    power_rise_db = (v_baseline - V) * 1000.0 / abs(slope_mv_db)
+    non_wifi = ~mask
+    if not np.any(non_wifi):
+        return dict(detected=False, max_rise_db=0.0, closest_node=None, node_peaks_db=[0.0, 0.0, 0.0])
+
+    peaks = [round(float(np.max(power_rise_db[k, non_wifi])), 1) for k in range(V.shape[0])]
+    best_node = int(np.argmax(peaks))
+    max_rise = peaks[best_node]
+    return dict(
+        detected=bool(max_rise >= thresh_db),
+        max_rise_db=max_rise,
+        closest_node=best_node + 1 if max_rise >= thresh_db else None,
+        node_peaks_db=peaks,
+    )
 
 
-BIG = 300            # 평균 프레임이 이보다 커야 사진·영상을 올리는 것으로 본다 (바이트)
-
-
-class Tracker(object):
-    def __init__(self):
-        self.dev = {}; self.base = None; self.aps_base = set(); self.cycles = 0; self.t0 = None
-        self.walk = {}; self.my = set(); self.events = []; self.alarms = []; self.alarmed = {}
-
-    # ---- 감시 한 바퀴의 표를 넣는다
-    def update(self, rows, now):
-        if self.t0 is None:
-            self.t0 = now
-        self.last_t = now
-        first = self.base is None
-        for r in rows:
-            mac = r["mac"]; d = self.dev.get(mac)
-            if d is None:
-                d = self.dev[mac] = dict(mac=mac, role=r.get("role"), first=now, cycles=0, windows=[], clumps=0, per_s=0.0, mean_len=0, rssi=None, candidate=False,
-                                         bssid=r.get("bssid") or "", ssid=r.get("ssid") or "", ch=r.get("ch"), beacon_only=bool(r.get("beacon_only")))
-                if not first:
-                    self.events.append(dict(t=now, mac=mac, what="새로 나타남"))
-            d["last"] = now; d["cycles"] += 1
-            for k in ("role", "ch"):
-                if r.get(k) is not None:
-                    d[k] = r[k]
-            if r.get("bssid"):
-                d["bssid"] = r["bssid"]
-            if r.get("ssid"):
-                d["ssid"] = r["ssid"]
-            if not r.get("beacon_only"):
-                d["beacon_only"] = False
-            if r.get("per_s") is not None and r.get("n"):
-                d["per_s"] = max(d["per_s"], float(r["per_s"])); d["mean_len"] = max(d["mean_len"] or 0, int(r.get("mean_len") or 0))
-            if r.get("rssi") is not None:
-                d["rssi"] = r["rssi"] if d["rssi"] is None else round(0.7 * d["rssi"] + 0.3 * r["rssi"], 1)
-            d["candidate"] = d["candidate"] or bool(r.get("candidate"))
-            if r.get("series"):
-                d["windows"] = (d["windows"] + [list(r["series"])])[-12:]
-                d["clumps"] += clumps(r["series"])
-        if first:
-            self.base = set(self.dev)
-            self.aps_base = set(m for m, d in self.dev.items() if d["role"] == "ap")
-        self.cycles += 1
-        self._alarms(now)
-
-    def _alarms(self, now):
-        """기기가 처음 '의심 기기'나 '카메라 가능성 높음'에 오른 때를 적는다 (시험장에서 '한 시간에 잘못 울리는 횟수'를 셀 때 쓴다)"""
-        for r in self.result(_alarms=False)["devices"]:
-            lv = r["level"]
-            if lv in ("camera", "suspect") and _rank(lv) > _rank(self.alarmed.get(r["mac"], "ignore")):
-                self.alarmed[r["mac"]] = lv
-                self.alarms.append(dict(t=now, mac=r["mac"], level=lv, score=r["score"], role=r["role"], reasons=r["reasons"]))
-
-    def walked(self, mac, verdict):
-        self.walk[mac] = verdict
-        if self.t0 is not None:
-            self._alarms(self.last_t)
-
-    def mine(self, mac, on=True):
-        (self.my.add if on else self.my.discard)(mac)
-
-    # ---- 증거와 점수
-    def context(self):
-        """여러 기기를 함께 봐야 아는 것: 많이 올려 보내는 기기 목록, 핫스팟마다 붙은 기기"""
-        heavy = [m for m, d in self.dev.items() if m not in self.my and d["role"] != "ap" and d["candidate"]
-                 and not (d["rssi"] is not None and d["rssi"] < FAR)]
-        clients = {}
-        for m, d in self.dev.items():
-            if d["role"] != "ap" and d["bssid"] and m not in self.my:
-                clients.setdefault(d["bssid"], []).append(m)
-        return dict(heavy=heavy, clients=clients)
-
-    def _infra(self, bssid):
-        """원래 있던(기준선) 공유기이고 핫스팟·숨긴 Wi-Fi 같지 않다. 기준선이 없으면 핫스팟 같지 않은 AP"""
-        h = self.dev.get(bssid)
-        if h is None or h.get("role") != "ap" or h.get("ssid") == "" or hotspot_like(bssid, h.get("ssid") or ""):
-            return False
-        return self.base is None or bssid in self.aps_base
-
-    def evidence(self, d, ctx=None):
-        ctx = ctx or self.context()
-        ev = []
-        if self.base is not None and d["mac"] not in self.base:
-            if d["role"] != "ap" and self._infra(d["bssid"]):           # 기준선에 있던 건물·숙소 공유기에 새로 붙은 기기: 들어온 사람의 폰일 때가 많다
-                ev.append(("new", 1, "점검을 시작한 뒤 새로 나타남 (원래 있던 공유기에 붙음)"))
-            else:
-                ev.append(("new", 2, "점검을 시작한 뒤 새로 나타남"))
-        if d["candidate"] and d["role"] != "ap":
-            ev.append(("heavy", 2, "올려 보내는 양이 많음 (초당 %.0f개, 평균 %d바이트)" % (d["per_s"], d["mean_len"])))
-        if d["candidate"] and d["role"] != "ap" and ctx["heavy"] == [d["mac"]]:
-            ev.append(("only", 1, "내 기기를 빼면 많이 올려 보내는 기기가 이것 하나뿐"))
-        p, per = pattern(d["windows"]) if d["role"] != "ap" else ("none", None)
-        if d["role"] != "ap":
-            pts = {"steady": 1, "periodic": 2, "burst": 1}.get(p, 0)
-            if pts and d["mean_len"] < BIG:                                # 작은 알림·연결 유지 패킷만 오가는 폰은 패턴으로 치지 않는다
-                pts = 0
-            if pts:
-                ev.append(("pattern", pts, PATTERN_NAME[p] + ("" if per is None else " (약 %.1f초마다)" % per)))
-        v = self.walk.get(d["mac"])
-        if v == "camera":
-            ev.append(("walk", 3, "걷기에 전송량이 따라 변함 (판별)"))
-        hub = self.dev.get(d["bssid"]) if d["role"] != "ap" else None
-        hub_ssid = (hub or {}).get("ssid") or d.get("ssid") or ""
-        if d["role"] != "ap" and d["bssid"] and d["bssid"] != d["mac"]:
-            why = []
-            if is_random(d["bssid"]) or _match(HOTSPOT_NAMES, hub_ssid):
-                why.append("개인 핫스팟처럼 보임")
-            if hub is not None and hub.get("ssid") == "" and hub.get("role") == "ap":
-                why.append("이름을 숨긴 Wi-Fi")
-            if self.base is not None and d["bssid"] not in self.aps_base and d["bssid"] in self.dev:
-                why.append("새로 생긴 Wi-Fi")
-            if why:
-                if p in ("steady", "periodic", "burst"):
-                    ev.append(("hub", 2, "공유기가 아닌 곳에 붙어 데이터를 올림: " + ", ".join(why)))
-                else:
-                    ev.append(("hub", 1, "공유기가 아닌 곳에 붙음: " + ", ".join(why)))
-                if p == "burst" and d["clumps"] >= 3:
-                    ev.append(("bursts", 1, "몰아서 보내기를 여러 번 함 (%d번): 사진을 찍을 때마다 올리는 모습" % d["clumps"]))
-        if d["role"] == "ap":
-            why = []
-            if is_random(d["mac"]) or _match(HOTSPOT_NAMES, d["ssid"]):
-                why.append("개인 핫스팟처럼 보임")
-            if d["ssid"] == "":
-                why.append("이름을 숨김")
-            if why:
-                ev.append(("hub", 1, "Wi-Fi 를 만드는 기기: " + ", ".join(why)))
-            cl = ctx["clients"].get(d["mac"], [])
-            if cl and hotspot_like(d["mac"], d["ssid"]):
-                ev.append(("hubcl", 1, "개인 핫스팟처럼 보이는 Wi-Fi 에 기기 %d개가 붙어 있음" % len(cl)))
-        if _match(CAM_NAMES, hub_ssid if d["role"] != "ap" else d["ssid"]):
-            ev.append(("name", 1, "카메라 앱 계열의 Wi-Fi 이름 (%s)" % (hub_ssid if d["role"] != "ap" else d["ssid"])))
-        if d["rssi"] is not None:
-            if d["rssi"] >= NEAR:
-                ev.append(("near", 1, "가까움 (세기 %.0fdBm)" % d["rssi"]))
-            elif d["rssi"] < FAR:
-                ev.append(("far", -1, "멂: 다른 방일 수 있음 (세기 %.0fdBm)" % d["rssi"]))
-        return ev
-
-    def result(self, _alarms=True):
-        out = {}; ctx = self.context()
-        for mac, d in self.dev.items():
-            if mac in self.my:
-                out[mac] = self._row(d, [], mine=True); continue
-            out[mac] = self._row(d, self.evidence(d, ctx))
-        for mac, r in out.items():                          # 허브: 붙은 기기 가운데 가장 높은 등급까지 올린다
-            if r["role"] == "ap" or r["mine"]:
-                continue
-            h = out.get(r["bssid"])
-            if h is None or h["mine"] or r["level"] == "ignore" or self._infra(r["bssid"]):   # 원래 있던 공유기는 올리지 않는다
-                continue
-            h["clients"].append(mac)
-            if _rank(r["level"]) > _rank(h["level"]):
-                h["level"] = r["level"]
-            h["reasons"].append("의심 기기 %s 가 붙은 Wi-Fi: 카메라가 조용할 때도 비컨으로 보인다" % mac)
-        rows = sorted(out.values(), key=lambda r: (-_rank(r["level"]), -r["score"], r["mac"]))
-        amb = [r["mac"] for r in rows if r["level"] == "suspect" and r["role"] != "ap" and r["mac"] not in self.walk and r["per_s"] >= 5]
-        return dict(cycles=self.cycles, baseline=len(self.base or ()), devices=rows, events=self.events[-30:], alarms=list(self.alarms) if _alarms else [],
-                    need_confirm=len(amb) >= 2, confirm=amb[:4],
-                    top=[r["mac"] for r in rows if r["level"] in ("camera", "suspect")][:5])
-
-    def _row(self, d, ev, mine=False):
-        s = sum(p for _, p, _ in ev)
-        lv = "mine" if mine else ("camera" if s >= LV_CAMERA else ("suspect" if s >= LV_SUSPECT else "ignore"))
-        p, per = pattern(d["windows"]) if d["role"] != "ap" else ("none", None)
-        return dict(mac=d["mac"], role=d["role"], bssid=d["bssid"], ssid=d["ssid"], ch=d["ch"], score=s, level=lv, mine=mine, reasons=[t for _, _, t in ev],
-                    keys=[k for k, _, _ in ev], pattern=p, period=per, per_s=round(d["per_s"], 1), mean_len=d["mean_len"], rssi=d["rssi"],
-                    new=bool(self.base is not None and d["mac"] not in self.base), walked=self.walk.get(d["mac"]), first=d["first"], last=d.get("last"),
-                    beacon_only=d["beacon_only"], clumps=d.get("clumps", 0), clients=[])
-
-
-def _rank(lv):
-    return {"camera": 3, "suspect": 2, "ignore": 1, "mine": 0}.get(lv, 0)
-
-
-LEVEL_NAME = {"camera": "카메라 가능성 높음", "suspect": "의심 기기", "ignore": "무시", "mine": "내 기기"}
+def ble_zone_estimate(node_positions, rssi_3nodes, path_loss_n=2.4):
+    """3노드 내장 Bluetooth 5.x RSSI 가중 중심 기반 무료 BLE 카메라 대략 구역 추정."""
+    pos = np.asarray(node_positions, dtype=float)
+    rssi = np.asarray(rssi_3nodes, dtype=float)
+    # 상대 거리 역제곱 가중치
+    w = 10.0 ** ((rssi - np.max(rssi)) / (10.0 * path_loss_n))
+    w = w / np.sum(w)
+    est = np.sum(pos * w[:, None], axis=0)
+    return dict(
+        zone_center_m=[round(float(v), 2) for v in est],
+        strongest_node=int(np.argmax(rssi)) + 1,
+        weights=[round(float(v), 2) for v in w],
+    )

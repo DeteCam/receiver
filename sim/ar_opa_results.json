@@ -1,0 +1,516 @@
+{
+  "spaces": {
+    "motel": {
+      "ko": "숙소 (모텔·원룸)",
+      "dims_m": [
+        4.5,
+        3.8,
+        2.6
+      ],
+      "solve_ms": 160.8,
+      "naive": {
+        "med_m": 0.384,
+        "p90_m": 2.741,
+        "hit_1m_pct": 75.6,
+        "los2_pct": 76.0
+      },
+      "wall_flush_0deg": {
+        "med_m": 0.255,
+        "p90_m": 0.775,
+        "hit_1m_pct": 94.0,
+        "los2_pct": 77.6
+      },
+      "fixed_corners": {
+        "med_m": 0.263,
+        "p90_m": 0.675,
+        "hit_1m_pct": 95.2,
+        "los2_pct": 82.4
+      },
+      "ar_opa": {
+        "med_m": 0.274,
+        "p90_m": 0.635,
+        "hit_1m_pct": 95.6,
+        "los2_pct": 82.4
+      },
+      "ar_opa_nodes": [
+        {
+          "wall": "앞벽",
+          "pos_m": [
+            0.45,
+            0.06,
+            2.0
+          ],
+          "pan_deg": 30,
+          "tilt_deg": -15,
+          "aim": [
+            0.48,
+            0.84,
+            -0.26
+          ]
+        },
+        {
+          "wall": "앞벽",
+          "pos_m": [
+            4.05,
+            0.06,
+            2.0
+          ],
+          "pan_deg": -30,
+          "tilt_deg": -15,
+          "aim": [
+            -0.48,
+            0.84,
+            -0.26
+          ]
+        },
+        {
+          "wall": "뒷벽",
+          "pos_m": [
+            0.45,
+            3.74,
+            1.1
+          ],
+          "pan_deg": -30,
+          "tilt_deg": 0,
+          "aim": [
+            0.5,
+            -0.87,
+            0.0
+          ]
+        }
+      ],
+      "p90_gain_vs_naive_pct": 76.8,
+      "p90_gain_vs_flush_pct": 18.1,
+      "p90_gain_vs_corner_pct": 5.9
+    },
+    "toilet": {
+      "ko": "화장실 (칸막이·거울)",
+      "dims_m": [
+        3.6,
+        2.8,
+        2.5
+      ],
+      "solve_ms": 153.9,
+      "naive": {
+        "med_m": 1.15,
+        "p90_m": 2.903,
+        "hit_1m_pct": 45.2,
+        "los2_pct": 50.0
+      },
+      "wall_flush_0deg": {
+        "med_m": 0.25,
+        "p90_m": 0.845,
+        "hit_1m_pct": 92.4,
+        "los2_pct": 57.6
+      },
+      "fixed_corners": {
+        "med_m": 0.279,
+        "p90_m": 0.751,
+        "hit_1m_pct": 94.4,
+        "los2_pct": 54.8
+      },
+      "ar_opa": {
+        "med_m": 0.225,
+        "p90_m": 0.588,
+        "hit_1m_pct": 97.2,
+        "los2_pct": 69.6
+      },
+      "ar_opa_nodes": [
+        {
+          "wall": "앞벽",
+          "pos_m": [
+            1.35,
+            0.06,
+            2.0
+          ],
+          "pan_deg": 15,
+          "tilt_deg": -25,
+          "aim": [
+            0.23,
+            0.88,
+            -0.42
+          ]
+        },
+        {
+          "wall": "앞벽",
+          "pos_m": [
+            3.15,
+            0.06,
+            1.1
+          ],
+          "pan_deg": -30,
+          "tilt_deg": 0,
+          "aim": [
+            -0.5,
+            0.87,
+            0.0
+          ]
+        },
+        {
+          "wall": "뒷벽",
+          "pos_m": [
+            0.45,
+            2.74,
+            2.0
+          ],
+          "pan_deg": -30,
+          "tilt_deg": -25,
+          "aim": [
+            0.45,
+            -0.78,
+            -0.42
+          ]
+        }
+      ],
+      "p90_gain_vs_naive_pct": 79.7,
+      "p90_gain_vs_flush_pct": 30.4,
+      "p90_gain_vs_corner_pct": 21.7
+    },
+    "bath": {
+      "ko": "목욕탕 (습기 타일·기둥)",
+      "dims_m": [
+        6.0,
+        5.0,
+        2.8
+      ],
+      "solve_ms": 172.3,
+      "naive": {
+        "med_m": 0.563,
+        "p90_m": 4.177,
+        "hit_1m_pct": 60.0,
+        "los2_pct": 60.0
+      },
+      "wall_flush_0deg": {
+        "med_m": 0.364,
+        "p90_m": 0.781,
+        "hit_1m_pct": 95.6,
+        "los2_pct": 87.2
+      },
+      "fixed_corners": {
+        "med_m": 0.377,
+        "p90_m": 0.82,
+        "hit_1m_pct": 94.8,
+        "los2_pct": 83.6
+      },
+      "ar_opa": {
+        "med_m": 0.313,
+        "p90_m": 0.807,
+        "hit_1m_pct": 95.2,
+        "los2_pct": 91.6
+      },
+      "ar_opa_nodes": [
+        {
+          "wall": "뒷벽",
+          "pos_m": [
+            2.15,
+            4.94,
+            1.1
+          ],
+          "pan_deg": -15,
+          "tilt_deg": 0,
+          "aim": [
+            0.26,
+            -0.97,
+            0.0
+          ]
+        },
+        {
+          "wall": "앞벽",
+          "pos_m": [
+            0.45,
+            0.06,
+            2.0
+          ],
+          "pan_deg": 30,
+          "tilt_deg": -15,
+          "aim": [
+            0.48,
+            0.84,
+            -0.26
+          ]
+        },
+        {
+          "wall": "뒷벽",
+          "pos_m": [
+            5.55,
+            4.94,
+            2.0
+          ],
+          "pan_deg": 30,
+          "tilt_deg": -15,
+          "aim": [
+            -0.48,
+            -0.84,
+            -0.26
+          ]
+        }
+      ],
+      "p90_gain_vs_naive_pct": 80.7,
+      "p90_gain_vs_flush_pct": -3.3,
+      "p90_gain_vs_corner_pct": 1.6
+    },
+    "locker": {
+      "ko": "탈의실 (금속 사물함)",
+      "dims_m": [
+        5.5,
+        4.0,
+        2.6
+      ],
+      "solve_ms": 141.5,
+      "naive": {
+        "med_m": 0.279,
+        "p90_m": 0.713,
+        "hit_1m_pct": 94.8,
+        "los2_pct": 93.6
+      },
+      "wall_flush_0deg": {
+        "med_m": 0.297,
+        "p90_m": 0.754,
+        "hit_1m_pct": 94.8,
+        "los2_pct": 95.2
+      },
+      "fixed_corners": {
+        "med_m": 0.423,
+        "p90_m": 0.933,
+        "hit_1m_pct": 92.0,
+        "los2_pct": 99.2
+      },
+      "ar_opa": {
+        "med_m": 0.279,
+        "p90_m": 0.597,
+        "hit_1m_pct": 97.6,
+        "los2_pct": 96.4
+      },
+      "ar_opa_nodes": [
+        {
+          "wall": "뒷벽",
+          "pos_m": [
+            5.05,
+            3.94,
+            2.0
+          ],
+          "pan_deg": 30,
+          "tilt_deg": -15,
+          "aim": [
+            -0.48,
+            -0.84,
+            -0.26
+          ]
+        },
+        {
+          "wall": "뒷벽",
+          "pos_m": [
+            0.45,
+            3.94,
+            2.0
+          ],
+          "pan_deg": -30,
+          "tilt_deg": -15,
+          "aim": [
+            0.48,
+            -0.84,
+            -0.26
+          ]
+        },
+        {
+          "wall": "앞벽",
+          "pos_m": [
+            3.52,
+            0.06,
+            1.1
+          ],
+          "pan_deg": -15,
+          "tilt_deg": 0,
+          "aim": [
+            -0.26,
+            0.97,
+            0.0
+          ]
+        }
+      ],
+      "p90_gain_vs_naive_pct": 16.3,
+      "p90_gain_vs_flush_pct": 20.8,
+      "p90_gain_vs_corner_pct": 36.0
+    },
+    "classroom": {
+      "ko": "40석 표준 교실 (대형 칠판)",
+      "dims_m": [
+        8.5,
+        7.5,
+        2.8
+      ],
+      "solve_ms": 404.6,
+      "naive": {
+        "med_m": 2.31,
+        "p90_m": 5.722,
+        "hit_1m_pct": 31.2,
+        "los2_pct": 27.6
+      },
+      "wall_flush_0deg": {
+        "med_m": 1.206,
+        "p90_m": 2.24,
+        "hit_1m_pct": 37.6,
+        "los2_pct": 5.6
+      },
+      "fixed_corners": {
+        "med_m": 1.165,
+        "p90_m": 2.398,
+        "hit_1m_pct": 44.0,
+        "los2_pct": 25.6
+      },
+      "ar_opa": {
+        "med_m": 1.017,
+        "p90_m": 2.226,
+        "hit_1m_pct": 48.4,
+        "los2_pct": 21.2
+      },
+      "ar_opa_nodes": [
+        {
+          "wall": "뒷벽",
+          "pos_m": [
+            5.01,
+            7.44,
+            2.0
+          ],
+          "pan_deg": 15,
+          "tilt_deg": -15,
+          "aim": [
+            -0.25,
+            -0.93,
+            -0.26
+          ]
+        },
+        {
+          "wall": "왼벽",
+          "pos_m": [
+            0.06,
+            2.1,
+            2.0
+          ],
+          "pan_deg": -30,
+          "tilt_deg": -15,
+          "aim": [
+            0.84,
+            0.48,
+            -0.26
+          ]
+        },
+        {
+          "wall": "오른벽",
+          "pos_m": [
+            8.44,
+            2.1,
+            2.0
+          ],
+          "pan_deg": 30,
+          "tilt_deg": -15,
+          "aim": [
+            -0.84,
+            0.48,
+            -0.26
+          ]
+        }
+      ],
+      "p90_gain_vs_naive_pct": 61.1,
+      "p90_gain_vs_flush_pct": 0.6,
+      "p90_gain_vs_corner_pct": 7.2
+    },
+    "hall150": {
+      "ko": "150석 대형 강의실 (기둥·계단식)",
+      "dims_m": [
+        14.0,
+        12.0,
+        3.6
+      ],
+      "solve_ms": 524.2,
+      "naive": {
+        "med_m": 3.279,
+        "p90_m": 9.07,
+        "hit_1m_pct": 8.8,
+        "los2_pct": 12.4
+      },
+      "wall_flush_0deg": {
+        "med_m": 1.45,
+        "p90_m": 3.79,
+        "hit_1m_pct": 32.4,
+        "los2_pct": 38.0
+      },
+      "fixed_corners": {
+        "med_m": 2.763,
+        "p90_m": 5.382,
+        "hit_1m_pct": 10.8,
+        "los2_pct": 9.6
+      },
+      "ar_opa": {
+        "med_m": 1.45,
+        "p90_m": 3.79,
+        "hit_1m_pct": 32.4,
+        "los2_pct": 38.0
+      },
+      "ar_opa_nodes": [
+        {
+          "wall": "뒷벽",
+          "pos_m": [
+            7.0,
+            11.94,
+            1.1
+          ],
+          "pan_deg": 0,
+          "tilt_deg": 0,
+          "aim": [
+            0.0,
+            -1.0,
+            0.0
+          ]
+        },
+        {
+          "wall": "왼벽",
+          "pos_m": [
+            0.06,
+            6.0,
+            2.0
+          ],
+          "pan_deg": 0,
+          "tilt_deg": 0,
+          "aim": [
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "wall": "오른벽",
+          "pos_m": [
+            13.94,
+            6.0,
+            2.0
+          ],
+          "pan_deg": 0,
+          "tilt_deg": 0,
+          "aim": [
+            -1.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "p90_gain_vs_naive_pct": 58.2,
+      "p90_gain_vs_flush_pct": 0.0,
+      "p90_gain_vs_corner_pct": 29.6
+    }
+  },
+  "overall": {
+    "naive_med_m": 1.327,
+    "naive_p90_m": 4.221,
+    "wall_flush_0deg_med_m": 0.637,
+    "wall_flush_0deg_p90_m": 1.531,
+    "fixed_corners_med_m": 0.878,
+    "fixed_corners_p90_m": 1.827,
+    "ar_opa_med_m": 0.593,
+    "ar_opa_p90_m": 1.441,
+    "med_reduction_vs_naive_pct": 55.3,
+    "p90_reduction_vs_naive_pct": 65.9,
+    "p90_reduction_vs_flush_pct": 5.9,
+    "p90_reduction_vs_corners_pct": 21.1
+  }
+}

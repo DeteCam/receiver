@@ -1,4 +1,5 @@
 __pycache__/
+.pytest_cache/
 *.pyc
 .DS_Store
 # 다시 만들 수 있는 큰 중간 파일

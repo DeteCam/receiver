@@ -1,0 +1,124 @@
+{
+  "puck_outer_mm": [
+    120.0,
+    120.0,
+    30.6
+  ],
+  "wall_standoff_mm": 60.0,
+  "rf_cavity_mm": 11.15,
+  "poses": [
+    {
+      "pan_deg": 0,
+      "tilt_deg": 0,
+      "bbox_mm": [
+        120.0,
+        120.0,
+        90.6
+      ],
+      "overlaps": [],
+      "wall_hits": []
+    },
+    {
+      "pan_deg": 30,
+      "tilt_deg": 0,
+      "bbox_mm": [
+        123.8,
+        120.0,
+        111.0
+      ],
+      "overlaps": [],
+      "wall_hits": []
+    },
+    {
+      "pan_deg": -30,
+      "tilt_deg": 0,
+      "bbox_mm": [
+        123.8,
+        120.0,
+        111.0
+      ],
+      "overlaps": [],
+      "wall_hits": []
+    },
+    {
+      "pan_deg": 0,
+      "tilt_deg": -15,
+      "bbox_mm": [
+        120.0,
+        123.8,
+        104.6
+      ],
+      "overlaps": [],
+      "wall_hits": []
+    },
+    {
+      "pan_deg": 30,
+      "tilt_deg": -15,
+      "bbox_mm": [
+        131.8,
+        123.8,
+        121.3
+      ],
+      "overlaps": [],
+      "wall_hits": []
+    },
+    {
+      "pan_deg": -30,
+      "tilt_deg": -15,
+      "bbox_mm": [
+        131.8,
+        123.8,
+        121.3
+      ],
+      "overlaps": [],
+      "wall_hits": []
+    },
+    {
+      "pan_deg": 0,
+      "tilt_deg": -25,
+      "bbox_mm": [
+        120.0,
+        121.7,
+        111.7
+      ],
+      "overlaps": [],
+      "wall_hits": []
+    },
+    {
+      "pan_deg": 30,
+      "tilt_deg": -25,
+      "bbox_mm": [
+        139.4,
+        121.7,
+        126.8
+      ],
+      "overlaps": [],
+      "wall_hits": []
+    },
+    {
+      "pan_deg": -30,
+      "tilt_deg": -25,
+      "bbox_mm": [
+        139.4,
+        121.7,
+        126.8
+      ],
+      "overlaps": [],
+      "wall_hits": []
+    }
+  ],
+  "mass_g": {
+    "printed_pla": 165.0,
+    "hardware": 124.0,
+    "total_node": 289.0,
+    "breakdown": {
+      "radxa_rock3a": 55.0,
+      "ax210": 4.0,
+      "rf_array_switch_pcb_112mm": 28.0,
+      "nicu_reflector_sheet": 5.0,
+      "neodymium_magnets_x4": 16.0,
+      "nano_gel_pad_and_fasteners": 16.0
+    }
+  },
+  "problems": []
+}

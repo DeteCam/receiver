@@ -2,7 +2,7 @@
 
 - 상태: **명세 (검증 전)**. 실측값 없음. 2026-11-24
 - 기준: [docs/AGENTS.md](https://github.com/DeteCam/docs/blob/main/AGENTS.md) (목표 G1~G3, 요구사항 R1~R7)
-- 대체하는 스펙: 001-nano2-receiver (v6, 태그 `v6-nano2`). 독립 검증에서 성능이 떨어지고 PCB 외주가 필요해 내렸다.
+- 대체하는 스펙: 001-nano2-receiver (v6, 브랜치 `archive/v6-nano2`). 독립 검증에서 성능이 떨어지고 PCB 외주가 필요해 내렸다.
 
 ## 1. 무엇을, 왜
 

@@ -20,7 +20,7 @@ import time
 import numpy as np
 import torch
 import sys
-RECV = os.environ.get("DETECAM_V6", os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "receiver-v6"))   # DeteCam/receiver at tag v6-nano2
+RECV = os.environ.get("DETECAM_V6", os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "receiver-v6"))   # DeteCam/receiver at branch archive/v6-nano2
 sys.path.insert(0, os.path.join(RECV, "sim"))
 
 from raytrace_engine import (

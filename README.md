@@ -15,6 +15,6 @@
 
 ## 이전 설계
 
-v6(84 mm 칩 안테나 PCB 수신기 2기)의 CAD · 출력 파일 · 펌웨어 · 시뮬레이터는 태그 [`v6-nano2`](https://github.com/DeteCam/receiver/tree/v6-nano2)에 있습니다. 독립 검증에서 성능이 크게 떨어져 내렸고, 그 문서의 숫자(1 m 이내 96.4% 등)는 쓰지 않습니다. 이유는 [docs/기술검증_보고서.md](https://github.com/DeteCam/docs/blob/main/기술검증_보고서.md)에 있습니다.
+v6(84 mm 칩 안테나 PCB 수신기 2기)의 CAD · 출력 파일 · 펌웨어 · 시뮬레이터는 브랜치 [`archive/v6-nano2`](https://github.com/DeteCam/receiver/tree/archive/v6-nano2)에 있습니다. 독립 검증에서 성능이 크게 떨어져 내렸고, 그 문서의 숫자(1 m 이내 96.4% 등)는 쓰지 않습니다. 이유는 [docs/기술검증_보고서.md](https://github.com/DeteCam/docs/blob/main/기술검증_보고서.md)에 있습니다.
 
 부품과 구매 순서는 [docs/구매_부품_목록.md](https://github.com/DeteCam/docs/blob/main/구매_부품_목록.md)를 봅니다.

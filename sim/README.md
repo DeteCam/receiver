@@ -1,6 +1,6 @@
 # sim — 시뮬레이션 코드
 
-v6 설계(태그 `v6-nano2`)의 숫자를 독립 도구로 다시 확인한 코드와, 손바닥 크기 회전 수신기를 계산한 코드입니다. 스위치 고리 계산은 이 폴더에 이어서 추가합니다.
+v6 설계(브랜치 `archive/v6-nano2`)의 숫자를 독립 도구로 다시 확인한 코드와, 손바닥 크기 회전 수신기를 계산한 코드입니다. 스위치 고리 계산은 이 폴더에 이어서 추가합니다.
 **모든 결과는 시뮬레이션이며 실측이 아닙니다.** 새 계산은 [docs/AGENTS.md](https://github.com/DeteCam/docs/blob/main/AGENTS.md) 5장 규칙을 따릅니다. 특히 수신기 · 카메라 자리와 조건을 결과를 보기 전에 `sim/plan_YYYYMMDD.md`에 적습니다.
 
 ## 폴더
@@ -16,7 +16,7 @@ v6 설계(태그 `v6-nano2`)의 숫자를 독립 도구로 다시 확인한 코�
 ```bash
 pip install sionna-rt numpy scipy torch scikit-learn   # Sionna RT 는 LLVM(CPU) 로도 돕니다
 sudo apt install nec2c                                  # em/ 을 다시 돌릴 때만
-git clone --branch v6-nano2 https://github.com/DeteCam/receiver receiver-v6   # v6 코드 (1번 · 3번에만 필요)
+git clone --branch archive/v6-nano2 https://github.com/DeteCam/receiver receiver-v6   # v6 코드 (1번 · 3번에만 필요)
 export DETECAM_V6=$PWD/receiver-v6                      # 기본값은 이 저장소 옆의 receiver-v6
 ```
 

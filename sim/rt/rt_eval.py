@@ -2,7 +2,7 @@
 import sys, json, glob, numpy as np, torch
 import os
 HERE = os.path.dirname(os.path.abspath(__file__))
-V6 = os.environ.get("DETECAM_V6", os.path.join(HERE, "..", "..", "..", "receiver-v6"))   # checkout of DeteCam/receiver at tag v6-nano2
+V6 = os.environ.get("DETECAM_V6", os.path.join(HERE, "..", "..", "..", "receiver-v6"))   # checkout of DeteCam/receiver at branch archive/v6-nano2
 EMDIR = os.path.join(HERE, "..", "em")
 sys.path.insert(0, os.path.join(V6, "sim")); sys.path.insert(0, EMDIR)
 from raytrace_engine import build_10_diverse_spaces, NANO12_EDGE_M, C0

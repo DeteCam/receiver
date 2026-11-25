@@ -1,15 +1,15 @@
 # DeteCam receiver — 수신기
 
-방 모서리에 두는 손바닥 크기 수신기입니다. 지름 약 10 cm 원 위에 세운 막대 안테나 8개를 전자 스위치로 번갈아 연결하고, 고정 기준 안테나와 함께 Intel AX210 한 장으로 받아 숨은 Wi-Fi 카메라 신호의 방향을 잽니다. 움직이는 부품이 없어 조용하고, 쇼핑몰 부품을 볼트와 SMA 커넥터로 조립합니다.
+방 모서리에 두는 손바닥 크기 수신기(`SPEC-002+`, ≤ 10 × 10 × 18 cm)입니다. 지름 10 cm 원 위에 세운 정품 2.4/5 GHz 듀얼밴드 다이폴 8개(`dz=0`)를 단일칩 흡수형 `PE42482` SP8T 스위치로 번갈아 연결하고, 중심 기준 안테나 1개(9번째 가상 소자 겸용)와 함께 Intel AX210NGW 한 장으로 받아 숨은 Wi-Fi 카메라 신호의 방향을 잽니다. 팬리스 라즈베리파이 5(`VesperCSI` + Linux 6.12 LTS, 호스트 GPIO 직결)와 Burst-TDM 무선 제어로 무소음(R1) · 무PCB(R5) · 무선(R9) 조건을 지킵니다.
 
-> 상태(2026-11-24): **명세 · 검증 전.** 실측한 성능 숫자는 없습니다. 작업 기준은 [docs/AGENTS.md](https://github.com/DeteCam/docs/blob/main/AGENTS.md)입니다.
+> 상태(2026-11-25): **V0 문서 검증 및 V1 6종 공간 시뮬레이션 완료, V2~V4 실측 전.** 실측한 성능 숫자는 없습니다. 작업 기준은 [docs/AGENTS.md](https://github.com/DeteCam/docs/blob/main/AGENTS.md)입니다.
 
 ## 폴더
 
 | 폴더 | 내용 |
 |---|---|
-| [`specs/`](specs/README.md) | 스펙. 지금은 [`002-switch-ring-receiver`](specs/002-switch-ring-receiver/spec.md) |
-| [`sim/`](sim/README.md) | 시뮬레이션 코드: v6 독립 검증(광선 추적 · 안테나 전자기 해석), 회전 수신기 계산. 스위치 고리 계산을 이어서 추가 |
+| [`specs/`](specs/README.md) | 스펙. 지금은 [`002-switch-ring-receiver`](specs/002-switch-ring-receiver/spec.md) (`SPEC-002+`) |
+| [`sim/`](sim/README.md) | 시뮬레이션 코드: **V1 6종 공간 스위치 고리 검증(`plan_20261125.md`, `v1_ring/RESULTS_20261125.md`)**, NEC2 안테나 해석(`em/ring_nec2.py`), v6 독립 검증, 회전 수신기 계산 |
 
 조립 · 펌웨어 · 3D 모델은 스위치 고리 계산과 첫 실측(V2) 뒤에 추가합니다.
 

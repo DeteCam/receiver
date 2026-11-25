@@ -1,4 +1,4 @@
-# TASKS-002 (`SPEC-002+`)
+# TASKS-002 (`SPEC-002+ Rev.2`)
 
 ## V0 문서 · 소스 코드 · 사례 확인 (완료 — 2026-11-25)
 - [x] RF 스위치 데이터시트 비교: `PE42482` 단일 SP8T vs `HMC7992` SP4T × 3 (손실 · 격리 · All-Off 50 Ω · 3.3 V 제어 · 6 GHz 위상 비대칭 · 위조 함정)
@@ -11,6 +11,11 @@
 - [x] `sim/plan_20261125.md`: 6종 공간 × 2변형 + 최악 금속방(13장면), 수신기 · 카메라 자리, 개발/평가 분리, 사다리 표 사전 등록
 - [x] `sim/em/ring_nec2.py`: `SPEC-002`, `SPEC-002+(8+1)`, `SPEC-002++(12+1)`, 흡수형 vs 개방 반사형 NEC2 3D 패턴 계산
 - [x] `sim/v1_ring/`: 13장면 Sionna RT 2.2 생성 및 `run_eval.py` · `RESULTS_20261125.md` 완료 (사전 등록 평가 + L0~L5 사다리 + 대조군 + 사후 후보 `D85/D100+Conj+6Wall`)
+
+## V1 Rev.2 (2026-11-25)
+- [x] T-R1: `estimators.py`에 Rev.2 옵션 추가 (`exact_manifold`, `tc_step_ns="auto"`, `REV2_*_KWARGS`; 기본값은 V1 재현용으로 유지)
+- [ ] T-R2: Rev.2 평가 스크립트(안테나 배치 8종 NEC2, 개발 4장면 선별, 평가 9장면 2.4/5 GHz · 20/40/80 MHz, S5 보정, 학습 불신뢰 경보, Split-Conformal 구역)를 `sim/v1_ring/`에 넣고 docs `Rev2_검증_보고서.md` 숫자 재현. 차이가 나면 보고서를 고친다
+- [ ] T-R3: V3 3D 프린트 고리 틀을 `D=85 mm`(인접 SMA 중심 간격 32.5 mm)로 설계
 
 ## V2~V4 실측
 - [ ] V2 (3.5~5만 원): 집 PC + AX210 + 광대역 SMA 분배기 + 6/10 dB 감쇠기 5대 관문 (2.4 & 5 GHz)

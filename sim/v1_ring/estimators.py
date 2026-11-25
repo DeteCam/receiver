@@ -11,17 +11,27 @@ import numpy as np
 
 C0 = 299792458.0
 
+# SPEC-002+ Rev.2 settings (docs/Rev2_검증_보고서.md). Defaults of the functions below keep the
+# pre-registered V1 behaviour so that RESULTS_20261125.md stays reproducible; pass these to use Rev.2.
+REV2_ESTIMATOR_KWARGS = dict(exact_manifold=True, tc_step_ns="auto")
+REV2_FUSION_KWARGS = dict(confidence_weighted=False)  # equal-weight L0 + L1
 
-def build_calibrated_manifold(U, cal_pat, heading_rad=0.0, include_ref=True):
+
+def build_calibrated_manifold(U, cal_pat, heading_rad=0.0, include_ref=True, exact=False):
     """Evaluate 1-time calibrated ring manifold (G, M) for unit direction vectors U (G, 3).
     Note: For a switched receiver measuring H_m / H_ref (or weighted [H_1/H_ref, ..., H_N/H_ref, 1.0]),
     the exact spatial steering vector at direction U is proportional to [a_1(u), ..., a_N(u), a_ref(u)]
     (or divided by a_ref(u) when include_ref=False).
+    exact=True (Rev.2) returns [a_1(u), ..., a_N(u), a_ref(u)] itself. The legacy form [et/rt, 1] rescales each
+    direction by 1/a_ref(u), which is harmless for one path but distorts the relative amplitude between the direct
+    path and its mirror images when several images are combined in one Gram matrix (RingMapEstimator).
     """
     th = np.arccos(np.clip(U[:, 2], -1.0, 1.0))
     ph = np.arctan2(U[:, 1], U[:, 0]) - heading_rad
     et, rt = cal_pat.element_responses(th, ph, aV=None, aH=None)  # et (N, G), rt (G,)
-    if include_ref:
+    if include_ref and exact:
+        A = np.vstack([et, rt[None, :]])
+    elif include_ref:
         # Stack [et / rt, 1.0] * |rt| -> proportional to [et, rt] while matching ratio observation scaling
         A = np.vstack([et / (rt[None, :] + 1e-12), np.ones((1, len(U)), dtype=np.complex128)])
     else:
@@ -91,6 +101,8 @@ class RingMapEstimator:
         lam=0.08,
         robust_huber=True,
         huber_delta=0.35,
+        exact_manifold=False,
+        tc_step_ns=8.0,
     ):
         self.grid = grid
         self.node_pos = np.asarray(node_pos_est, dtype=np.float64)
@@ -140,7 +152,9 @@ class RingMapEstimator:
             v = g - self.node_pos[None, :]
             d = np.maximum(np.linalg.norm(v, axis=1), 0.15)
             U = v / d[:, None]
-            man = build_calibrated_manifold(U, cal_pat, heading_rad=heading_est, include_ref=include_ref)
+            man = build_calibrated_manifold(
+                U, cal_pat, heading_rad=heading_est, include_ref=include_ref, exact=exact_manifold
+            )
             self.S[:, i, :] = man * valid[i][:, None]
             self.dt[:, i] = (d - d0) / C0
             self.w[:, i] = (rhos[i] * d0 / d) ** 2
@@ -149,7 +163,13 @@ class RingMapEstimator:
         Gs = np.einsum("crm,csm->crs", self.S.conj(), self.S)
         Gf = np.einsum("crk,csk->crs", self.Fq.conj(), self.Fq)
         self.G = (Gs * Gf).astype(np.complex64)
-        tc = np.arange(-40e-9, 40e-9 + 1e-12, 8e-9)
+        if tc_step_ns == "auto":
+            # Rev.2: step = min(8 ns, 0.16 / bandwidth) so 80 MHz channels do not alias the delay search
+            bw = float(self.df.max() - self.df.min()) if self.df.size > 1 else 20e6
+            tc_step = min(8e-9, 0.16 / max(bw, 1.0))
+        else:
+            tc_step = float(tc_step_ns) * 1e-9
+        tc = np.arange(-40e-9, 40e-9 + 1e-12, tc_step)
         self.Ftc = np.exp(2j * np.pi * self.df[:, None] * tc[None, :]).astype(np.complex64)
 
         # Precompute regularized inverse Gram matrices once per node (exact same math, ~20x faster)

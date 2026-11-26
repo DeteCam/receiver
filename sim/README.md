@@ -101,6 +101,20 @@ REAL_ONE=1 python3 mysim/exp_real.py exam_s,lecture_c,seminar_g design 2g4 0,1,2
 
 묶음 B는 `A` 자리에 방 이름(`goshiwon_a,studio_b,restroom_e,sauna_locker` / `lecture_c,seminar_g`)을 쓰고, 묶음 C는 `plan_20261126_real_c.md` 6절의 명령을 쓴다. 스크립트마다 정확한 인자(시드, 설정 이름)는 파일 맨 위 설명과 `CFG`에 있다.
 
+### 3.4 상자 거리 · 안테나 케이블 배선 (계획서 `plan_20261126_molex`)
+
+```
+PYTHONHASHSEED=0 python3 mysim/molex_heads.py mysim/nec_molex.npy      # 상자 거리 G30 · G15, 곧장 내린 케이블 G*C
+PYTHONHASHSEED=0 python3 mysim/molex_layouts.py mysim/nec_molex2.npy   # 바퀴살 + 기둥(L1 · L2 · L5), 뒤집은 머리(L3 · L6 · I30), 진단 R45
+python3 mysim/exp_molex.py nec                                         # nec_real.npy에 추가
+python3 mysim/exp_molex.py scales                                      # 머리마다 기준 안테나 수평 이득 변화(잡음 's' 방식에 씀)
+REAL_LL=1 python3 mysim/exp_molex.py A design 2g4 0,1,2 P0F,Q30,Q15,Q30Cs,Q15Cs,Q60Cs,QL1s molex_a
+python3 mysim/molex_compare.py real_molex_a.pkl:P0F real_molex_a.pkl:Q30 real_molex_a.pkl:QL1s   # 짝 비교(M1, 융합 방향, 위치)
+python3 mysim/analyze_real.py molex_a QL1s                             # 시험실 3곳 안
+```
+
+실제로 돌린 묶음과 태그는 [`안테나-케이블-배선-결과.md`](안테나-케이블-배선-결과.md) 6절에 있다. 묶음 C 확인은 방 이름(`hotel_c,guesthouse_d,restroom_f,pool_locker,fitting_b`)을 쓰고 기준은 `real_C_design_ll.pkl`의 `P0F`다.
+
 ## 4. 장면
 
 - **기존 방 17개** (`v1_ring/gen_scenes.py`, `mysim/fresh_scenes.py`, `mysim/gen_wall.py`)
@@ -123,6 +137,7 @@ REAL_ONE=1 python3 mysim/exp_real.py exam_s,lecture_c,seminar_g design 2g4 0,1,2
 | `plan_20261126_final.md` | 최종 부품(2곳, 사람 없음, 실제 앵커 손실) | 시험실 2곳 + 끄덕이기: 의심 책상 3곳 안 92%. 시험실 밖 맞은편 2곳 + 끄덕이기(H4): 0.5 m 안 65%, 1 m 안 89%. 앵커 H1 부호 복원 86% → H4 97% |
 | `plan_20261126_plate.md` | 고리 대 레거시 돌판(기준 곡선 보정), 돌판 자유 배치 | 한 자리 방위각 고리 8.4° 대 돌판 18.3°(2.4 GHz, 모든 종류 · 시드에서 고리). 위치 0.5 m 안: 고리 2곳 59%, 4곳 80%, 8곳 91% / 돌판 방 안 2곳 52%, 3곳 64%, 5곳 76%, 9곳 83% |
 | `plan_20261126_real.md`, `plan_20261126_real_c.md` | 실제와 비슷한 새 방 16개에서 지금 구조가 기준선을 넘는가, 못 넘으면 무엇으로 줄이는가 | 한 번 잰 방향 13.8~16.3°(기준선 8.92° 미달, 원인은 가림). 구조 후보 9개 채택 없음. 체인 B 입력 6 dB 감쇠기 + 새 판정 규칙. 4자리 "융합 방향" 4.4~5.4°(묶음 C에서 사전 등록 뒤 확인). 위치는 숙박만 5~7곳에서 81~88%, 탈의실 68~79%, 금속 칸막이 화장실 45~49%. 시험실 앞벽 2자리 88~93%, 한 자리 38~61% |
+| `plan_20261126_molex.md` (3.2~3.4절 사후 추가) | Molex 필름 케이블(100 mm, 옆으로 나옴) 때문에 상자가 가까워지고 케이블 16가닥이 소자 옆을 지날 때 얼마나 나빠지나 | 상자 윗면은 소자 가운데에서 5.9 cm면 +4%(영향 작음), 4.4 cm면 +11%. 케이블을 소자 안쪽에서 곧장 내리면 한 자리 방향 +40~66%, 위치 −18~34%p(큰 결함). 가로 바퀴살 + 가운데 기둥 + 기준 안테나 45 mm 위(L1)가 가장 덜 나쁨: +11~12%(묶음 A · C), 융합 방향은 그대로(5.1° / 15.4°, 5.3° / 15.8°), 화장실 위치 −10~16%p. 결과: [`안테나-케이블-배선-결과.md`](안테나-케이블-배선-결과.md) |
 
 새 방 16개 요약(2.4 GHz 설계 조건):
 
@@ -156,6 +171,7 @@ REAL_ONE=1 python3 mysim/exp_real.py exam_s,lecture_c,seminar_g design 2g4 0,1,2
 | `exp_real.py`, `exp_dev_ll.py`, `analyze_real.py`, `cmp_real.py` | 새 방 평가(`REAL_LL=1` 지도 저장, `REAL_ONE=1` 시험실 한 자리), 기존 방 지도, 표 |
 | `ll_study.py`, `ll_policy.py`, `ll_adapt.py`, `ll_fuse2.py`, `ll_fbear.py`, `ll_b4_nodev.py` | 측정 뒤 절차: 신뢰도(퍼짐 규칙 대 경사 부스팅), 옮기기, 더 재기, 융합 변형, 융합 방향 |
 | `exp_chain_h4.py`, `exp_real_abl.py`, `exp_real2_ladder.py` | 체인 가르기, 조건을 하나씩 바꾼 사다리 |
+| `molex_heads.py`, `molex_layouts.py`, `exp_molex.py`, `molex_compare.py` | 상자 거리 · 안테나 케이블 배선(곧장 내림, 바퀴살 + 기둥, 기준 안테나 위치, 뒤집은 머리)과 짝 비교 |
 | 그 밖의 `exp_*`, `ai_*`, `analyze_*` | 11-24~25의 이전 실험(기준선, 크기, 재순위 학습 등). 지금 결정에는 쓰지 않지만 다시 볼 수 있게 남김 |
 
 추정기는 광선 추적 결과를 직접 읽지 않는다. 합성된 CSI와, 사용자가 실제로 알 수 있는 방 정보(벽 · 천장 · 바닥 위치, 큰 가구)만 받는다.
@@ -170,6 +186,7 @@ REAL_ONE=1 python3 mysim/exp_real.py exam_s,lecture_c,seminar_g design 2g4 0,1,2
 - 시험실 숫자는 책상 자동 인식 오차 0.10 m를 가정한 값이다. 실물 폰 AR 인식이 이보다 나쁘면 그 오차로 다시 계산한다(`seat25`가 0.25 m 판).
 - 면 근접 결합에서 아직 안 한 것: ±20° 자세, 5.8 GHz, 선반 · 교탁 윗면 위, 받침판 모터 · 보조배터리, 최종 조건(`nop`, H4).
 - 아직 없는 값: 기존 방 벽 4곳의 5 GHz 값, 새 방 묶음 C의 5 GHz 값.
+- 지금까지의 머리 표(`d120_16` 등)에는 안테나 케이블이 없다. 케이블 배선에 따라 한 자리 방향이 수십 % 바뀐다(`plan_20261126_molex.md`). 머리 구조를 비교할 때는 케이블 배선을 같게 둔다.
 - 합격선(시험실 밖 종류마다 0.5 m 안 80%, 시험실 의심 책상 3곳 안 80%, 방향 평균 8.92° 이하 · 95% 지점 27.53° 미만)은 결과를 본 뒤 바꾸지 않는다.
 
 ## 8. 저장소에 없는 계산

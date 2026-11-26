@@ -11,8 +11,9 @@ import real_scenes as R
 band, cfg = sys.argv[1], sys.argv[2]
 realp = os.path.join(S.ROOT, "results", sys.argv[3])
 grp = sys.argv[4] if len(sys.argv) > 4 else "four"
-devp = os.path.join(S.ROOT, "results", f"dev_ll_{cfg}_{band}.pkl")
-dev_rows = S.spot_table(S.load(devp), cfg, S.dev_spots, S.dev_looks)
+devcfg = os.environ.get("DEV_CFG", cfg)     # learned-reliability model from another cfg's development rooms
+devp = os.path.join(S.ROOT, "results", f"dev_ll_{devcfg}_{band}.pkl")
+dev_rows = S.spot_table(S.load(devp), devcfg, S.dev_spots, S.dev_looks)
 model = S.train_model(dev_rows)
 res = S.load(realp)
 rows = S.spot_table(res, cfg, S.real_spots("all"), S.real_looks)

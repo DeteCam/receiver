@@ -26,3 +26,5 @@ sim/data_*/
 sim/logs/
 sim/results/*.pkl
 sim/**/*.npy
+# 조립 그림 코드가 만드는 중간 파일
+hw/anim/out/

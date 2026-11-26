@@ -12,6 +12,9 @@ import ll_study as S  # noqa: E402
 import real_scenes as R  # noqa: E402
 
 
+BANDS, SEEDS = set(), set()
+
+
 def table(pkl, cfg):
     res = S.load(os.path.join(S.ROOT, "results", pkl))
     m1, n1, pos = {}, {}, {}
@@ -20,6 +23,8 @@ def table(pkl, cfg):
         mt, outs = res[key]
         if cfg not in outs or sc in R.EXAM or "ll_all" not in outs[cfg]:
             continue
+        BANDS.add({"2g4": "2.4 GHz", "5g": "5 GHz"}.get(band, str(band)))
+        SEEDS.add(seed)
         o = outs[cfg]
         LL = o["ll_all"].astype(np.float32)
         grid = o["grid"].astype(np.float64)
@@ -64,7 +69,7 @@ def main():
     bp, bc = sys.argv[1].split(":")
     B = table(bp, bc)
     rooms = sorted({k[0] for k in B[2]})
-    print(f"# base {bc} ({bp})   [simulation, 2.4 GHz, set A outside rooms, seeds 0-2]")
+    print(f"# base {bc} ({bp})   [simulation, {' / '.join(sorted(BANDS))}, outside rooms, seeds {sorted(SEEDS)}]")
     print("# cfg      M1 mean/p95   dM1 (95% CI)          rel    N1 mean/p95   pos0.5 per room (" + ", ".join(rooms) + ")")
     for arg in [sys.argv[1]] + sys.argv[2:]:
         p, c = arg.split(":")

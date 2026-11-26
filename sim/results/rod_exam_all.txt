@@ -1,0 +1,43 @@
+# exam rooms, front-wall pair, suspect desk in top 3 [simulation, 2.4 GHz unless the tag says 5 GHz]
+molex_a    P0F       pair exam_s top1 60.0 % top3 93.3 % n=120;
+molex_e    QL1s      pair exam_s top1 55.0 % top3 90.0 % n=120;
+rod_a1     QF1s      pair exam_s top1 52.5 % top3 90.8 % n=120;
+rod_a1     QF2s      pair exam_s top1 55.0 % top3 90.8 % n=120;
+rod_a2     QR1s      pair exam_s top1 51.7 % top3 92.5 % n=120;
+rod_a2     QR2s      pair exam_s top1 43.3 % top3 79.2 % n=120;
+rod_a2     QR3s      pair exam_s top1 36.7 % top3 81.7 % n=120;
+rod_a3     QR4s      pair exam_s top1 25.0 % top3 55.0 % n=120;
+rod_a5     QK1s      pair exam_s top1 62.5 % top3 94.2 % n=120;
+rod_a6     QK1ms     pair exam_s top1 60.8 % top3 94.2 % n=120;
+rod_a6     QK1os     pair exam_s top1 56.7 % top3 93.3 % n=120;
+rod_a6     QK1ns     pair exam_s top1 57.5 % top3 92.5 % n=120;
+rod_a6     QK1ws     pair exam_s top1 63.3 % top3 94.2 % n=120;
+rod_a14    QK2s      pair exam_s top1 57.5 % top3 93.3 % n=120;
+rod_a14    QK2ns     pair exam_s top1 57.5 % top3 93.3 % n=120;
+rod_a14    QK2is     pair exam_s top1 61.7 % top3 94.2 % n=120;
+rod_a7     QB0s      pair exam_s top1 55.8 % top3 90.8 % n=120;
+rod_a7     QBK1s     pair exam_s top1 60.0 % top3 89.2 % n=120;
+rod_a10    QBK1ws    pair exam_s top1 56.7 % top3 91.7 % n=120;
+rod_a10    QBK1xs    pair exam_s top1 59.2 % top3 89.2 % n=120;
+rod_a10    QBKVs     pair exam_s top1 58.3 % top3 90.0 % n=120;
+rod_a14    QBK2s     pair exam_s top1 55.0 % top3 90.0 % n=120;
+# 5 GHz
+rod_a8     P0F       pair exam_s top1 66.7 % top3 94.2 % n=120;
+rod_a9     QK1s      pair exam_s top1 63.3 % top3 91.7 % n=120;
+rod_a15    QK2s      pair exam_s top1 67.5 % top3 94.2 % n=120;
+rod_a15    QK2ns     pair exam_s top1 64.2 % top3 93.3 % n=120;
+rod_a15    QK2is     pair exam_s top1 66.7 % top3 94.2 % n=120;
+# set B 2.4 GHz
+B_design_ll_exam P0F       pair lecture_c top1 55.0 % top3 88.3 % n=120; pair seminar_g top1 73.3 % top3 88.3 % n=120;
+rod_b3     QF1s      pair lecture_c top1 44.2 % top3 80.8 % n=120; pair seminar_g top1 67.5 % top3 90.0 % n=120;
+rod_b4     QK1s      pair lecture_c top1 56.7 % top3 89.2 % n=120; pair seminar_g top1 70.8 % top3 90.8 % n=120;
+rod_b6     QK2ns     pair lecture_c top1 50.0 % top3 80.8 % n=120; pair seminar_g top1 69.2 % top3 90.8 % n=120;
+rod_b10    QK2is     pair lecture_c top1 56.7 % top3 86.7 % n=120; pair seminar_g top1 68.3 % top3 90.0 % n=120;
+# set B 5 GHz
+B_design_ll_5g_exam P0F       pair lecture_c top1 75.0 % top3 90.8 % n=120; pair seminar_g top1 73.3 % top3 92.5 % n=120;
+rod_b8     QK2ns     pair lecture_c top1 73.3 % top3 90.8 % n=120; pair seminar_g top1 71.7 % top3 92.5 % n=120;
+rod_b12    QK2is     pair lecture_c top1 72.5 % top3 91.7 % n=120; pair seminar_g top1 66.7 % top3 94.2 % n=120;
+# set A 2.4 GHz, realistic box
+rod_a17    QBK2ns    pair exam_s top1 54.2 % top3 87.5 % n=120;
+rod_a18    QBK2is    pair exam_s top1 58.3 % top3 88.3 % n=120;
+rod_a18    QBK2iws   pair exam_s top1 59.2 % top3 90.8 % n=120;

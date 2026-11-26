@@ -25,13 +25,22 @@ HEADS = {"QF1": "d120_16f1", "QF2": "d120_16f2", "QR1": "d120_16r1", "QR2": "d12
          "QK1a": "d120_16k1a", "QK1b": "d120_16k1b", "QK1L": "d120_16k1l", "QF1a": "d120_16f1a", "QK1oa": "d120_16k1oa",
          "QK2": "d120_16k2", "QK2n": "d120_16k2n", "QK2i": "d120_16k2i", "QBK2": "d120_16bk2",
          "QBK2n": "d120_16bk2n", "QK2iw": "d120_16k2iw", "QK2i3": "d120_16k2i3", "QK2nw": "d120_16k2nw",
-         "QK2n3": "d120_16k2n3", "QBK2i": "d120_16bk2i", "QBK2iw": "d120_16bk2iw"}
-EXTRA = ("nec_cand.npy", "nec_molex.npy", "nec_molex2.npy", "nec_rod.npy")
+         "QK2n3": "d120_16k2n3", "QBK2i": "d120_16bk2i", "QBK2iw": "d120_16bk2iw",
+         # plan_20261127_exterior.md: base metal (mysim/ext_heads.py)
+         "QBK2iE0": "d120_16bk2ie0", "QBK2iE1": "d120_16bk2ie1", "QBK2iE1c": "d120_16bk2ie1c",
+         "QK2iE1c": "d120_16k2ie1c", "QK2iE1": "d120_16k2ie1", "QK2iE0": "d120_16k2ie0",
+         "QK2iE1m": "d120_16k2ie1m", "QK2iE1b": "d120_16k2ie1b", "QK2iE1cw": "d120_16k2ie1cw", "QK2iE1cr": "d120_16k2ie1cr"}
+EXTRA = ("nec_cand.npy", "nec_molex.npy", "nec_molex2.npy", "nec_rod.npy", "nec_ext_a.npy", "nec_ext_b.npy", "nec_ext_c.npy",
+         "nec_ext_d.npy", "nec_ext_e.npy", "nec_ext_f.npy", "nec_ext_g.npy")
 
 
 def scales(band="2g4"):
     ring = np.load(os.path.join(HERE, "nec_ring.npy"), allow_pickle=True).item()
-    rod = np.load(os.path.join(HERE, "nec_rod.npy"), allow_pickle=True).item()
+    rod = {}
+    for f in ("nec_rod.npy",) + tuple(f for f in EXTRA if f.startswith("nec_ext_")):
+        fp = os.path.join(HERE, f)
+        if os.path.exists(fp):
+            rod.update(np.load(fp, allow_pickle=True).item())
     s0 = float(ring[("d120_16", band)]["scale"])
     return {q: 20.0 * np.log10(float(rod[(k, band)]["scale"]) / s0) for q, k in HEADS.items() if (k, band) in rod}
 

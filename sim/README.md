@@ -14,13 +14,14 @@
 | [`실제-방-시뮬레이션-결과.md`](실제-방-시뮬레이션-결과.md) | 새 방 16개 본 계산의 전체 표, 사다리, 미리 적은 예상과 결과, 믿어도 되는 것 |
 | `mysim/` | 광선 추적(Sionna RT), 안테나 계산(NEC2), 신호 합성, 추정기, 분석 스크립트 |
 | `v1_ring/` | 11-25 첫 고리 계산(V1) 코드와 결과. `mysim/`이 방 만들기 · CSI 합성 코드를 불러 쓴다 |
+| `em/ring_nec2.py` | V1 계산이 쓰는 NEC2 패턴 생성기(nec2c 호출, `em/data/`에 표를 만든다). 11-26부터의 계산은 같은 모형을 PyNEC로 옮긴 `mysim/ring_pynec.py`를 쓴다 |
 | `results/*.txt` | 분석 스크립트가 낸 요약 표 |
 | `results/시뮬레이션-장면.md`, `시뮬레이션-장면-좌표.md`, `scene_topviews.png` | 기존 방 17개의 크기 · 재질 · 물건 · 사람 · 수신 자리, 시드 0의 카메라 좌표, 위에서 본 그림 |
 | `build_nec.sh`, `setup_paths.sh` | 안테나 표 만들기, 스크립트 안 경로 바꾸기 |
 
 저장소에 넣지 않은 것(다시 만들 수 있음): 광선 추적 데이터(`data_wall/` 약 460 MB, `data_real/`), 결과 원본(`results/*.pkl`), 안테나 표(`mysim/*.npy`), 실행 기록(`logs/`).
 
-예전 시뮬레이션 코드(`sim/em`, `sim/repo_sim`, `sim/rt`: v6 독립 검증과 회전 수신기 계산)는 지금 설계와 맞지 않아 지웠다. 커밋 [`e66aed2`](https://github.com/DeteCam/receiver/tree/e66aed2/sim)에서 볼 수 있다.
+예전 시뮬레이션 코드(`sim/em`의 v6 · 회전 수신기 모형, `sim/repo_sim`, `sim/rt`: v6 독립 검증과 회전 수신기 계산)는 지금 설계와 맞지 않아 지웠다. 커밋 [`e66aed2`](https://github.com/DeteCam/receiver/tree/e66aed2/sim)에서 볼 수 있다.
 
 ## 2. 준비
 

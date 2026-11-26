@@ -1,0 +1,28 @@
+# real_B_real2_ll_P5_exam.pkl  cfg=P5F  (configs in file: P5F)   [simulation, not measured]
+
+## 2g4  single-spot bearing error (deg), four-combo spots, columns: mean median p90 p95 n
+  lecture_c       9.7   3.9  29.1  40.4    480
+  seminar_g      10.5   5.8  26.1  37.4    480
+  EXAM pooled    10.1   4.8  27.1  39.4    960
+  ALL pooled     10.1   4.8  27.1  39.4    960
+  by spot type (all spots, outside rooms):
+     W               -     -     -     -      0
+     F               -     -     -     -      0
+     T               -     -     -     -      0
+     B               -     -     -     -      0
+
+## 2g4  position error (m): within 0.5 m / within 1 m / median   (line: >= 80 % within 0.5 m per kind)
+  group four
+     lecture_c      37.5 %  62.5 %   0.63 m  n=120
+     seminar_g      52.5 %  74.2 %   0.45 m  n=120
+     kind exam      45.0 %  68.3 %   0.56 m  n=240
+  group pair
+     lecture_c      55.8 %  79.2 %   0.41 m  n=120
+     seminar_g      46.7 %  74.2 %   0.57 m  n=120
+     kind exam      51.2 %  76.7 %   0.48 m  n=240
+
+## 2g4  exam rooms: suspect desk top-1 / top-3 (line: top-3 >= 80 %)
+     pair  lecture_c     top1  36.7 %  top3  74.2 %  n=120
+     pair  seminar_g     top1  47.5 %  top3  82.5 %  n=120
+     four  lecture_c     top1  34.2 %  top3  70.8 %  n=120
+     four  seminar_g     top1  65.0 %  top3  85.0 %  n=120

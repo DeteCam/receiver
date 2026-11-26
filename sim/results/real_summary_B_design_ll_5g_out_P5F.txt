@@ -1,0 +1,48 @@
+# real_B_design_ll_5g_out.pkl  cfg=P5F  (configs in file: P0F, P5F)   [simulation, not measured]
+
+## 5g  single-spot bearing error (deg), four-combo spots, columns: mean median p90 p95 n
+  goshiwon_a     15.3   2.5  41.0 125.2    480
+  studio_b       13.6   3.0  43.9  65.8    480
+  restroom_e     23.6   7.2  66.1 108.8    480
+  sauna_locker    9.2   2.1  26.0  52.1    480
+  OUTSIDE pooled  15.4   3.1  48.8  78.7   1920   <- G2 proxy (line: mean <= 8.92, p95 < 27.53)
+     seed 0       15.5   3.0  49.9  72.1    640
+     seed 1       15.0   3.1  43.9  86.0    640
+     seed 2       15.8   3.4  50.2  70.5    640
+     locker        9.2   2.1  26.0  52.1    480
+     lodging      14.4   2.7  43.0  79.2    960
+     restroom     23.6   7.2  66.1 108.8    480
+     open cams    13.9   2.9  40.4  66.8   1060
+     hidden cams  17.4   3.5  54.4  83.5    860
+     same zone    13.2   2.6  38.2  70.3   1576
+     behind part. 25.7   9.8  66.7  98.7    344
+  ALL pooled     15.4   3.1  48.8  78.7   1920
+  by spot type (all spots, outside rooms):
+     W            12.7   2.6  39.5  65.3   1200
+     F            16.7   3.7  51.5  82.4    720
+     T            22.2   4.7  71.4 123.9   1080
+     B            50.4  38.9 121.7 135.2    120
+
+## 5g  position error (m): within 0.5 m / within 1 m / median   (line: >= 80 % within 0.5 m per kind)
+  group four
+     goshiwon_a     94.2 %  97.5 %   0.20 m  n=120
+     studio_b       72.5 %  89.2 %   0.30 m  n=120
+     restroom_e     49.2 %  72.5 %   0.51 m  n=120
+     sauna_locker   66.7 %  85.0 %   0.35 m  n=120
+     kind locker    66.7 %  85.0 %   0.35 m  n=120
+     kind lodging   83.3 %  93.3 %   0.24 m  n=240
+     kind restroom  49.2 %  72.5 %   0.51 m  n=120
+  group pair
+     goshiwon_a     70.0 %  85.8 %   0.33 m  n=120
+     studio_b       68.3 %  85.0 %   0.30 m  n=120
+     restroom_e     37.5 %  60.0 %   0.77 m  n=120
+     sauna_locker   49.2 %  66.7 %   0.51 m  n=120
+     kind locker    49.2 %  66.7 %   0.51 m  n=120
+     kind lodging   69.2 %  85.4 %   0.32 m  n=240
+     kind restroom  37.5 %  60.0 %   0.77 m  n=120
+  group low
+     goshiwon_a     85.8 %  95.0 %   0.21 m  n=120
+     studio_b       54.2 %  65.0 %   0.40 m  n=120
+     sauna_locker   44.2 %  66.7 %   0.57 m  n=120
+     kind locker    44.2 %  66.7 %   0.57 m  n=120
+     kind lodging   70.0 %  80.0 %   0.30 m  n=240

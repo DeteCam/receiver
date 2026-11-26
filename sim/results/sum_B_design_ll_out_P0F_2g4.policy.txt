@@ -1,0 +1,35 @@
+# bearing procedures on the realistic outside rooms (four-combo spots); columns: mean median p90 p95 | gross>20 | mean spots   [simulation]
+every measurement counted (plan metric)        16.30  4.9  48.7  81.8  20.9%  1.00
+-- score: spread
+  start with 1, up to 4, accept level 90% of old-room measurements: 11.28  4.2  26.9  57.2  14.4%  1.24
+  start with 1, up to 4, accept level 80% of old-room measurements: 10.22  3.9  25.4  50.2  12.9%  1.42
+  start with 1, up to 4, accept level 70% of old-room measurements:  9.98  3.9  24.4  46.0  12.9%  1.58
+  start with 1, up to 4, accept level 60% of old-room measurements:  8.79  3.8  22.6  31.3  11.2%  1.80
+  start with 1, up to 4, accept level 50% of old-room measurements:  8.67  3.6  22.5  31.3  11.2%  2.04
+  start with 2, up to 4, accept level 90% of old-room measurements: 10.99  3.8  26.9  55.0  13.8%  2.08
+  start with 2, up to 4, accept level 80% of old-room measurements: 10.10  3.8  24.4  46.7  12.3%  2.17
+  start with 2, up to 4, accept level 70% of old-room measurements:  9.77  3.8  23.5  43.1  11.9%  2.26
+  start with 2, up to 4, accept level 60% of old-room measurements:  8.41  3.7  20.1  28.6  10.2%  2.40
+  start with 2, up to 4, accept level 50% of old-room measurements:  8.30  3.5  20.1  29.1  10.2%  2.56
+  always 2 spots, report the most reliable one:                    12.35  4.2  28.3  65.0  14.6%  2.00
+  always 3 spots, report the most reliable one:                     9.14  3.5  21.5  34.4  10.8%  3.00
+  always 4 spots, report the most reliable one:                     7.39  3.3  19.1  27.9   8.8%  4.00
+-- score: learned
+  start with 1, up to 4, accept level 90% of old-room measurements:  9.59  4.3  25.4  41.1  12.3%  1.23
+  start with 1, up to 4, accept level 80% of old-room measurements:  9.05  4.1  21.7  40.4  10.8%  1.51
+  start with 1, up to 4, accept level 70% of old-room measurements:  8.30  3.8  19.3  30.7   9.6%  1.74
+  start with 1, up to 4, accept level 60% of old-room measurements:  7.61  3.5  18.7  26.1   8.8%  2.05
+  start with 1, up to 4, accept level 50% of old-room measurements:  7.21  3.4  16.3  26.0   7.9%  2.36
+  start with 2, up to 4, accept level 90% of old-room measurements:  9.80  3.9  23.5  42.6  11.5%  2.08
+  start with 2, up to 4, accept level 80% of old-room measurements:  8.94  3.8  20.1  40.4  10.2%  2.23
+  start with 2, up to 4, accept level 70% of old-room measurements:  7.93  3.6  18.7  28.3   8.5%  2.36
+  start with 2, up to 4, accept level 60% of old-room measurements:  7.37  3.4  16.5  26.1   7.9%  2.55
+  start with 2, up to 4, accept level 50% of old-room measurements:  7.15  3.4  16.2  26.0   7.7%  2.75
+  always 2 spots, report the most reliable one:                    10.94  4.1  25.6  54.9  12.5%  2.00
+  always 3 spots, report the most reliable one:                     8.73  3.5  20.1  30.8  10.2%  3.00
+  always 4 spots, report the most reliable one:                     6.83  3.3  15.1  26.1   7.5%  4.00
+-- learned vs spread at the same mean number of spots (start with 1, up to 4)
+  1.25 spots: spread rule mean 11.21 (p95 57.0)  |  learned mean 9.55 (p95 41.1)
+  1.50 spots: spread rule mean 10.33 (p95 51.8)  |  learned mean 9.01 (p95 39.9)
+  1.75 spots: spread rule mean 9.42 (p95 39.2)  |  learned mean 8.28 (p95 30.7)
+  2.00 spots: spread rule mean 8.64 (p95 31.3)  |  learned mean 7.73 (p95 26.6)

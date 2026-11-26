@@ -1,0 +1,56 @@
+  w=(1-p)^2      within 0.5 m  79.6 %  1 m  95.0 %  median 0.27 m  spots used 4.00  
+  w=1/spread     within 0.5 m  79.1 %  1 m  95.0 %  median 0.27 m  spots used 4.00  
+  drop p>0.5     within 0.5 m  79.8 %  1 m  95.6 %  median 0.27 m  spots used 3.90  
+  drop p>0.35    within 0.5 m  79.3 %  1 m  95.3 %  median 0.28 m  spots used 3.74  
+  drop p>0.25    within 0.5 m  78.1 %  1 m  94.7 %  median 0.28 m  spots used 3.56  
+  drop worst 1   within 0.5 m  74.6 %  1 m  93.0 %  median 0.31 m  spots used 3.00  
+
+## old rooms, all 8 wall spots
+  equal          within 0.5 m  90.8 %  1 m  98.8 %  median 0.21 m  spots used 8.00  
+  w=1-p          within 0.5 m  90.8 %  1 m  98.8 %  median 0.21 m  spots used 8.00  
+  w=(1-p)^2      within 0.5 m  90.6 %  1 m  98.9 %  median 0.20 m  spots used 8.00  
+  w=1/spread     within 0.5 m  90.6 %  1 m  98.4 %  median 0.21 m  spots used 8.00  
+  drop p>0.5     within 0.5 m  90.7 %  1 m  98.8 %  median 0.21 m  spots used 7.85  
+  drop p>0.35    within 0.5 m  90.3 %  1 m  98.8 %  median 0.21 m  spots used 7.61  
+  drop p>0.25    within 0.5 m  89.7 %  1 m  98.8 %  median 0.21 m  spots used 7.31  
+  drop worst 1   within 0.5 m  90.1 %  1 m  98.4 %  median 0.21 m  spots used 7.00  
+
+## realistic rooms, four spots
+  equal          within 0.5 m  67.9 %  1 m  89.6 %  median 0.33 m  spots used 4.00  lodging 69.6 restroom 65.8 locker 66.7
+  w=1-p          within 0.5 m  67.9 %  1 m  88.5 %  median 0.33 m  spots used 4.00  lodging 69.6 restroom 67.5 locker 65.0
+  w=(1-p)^2      within 0.5 m  69.2 %  1 m  88.3 %  median 0.32 m  spots used 4.00  lodging 69.2 restroom 71.7 locker 66.7
+  w=1/spread     within 0.5 m  66.9 %  1 m  87.7 %  median 0.33 m  spots used 4.00  lodging 68.8 restroom 66.7 locker 63.3
+  drop p>0.5     within 0.5 m  67.9 %  1 m  89.4 %  median 0.33 m  spots used 3.83  lodging 70.4 restroom 65.0 locker 65.8
+  drop p>0.35    within 0.5 m  67.3 %  1 m  88.5 %  median 0.33 m  spots used 3.65  lodging 68.3 restroom 67.5 locker 65.0
+  drop p>0.25    within 0.5 m  67.1 %  1 m  87.7 %  median 0.33 m  spots used 3.50  lodging 67.9 restroom 68.3 locker 64.2
+  drop worst 1   within 0.5 m  63.1 %  1 m  86.0 %  median 0.36 m  spots used 3.00  lodging 65.4 restroom 64.2 locker 57.5
+
+## realistic rooms, two spots
+  equal          within 0.5 m  48.1 %  1 m  72.1 %  median 0.53 m  spots used 2.00  lodging 52.1 restroom 37.5 locker 50.8
+  w=1-p          within 0.5 m  48.5 %  1 m  72.1 %  median 0.53 m  spots used 2.00  lodging 52.9 restroom 38.3 locker 50.0
+  w=(1-p)^2      within 0.5 m  47.5 %  1 m  72.1 %  median 0.55 m  spots used 2.00  lodging 51.7 restroom 37.5 locker 49.2
+  w=1/spread     within 0.5 m  46.5 %  1 m  71.5 %  median 0.55 m  spots used 2.00  lodging 50.4 restroom 39.2 locker 45.8
+  drop p>0.5     within 0.5 m  48.1 %  1 m  72.1 %  median 0.53 m  spots used 2.00  lodging 52.1 restroom 37.5 locker 50.8
+  drop p>0.35    within 0.5 m  48.1 %  1 m  72.1 %  median 0.53 m  spots used 2.00  lodging 52.1 restroom 37.5 locker 50.8
+  drop p>0.25    within 0.5 m  48.1 %  1 m  72.1 %  median 0.53 m  spots used 2.00  lodging 52.1 restroom 37.5 locker 50.8
+  drop worst 1   within 0.5 m  48.1 %  1 m  72.1 %  median 0.53 m  spots used 2.00  lodging 52.1 restroom 37.5 locker 50.8
+
+## realistic rooms, every spot except inside the bathroom (5-7 spots)
+  equal          within 0.5 m  81.9 %  1 m  95.0 %  median 0.24 m  spots used 6.75  lodging 87.1 restroom 78.3 locker 75.0
+  w=1-p          within 0.5 m  81.9 %  1 m  95.4 %  median 0.24 m  spots used 6.75  lodging 87.1 restroom 79.2 locker 74.2
+  w=(1-p)^2      within 0.5 m  81.9 %  1 m  95.2 %  median 0.24 m  spots used 6.75  lodging 86.7 restroom 80.0 locker 74.2
+  w=1/spread     within 0.5 m  81.7 %  1 m  94.8 %  median 0.24 m  spots used 6.75  lodging 87.5 restroom 80.0 locker 71.7
+  drop p>0.5     within 0.5 m  81.2 %  1 m  95.0 %  median 0.24 m  spots used 6.44  lodging 87.1 restroom 76.7 locker 74.2
+  drop p>0.35    within 0.5 m  81.9 %  1 m  95.2 %  median 0.24 m  spots used 6.11  lodging 87.1 restroom 79.2 locker 74.2
+  drop p>0.25    within 0.5 m  82.5 %  1 m  94.8 %  median 0.24 m  spots used 5.78  lodging 86.7 restroom 81.7 locker 75.0
+  drop worst 1   within 0.5 m  81.5 %  1 m  95.4 %  median 0.24 m  spots used 5.75  lodging 87.1 restroom 77.5 locker 74.2
+
+## realistic rooms, every spot (5-8)
+  equal          within 0.5 m  83.5 %  1 m  94.8 %  median 0.23 m  spots used 7.00  lodging 90.4 restroom 78.3 locker 75.0
+  w=1-p          within 0.5 m  83.5 %  1 m  95.2 %  median 0.24 m  spots used 7.00  lodging 90.4 restroom 79.2 locker 74.2
+  w=(1-p)^2      within 0.5 m  83.8 %  1 m  95.0 %  median 0.24 m  spots used 7.00  lodging 90.4 restroom 80.0 locker 74.2
+  w=1/spread     within 0.5 m  82.7 %  1 m  94.8 %  median 0.24 m  spots used 7.00  lodging 89.6 restroom 80.0 locker 71.7
+  drop p>0.5     within 0.5 m  82.9 %  1 m  94.8 %  median 0.24 m  spots used 6.67  lodging 90.4 restroom 76.7 locker 74.2
+  drop p>0.35    within 0.5 m  83.5 %  1 m  95.2 %  median 0.23 m  spots used 6.31  lodging 90.4 restroom 79.2 locker 74.2
+  drop p>0.25    within 0.5 m  83.5 %  1 m  94.8 %  median 0.24 m  spots used 5.96  lodging 88.8 restroom 81.7 locker 75.0
+  drop worst 1   within 0.5 m  82.7 %  1 m  95.4 %  median 0.24 m  spots used 6.00  lodging 89.6 restroom 77.5 locker 74.2

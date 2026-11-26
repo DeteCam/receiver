@@ -7,14 +7,7 @@ cad/_tmp/
 cad/slicing/shim/*.so
 print/_tmp/
 firmware/core/cache/
-sim/em/cache/
-sim/em/fdtd/*.h5
-sim/em/fdtd/*.log
-sim/em/fdtd/room2d_cache/
 sim/**/*.log
-sim/rt/paths/
-sim/rt/paths_old/
-sim/rt/study/
 firmware/data/
 console/src/node_modules/
 # 옵시디언이 문서 폴더에 만드는 것
@@ -29,7 +22,7 @@ firmware/c5/*/sdkconfig.old
 firmware/c5/*/dependencies.lock
 # 시뮬레이션 데이터와 결과 배열 (다시 만들 수 있음)
 sim/**/data/
+sim/data_*/
+sim/logs/
+sim/results/*.pkl
 sim/**/*.npy
-!sim/rt/frame12.npy
-sim/em/*.nec
-sim/em/*.out

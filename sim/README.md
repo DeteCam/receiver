@@ -1,94 +1,176 @@
-# sim — 시뮬레이션 코드
+# 시뮬레이션 기록 (`sim/`)
 
-v6 설계(브랜치 `archive/v6-nano2`)의 숫자를 독립 도구로 다시 확인한 코드와, 손바닥 크기 회전 수신기를 계산한 코드입니다. 스위치 고리 계산은 이 폴더에 이어서 추가합니다.
-**모든 결과는 시뮬레이션이며 실측이 아닙니다.** 새 계산은 [docs/AGENTS.md](https://github.com/DeteCam/docs/blob/main/AGENTS.md) 5장 규칙을 따릅니다. 특히 수신기 · 카메라 자리와 조건을 결과를 보기 전에 `sim/plan_YYYYMMDD.md`에 적습니다.
+**이 폴더의 숫자는 모두 시뮬레이션(계산값)이며 실측이 아니다.** 설계를 고르는 근거로만 쓰고 "성능"이나 "목표 달성"으로 쓰지 않는다. 규칙은 [docs/AGENTS.md](https://github.com/DeteCam/docs/blob/main/AGENTS.md) 5장이다. 계획서를 결과 전에 고정하고, 시드 3개 이상, 방마다 카메라 40곳 이상, 평균 · 중앙값 · 90% · 95% 지점 · 가장 나쁜 방을 함께 적는다. 결과를 본 뒤 더한 것은 "사후 추가"로 표시한다.
 
-## 폴더
+마지막 수정: 2026-11-26
 
-| 폴더 | 내용 | 도구 |
+가장 최근 결과는 [실제-방-시뮬레이션-결과.md](실제-방-시뮬레이션-결과.md)에 있다(실제와 비슷한 새 방 16개). 지금 고른 설계는 [docs/현재_방향.md](https://github.com/DeteCam/docs/blob/main/현재_방향.md)에 있다.
+
+## 1. 폴더
+
+| 경로 | 내용 |
+|---|---|
+| `plan_*.md` | 계획서. 결과를 보기 전에 장면 · 자리 · 조건 · 판정 기준을 적은 것 |
+| [`실제-방-시뮬레이션-결과.md`](실제-방-시뮬레이션-결과.md) | 새 방 16개 본 계산의 전체 표, 사다리, 미리 적은 예상과 결과, 믿어도 되는 것 |
+| `mysim/` | 광선 추적(Sionna RT), 안테나 계산(NEC2), 신호 합성, 추정기, 분석 스크립트 |
+| `v1_ring/` | 11-25 첫 고리 계산(V1) 코드와 결과. `mysim/`이 방 만들기 · CSI 합성 코드를 불러 쓴다 |
+| `results/*.txt` | 분석 스크립트가 낸 요약 표 |
+| `results/시뮬레이션-장면.md`, `시뮬레이션-장면-좌표.md`, `scene_topviews.png` | 기존 방 17개의 크기 · 재질 · 물건 · 사람 · 수신 자리, 시드 0의 카메라 좌표, 위에서 본 그림 |
+| `build_nec.sh`, `setup_paths.sh` | 안테나 표 만들기, 스크립트 안 경로 바꾸기 |
+
+저장소에 넣지 않은 것(다시 만들 수 있음): 광선 추적 데이터(`data_wall/` 약 460 MB, `data_real/`), 결과 원본(`results/*.pkl`), 안테나 표(`mysim/*.npy`), 실행 기록(`logs/`).
+
+예전 시뮬레이션 코드(`sim/em`, `sim/repo_sim`, `sim/rt`: v6 독립 검증과 회전 수신기 계산)는 지금 설계와 맞지 않아 지웠다. 커밋 [`e66aed2`](https://github.com/DeteCam/receiver/tree/e66aed2/sim)에서 볼 수 있다.
+
+## 2. 준비
+
+- 도구: Python 3.13, Sionna RT 2.2.0(Mitsuba 3.9.1, Dr.Jit 1.5.0), PyNEC 2.4.1, NumPy 2.5, SciPy 1.18, scikit-learn 1.9. Sionna RT는 CPU(LLVM)로도 돈다.
+
+```
+pip install sionna-rt==2.2.0 numpy scipy scikit-learn PyNEC==2.4.1
+```
+
+- 레거시 돌판 비교를 다시 돌리려면 [receiver-legacy](https://github.com/DeteCam/receiver-legacy)를 받아 커밋 `62cd341d08f3ea41af58a0a028144372dee9231d`(2026-11-18)로 맞춘다. `sim/rt` · `firmware/core` · `firmware/pi` · `sim/em`을 쓴다.
+- 스크립트에는 자리표시 경로(`/opt/detecam/sim`, `/opt/detecam/receiver-legacy`)가 들어 있다. 이 폴더에서 한 번 바꾼다. 바뀐 파일은 커밋하지 않는다(`git checkout -- mysim v1_ring`으로 되돌린다).
+
+```
+cd sim
+bash setup_paths.sh /path/to/receiver-legacy
+```
+
+- 아래 명령은 모두 `sim/` 폴더에서 돌린다.
+- 광선 추적은 반드시 `PYTHONHASHSEED=0`으로 돌린다. 그렇지 않으면 카메라 자리가 파일마다 달라진다. 평가는 `OMP_NUM_THREADS=1`.
+- 두 프로세스가 같은 pkl에 쓰지 않게 한다(파일을 나눈다).
+- 시험실 평가는 프로세스 하나가 약 2 GB를 쓴다. 메모리 8 GB에서는 광선 추적과 함께 시험실 평가를 하나만 돌린다.
+
+## 3. 다시 돌리는 순서
+
+### 3.1 안테나 표 (NEC2)
+
+```
+bash build_nec.sh          # nec_patterns → nec_all → nec_all2 → nec_all3 → nec_all4
+```
+
+### 3.2 기존 방 17개 (계획서 `plan_20261126_wall` · `final` · `plate`)
+
+```
+# 광선 추적 장면(방 17개, 카메라 40곳, 2.4 · 5 GHz)
+PYTHONHASHSEED=0 python3 mysim/gen_wall.py --variants base --seeds 0,1,2                 # 사람 있음(시험실 기본)
+PYTHONHASHSEED=0 python3 mysim/gen_wall.py --variants nop --seeds 0,1,2                  # 사람 없음(시험실 밖 기본)
+PYTHONHASHSEED=0 python3 mysim/gen_wall.py --variants nop --nodeset free --seeds 0,1,2   # 돌판 자유 자리 비교용
+
+# 최종 검증(plan_20261126_final.md)
+OMP_NUM_THREADS=1 python3 mysim/exp_final.py outside 0,1,2
+OMP_NUM_THREADS=1 python3 mysim/exp_final.py exam 0,1,2
+OMP_NUM_THREADS=1 python3 mysim/exp_final.py anchor-outside 0,1,2 H1,H2,H4,H5
+OMP_NUM_THREADS=1 python3 mysim/exp_final.py anchor-exam 0,1,2 H1,H2
+OMP_NUM_THREADS=1 python3 mysim/exp_final.py anchor-exam 0,1,2 H4,H5
+python3 mysim/analyze_final_check.py outside      # exam, anchor, pairs도 같은 방식
+
+# 레거시 돌판 비교와 1기 여러 자리(plan_20261126_plate.md)
+OMP_NUM_THREADS=1 python3 mysim/exp_bearing.py 0,1,2 2g4
+for s in 0 1 2; do PLATE_OUT=results/exp_bearing_plate_s$s.pkl OMP_NUM_THREADS=1 python3 mysim/plate_eval.py $s; done
+for s in 0 1 2; do PLATE_OUT=results/exp_plate_pos_s$s.pkl OMP_NUM_THREADS=1 python3 mysim/plate_pos.py $s; done
+OMP_NUM_THREADS=1 python3 mysim/exp_ringmulti.py 0,1,2
+python3 mysim/analyze_bearing.py 0,1,2; python3 mysim/analyze_plate_pos.py 0,1,2
+
+# 면 근접 결합(plan_20261126_wall.md)
+OMP_NUM_THREADS=1 python3 mysim/exp_wall.py base 0,1,2 d120_16_fv,d120_16_wcf,d120_16_wmf,d120_16_wcc,d120_16_wmc,d120_16_wpf,d120_16_wmm all
+python3 mysim/analyze_final.py nf
+```
+
+### 3.3 실제와 비슷한 새 방 16개 (계획서 `plan_20261126_real` · `real_c`)
+
+```
+PYTHONHASHSEED=0 python3 mysim/real_meta.py check          # 방 정의 점검
+PYTHONHASHSEED=0 python3 mysim/real_meta.py
+PYTHONHASHSEED=0 python3 mysim/gen_real.py --scenes A --variants nop,base,op1 --bands 2g4,5g --seeds 0,1,2
+python3 mysim/exp_real.py nec
+REAL_LL=1 OMP_NUM_THREADS=1 python3 mysim/exp_real.py A design 2g4 0,1,2 P0F A_design_ll
+REAL_LL=1 OMP_NUM_THREADS=1 python3 mysim/exp_real.py A real2 2g4 0,1,2 P0F A_real2_ll
+python3 mysim/exp_dev_ll.py 0,1,2 2g4 P0F                     # 기존 방 지도(문턱 · 모델용)
+python3 mysim/analyze_real.py A_design_ll P0F                 # 한 번 잰 방향, 4자리 위치, 시험실
+python3 mysim/ll_study.py rel 2g4 P0F real_A_design_ll.pkl    # 신뢰도(규칙 대 배운 모델)
+python3 mysim/ll_policy.py 2g4 P0F real_A_design_ll.pkl       # 옮기기, 가장 믿을 만한 자리
+python3 mysim/ll_fbear.py 2g4 P0F real_A_design_ll.pkl        # 융합 방향
+python3 mysim/ll_adapt.py 2g4 P0F real_A_design_ll.pkl        # 더 재기
+python3 mysim/exp_real.py A design 2g4 0,1,2 P1,P2,P3,P4,P5,P6,P7,SW1,SW3 A_design_c   # 구조 · 처리 후보
+REAL_ONE=1 python3 mysim/exp_real.py exam_s,lecture_c,seminar_g design 2g4 0,1,2 P0 X_design_one   # 시험실 한 자리
+```
+
+묶음 B는 `A` 자리에 방 이름(`goshiwon_a,studio_b,restroom_e,sauna_locker` / `lecture_c,seminar_g`)을 쓰고, 묶음 C는 `plan_20261126_real_c.md` 6절의 명령을 쓴다. 스크립트마다 정확한 인자(시드, 설정 이름)는 파일 맨 위 설명과 `CFG`에 있다.
+
+## 4. 장면
+
+- **기존 방 17개** (`v1_ring/gen_scenes.py`, `mysim/fresh_scenes.py`, `mysim/gen_wall.py`)
+  - 시험실 밖 12개: lodging_a · b · c, restroom_a · b · c, locker_a · b, bathhouse_a · b, office_a, worst_metal(금속 방)
+  - 시험실 5개: classroom_a · b · c, lecture_a · b
+  - 내용 변형: `base`(물건 + 사람, 시험실은 학생 착석), `nop`(사람 없음, 시험실 밖의 기본 가정)
+  - 수신 자리(벽에서 약 0.1 m): 모서리 c0~c3, 벽 가운데 m0~m3, 높이 2.0 m · 1.5 m. 방 안 스탠드 자리 f0~f4는 돌판 비교에만 쓴다(큰 스탠드는 요구사항 R8로 금지).
+- **새 방 16개** (`mysim/real_scenes.py`): 묶음 A 5개(개선용) + 묶음 B 6개(따로 떼어 둠) + 묶음 C 5개(두 번째 확인). 네모가 아닌 방, 지도에 없는 금속, 손으로 정한 수신 자리(벽 고리 · 가구 위 · 탁자 높이 · 욕실 · 칸 안), 숨긴 카메라(상자 35%, 얇은 유리 10%). 기존 17개 방은 문턱 · 모델을 정하는 데만 썼다.
+- 방마다 카메라 40곳(실제로 숨기는 자리), 2.4 GHz(2.437 GHz) · 5 GHz(5.22 GHz), 반사 4회 · 회절 · 투과(새 방은 난반사 포함, 광선 10만 개).
+- 시드마다 바뀌는 것: 카메라 자리, 사람 자리, 시험실 책상 위치의 작은 흔들림. 방 크기 · 벽 · 고정 가구 · 거울 · 칠판은 같다.
+- 안테나: NEC2로 푼 지름 12 cm 16소자 고리 응답(막대 다이폴 대리, 필름 안테나보다 좋은 쪽일 수 있음). 끄덕인 자세는 `ty±20` 표.
+- 시험실 평가는 좌석 정보를 입력하지 않는다(R10). 책상은 폰 AR 평면 인식 + 사람 인식으로 자동으로 찾는다고 두고 공통 위치 오차 0.10 m, 약한 사전 가중으로 넣었다(`mysim/exp_wall.py`의 `seat10m`). 좌석마다 기기를 두는 구성(R11)은 계산하지 않는다.
+
+## 5. 계획서와 결과 (오래된 것부터, 모두 계산값)
+
+| 계획서 | 물은 것 | 핵심 결과 |
 |---|---|---|
-| `repo_sim/` | 저장소 벤치마크를 그대로 다시 돌리고, 난수 · 대역폭 · 지도 오차 · 안테나 응답을 하나씩 바꿔 본 시험 | 저장소 코드 + NumPy |
-| `em/` | 안테나 전자기 해석. 84 mm 판(v6)과, 회전 수신기의 안테나 2개(기준 + 회전) | NEC2 (`nec2c`, 모멘트법) |
-| `rt/` | 교실(40명) · 숙소 3차원 장면의 광선 추적과 위치 · 방향 추정 | Sionna RT 2.2 (Mitsuba 3), scikit-learn |
+| `plan_20261125.md` | 스위치 고리 V1(8소자 등), 기준선 비교 | 16소자 지름 12 cm 쪽으로 감 |
+| `plan_20261126_wall.md` | 벽 부착 머리 모양, 자리 수, 높이, 끄덕이기, 면 근접 결합, 책상 자동 인식 | 벽 부착 손해 없음. 반원 · 평면 머리 이득 없음. 사람 있는 조건에서 벽 4곳 × 두 높이 81~91%. 근접 결합은 유전체 벽에서 무시할 만하고 금속면에서 남음 |
+| `plan_20261126_final.md` | 최종 부품(2곳, 사람 없음, 실제 앵커 손실) | 시험실 2곳 + 끄덕이기: 의심 책상 3곳 안 92%. 시험실 밖 맞은편 2곳 + 끄덕이기(H4): 0.5 m 안 65%, 1 m 안 89%. 앵커 H1 부호 복원 86% → H4 97% |
+| `plan_20261126_plate.md` | 고리 대 레거시 돌판(기준 곡선 보정), 돌판 자유 배치 | 한 자리 방위각 고리 8.4° 대 돌판 18.3°(2.4 GHz, 모든 종류 · 시드에서 고리). 위치 0.5 m 안: 고리 2곳 59%, 4곳 80%, 8곳 91% / 돌판 방 안 2곳 52%, 3곳 64%, 5곳 76%, 9곳 83% |
+| `plan_20261126_real.md`, `plan_20261126_real_c.md` | 실제와 비슷한 새 방 16개에서 지금 구조가 기준선을 넘는가, 못 넘으면 무엇으로 줄이는가 | 한 번 잰 방향 13.8~16.3°(기준선 8.92° 미달, 원인은 가림). 구조 후보 9개 채택 없음. 체인 B 입력 6 dB 감쇠기 + 새 판정 규칙. 4자리 "융합 방향" 4.4~5.4°(묶음 C에서 사전 등록 뒤 확인). 위치는 숙박만 5~7곳에서 81~88%, 탈의실 68~79%, 금속 칸막이 화장실 45~49%. 시험실 앞벽 2자리 88~93%, 한 자리 38~61% |
 
-## 준비
+새 방 16개 요약(2.4 GHz 설계 조건):
 
-```bash
-pip install sionna-rt numpy scipy torch scikit-learn   # Sionna RT 는 LLVM(CPU) 로도 돕니다
-sudo apt install nec2c                                  # em/ 을 다시 돌릴 때만
-git clone --branch archive/v6-nano2 https://github.com/DeteCam/receiver receiver-v6   # v6 코드 (1번 · 3번에만 필요)
-export DETECAM_V6=$PWD/receiver-v6                      # 기본값은 이 저장소 옆의 receiver-v6
-```
+| 결과 | 묶음 A | 묶음 B | 묶음 C |
+|---|---|---|---|
+| 한 번 잰 방향 평균 / 중앙 / 90% / 95% | 13.8° / 4.2° / 39.9° / 72.5° | 16.3° / 4.9° / 48.7° / 81.8° | 14.0° / 4.4° / 43.9° / 65.8° |
+| 가장 나쁜 방(평균) | pension_a 16.4° | restroom_e 25.5° | restroom_f 17.2° |
+| 융합 방향(4자리) 평균 / 95% | 4.4° / 12.5° (사후 추가) | 5.3° / 16.8° (사후 추가) | 5.4° / 15.8° (사전 등록, 통과) |
+| 4자리 0.5 m 안(숙박 / 화장실 / 탈의실) | 69.6 / 65.8 / 66.7% | 79.6 / 49.2 / 61.7% | 62.5 / 85.8 / 68.3% |
+| "더 재기" 0.5 m 안, 평균 자리 수 | 87.5 / 79.2 / 75.0%, 5.6곳 | 83.3 / 49.2 / 71.7%, 5.1곳 | 81.2 / 89.2 / 76.7%, 5.6곳 |
+| 시험실 의심 책상 3곳 안(앞벽 2자리 / 한 자리) | 93.3% / 60.8% | 88.3% / 37.5~58.3% | — |
 
-## 1. v6 보고서 숫자와 검증 숫자가 다른 이유 (docs `기술검증_보고서.md` 1부)
+- 사전 등록한 현실 조건은 체인 판정 규칙이 거꾸로 동작해 방향 23.6°로 무너졌다. 체인 B 입력 6 dB 감쇠기 + "센 쪽 = 기준 체인" 규칙(`real2`, 사후 추가)으로 13.1°가 됐다.
+- 미리 적은 예상 10개 가운데 4개는 맞았고, 3개는 틀렸고, 3개는 일부만 맞았다. 모두 결과 문서 6절에 그대로 적었다.
+- 1기로 차례로 재는 것은 계산에서 동시 측정과 같다(장면이 그대로이고 카메라가 계속 보낸다고 둠). 시험실처럼 카메라가 송출을 멈출 수 있는 곳은 한 자리만 남는 경우를 따로 계산했다.
+- 기존 방 벽 4곳(m0~m3) 차례로 + 끄덕이기, 2.4 GHz, 사람 없음, H4: 0.5 m 안 80%, 1 m 안 95%, 평균 0.36 m, 중앙 0.27 m, 90% 0.71 m, 95% 0.97 m. 종류별 0.5 m 안은 목욕탕 78%, 탈의실 85%, 숙소 85%, 사무실 80%, 화장실 72%, 금속 방 81%(`plan_20261126_plate.md` 7절, 사후 추가).
 
-```bash
-cd rt
-python3 rt_gen_ladder.py classroom 5g 0 shellroi 1 0   # 벽만, 1차 반사, 카메라는 저장소 격자점
-python3 rt_gen_ladder.py classroom 5g 0 shell 1 0      # 벽만, 1차 반사, 카메라는 좌석
-python3 rt_gen_ladder.py classroom 5g 0 shell 4 1      # + 4차 반사 · 회절
-python3 rt_gen_ladder.py classroom 5g 0 furn 4 1       # + 가구
-python3 rt_gen_ladder.py classroom 5g 0 full 4 1       # + 사람
-python3 eval_ladder.py classroom 5g 160e6              # 저장소 채널 폭으로 평가 (난수 0~2 가 모두 있어야 합니다)
-python3 eval_ladder.py classroom 5g                    # 20 MHz
-cd ../repo_sim
-SEED=3 OUTNAME=seed_3.json python3 bench_seed.py       # 저장소 벤치마크를 난수만 바꿔서
-BW24=20e6 BW5=20e6 JIT=0.18 MAPERR=1 EM=1 OUTNAME=x.json python3 bench_stress.py
-```
+## 6. 스크립트 (`mysim/`)
 
-## 2. 손바닥 크기 회전 수신기 (docs `기술검증_보고서.md` 2부)
+| 파일 | 하는 일 |
+|---|---|
+| `ring_pynec.py`, `wall_heads.py`, `wall_nf.py`, `shapes.py`, `cand_heads.py` | NEC2 안테나 표(고리 · 끄덕인 자세 · 면 근접 결합 · 모양 비교 · 구조 후보) |
+| `gen_wall.py`, `fresh_scenes.py`, `gen_ext.py`, `scene_meta.py` | 기존 방 광선 추적. `--variants base,nop`, `--nodeset wall/corner/wallhi/free` |
+| `real_scenes.py`, `real_meta.py`, `gen_real.py` | 새 방 16개 정의 · 점검 · 광선 추적 |
+| `dump_scenes.py` | 기존 방 17개를 다시 만들어 장면 문서 2개와 위에서 본 그림을 만든다(광선 추적 없음) |
+| `my_eval.py`, `pattern3d.py`, `risk_synth.py`, `est_variants.py` | 신호 합성 + 지도 반영 우도 추정기(직접파 + 벽 · 천장 · 바닥 반사), 추정기 변형 |
+| `exp_wall.py`, `analyze_wall.py`, `analyze_alt_seat.py` | 벽 부착 평가, 책상 자동 인식 후보(`seat10` · `seat25` · `seat10m`), 면 근접 결합 설정(`d120_16_w*`) |
+| `exp_final.py`, `analyze_final_check.py`, `analyze_final.py` | 최종 검증과 앵커 손실표(H1 · H2 · H4 · H5) |
+| `exp_bearing.py`, `analyze_bearing.py`, `exp_ringmulti.py` | 고리 1기 방위각(끄덕이기 3자세), 1기 여러 자리 위치 |
+| `plate_eval.py`, `plate_pos.py`, `analyze_plate_pos.py` | 레거시 돌판을 같은 장면에 붙인 비교 |
+| `exp_real.py`, `exp_dev_ll.py`, `analyze_real.py`, `cmp_real.py` | 새 방 평가(`REAL_LL=1` 지도 저장, `REAL_ONE=1` 시험실 한 자리), 기존 방 지도, 표 |
+| `ll_study.py`, `ll_policy.py`, `ll_adapt.py`, `ll_fuse2.py`, `ll_fbear.py`, `ll_b4_nodev.py` | 측정 뒤 절차: 신뢰도(퍼짐 규칙 대 경사 부스팅), 옮기기, 더 재기, 융합 변형, 융합 방향 |
+| `exp_chain_h4.py`, `exp_real_abl.py`, `exp_real2_ladder.py` | 체인 가르기, 조건을 하나씩 바꾼 사다리 |
+| 그 밖의 `exp_*`, `ai_*`, `analyze_*` | 11-24~25의 이전 실험(기준선, 크기, 재순위 학습 등). 지금 결정에는 쓰지 않지만 다시 볼 수 있게 남김 |
 
-```bash
-cd em
-python3 puck.py            # 접지판 위 안테나(모노폴) 2개: 편파가 뒤틀리는 것을 확인
-python3 puck2.py           # 접지판 없는 세로 다이폴 2개
-python3 puck3.py           # 기준 안테나 높이, 금속 몸체 거리를 바꿔 가며 (puck3_results.npy)
+추정기는 광선 추적 결과를 직접 읽지 않는다. 합성된 CSI와, 사용자가 실제로 알 수 있는 방 정보(벽 · 천장 · 바닥 위치, 큰 가구)만 받는다.
 
-cd ../rt
-python3 rt_gen_extra.py classroom 2g4 0                # 교실 네 모서리(높이 2.35 m)의 경로 데이터. 난수 0~2
-python3 rt_gen_xm.py 2g4 0                             # 숙소 네 모서리. 난수 0~3
-python3 rt_gen_xl.py classroom 2g4 0                   # 교실 앞쪽 낮은 자리(1.5 m, 교탁)
-python3 rt_gen_xc.py 2g4 0                             # 숙소에서 벽에서 떨어진 자리
-SPOTS='[[0.3,0.3,2.2],[0.8,0.3,2.2],[0.3,0.8,2.2],[0.8,0.8,1.7]]' OUT=xd python3 rt_gen_xc.py 2g4 0   # 반 미터씩 옮긴 자리
+## 7. 알아 둘 함정
 
-python3 pe.py classroom 2g4 'data/x_classroom_2g4_?.npy' c24 ringH45,ringH90 bart,nomp,map1,map2      # 추정 방법 비교
-python3 pe2.py classroom 2g4 'data/x_classroom_2g4_?.npy' base                                        # 권장 추정기, 이상적 안테나
-EM=box,65,100 python3 pe2.py classroom 2g4 'data/x_classroom_2g4_?.npy' em100                         # 전자기 해석으로 구한 안테나 응답
-ARR=ringH90 NPOS=24 EM=box,65,100 python3 pe2.py motel 2g4 'data/xm_2g4_?.npy' r90                    # 팔을 9 cm 로 펼친 경우
-HEADERR=6 CALIB=8 python3 pe2.py classroom 2g4 'data/x_classroom_2g4_?.npy' cal                       # 놓인 각도가 틀렸을 때 + 현장 보정
-python3 ai_rank.py gbm                                 # 학습으로 후보 고르기 · 신뢰도 (한 방에서 배우고 다른 방에서 시험)
-python3 mk_tables.py ; python3 sens_rows.py ; python3 report_numbers.py    # 결과 표 (pe2.py 가 만든 res_pe2_*.npy 를 읽습니다)
-python3 motel_break.py m_em100                         # 숙소: 자리별, 가까운 카메라 제외
-```
+- 자세 오차 난수는 평가하는 노드 수에 따라 달라진다. 끄덕이기(48노드) 결과는 끄덕이기 없는 실행과 숫자가 다를 수 있다. 같은 노드 집합끼리만 견준다.
+- 돌판 NEC2 표는 2.4 GHz뿐이다. 5 GHz 돌판 비교는 없다. 돌판은 새 방 16개에서 다시 돌리지 않았다(계획서: 구조를 바꿀 때만).
+- 고리 SNR은 안테나 출력 20 dB에서 부품 손실(스위치 · 윌킨슨 · 감쇠기)을 뺀 값이다. 돌판 비교에서는 돌판을 패킷 SNR 30 dB로 유리하게 뒀다.
+- Sionna RT는 두께 6 mm 유리판에서 직접파를 아예 내지 않는다. 카메라에서 5 mm 안쪽에 면이 있어도 같다. 유리 뒤 카메라 결과는 실제보다 불리하다.
+- 앞 계획서의 대책이 뒤에 바꾼 부품 배치와 맞는지 다시 확인한다. 사전 등록 조건의 체인 판정 규칙이 앵커 배치 H4와 맞지 않아 거꾸로 동작했다.
+- 시험실 숫자는 책상 자동 인식 오차 0.10 m를 가정한 값이다. 실물 폰 AR 인식이 이보다 나쁘면 그 오차로 다시 계산한다(`seat25`가 0.25 m 판).
+- 면 근접 결합에서 아직 안 한 것: ±20° 자세, 5.8 GHz, 선반 · 교탁 윗면 위, 받침판 모터 · 보조배터리, 최종 조건(`nop`, H4).
+- 아직 없는 값: 기존 방 벽 4곳의 5 GHz 값, 새 방 묶음 C의 5 GHz 값.
+- 합격선(시험실 밖 종류마다 0.5 m 안 80%, 시험실 의심 책상 3곳 안 80%, 방향 평균 8.92° 이하 · 95% 지점 27.53° 미만)은 결과를 본 뒤 바꾸지 않는다.
 
-`pe2.py` 의 환경 변수(파일 맨 위 설명): `ARR` 팔 길이, `NPOS` 한 바퀴 자리 수, `BW` 채널 폭, `EM` 안테나 응답, `DIMERR` · `POSERR` · `HEADERR` 지도와 놓인 자세의 오차,
-`ANGJIT` · `CALDEG` · `RNOISE` 장치 오차, `TVAR` 재는 동안 흔들리는 반사(`NSWEEP` 바퀴 평균), `CALIB` · `REFLCAL` 현장 보정, `MAPFURN` 큰 가구 면을 지도에 추가.
-벽 재질을 바꾼 숙소는 `WALL=concrete` 또는 `WALL=metal` 을 붙여 `rt_gen_xc.py` 로 만듭니다.
+## 8. 저장소에 없는 계산
 
-## 3. v6 설계 검증 (84 mm 판, 틀, 막대 비교)
-
-```bash
-cd em && python3 em_run2.py                                  # 84 mm 판 해석 (em_results.npy)
-cd ../rt
-python3 rt_gen.py classroom 2g4 0                            # 장면 · 카메라 40개 · 경로 데이터 생성 (data/)
-python3 rt_eval.py classroom 2g4                             # 20 MHz 기준 평가
-python3 rt_eval.py classroom 5g "" 160e6                     # 저장소가 가정한 160 MHz 로 평가
-PEOPLE=0 VSUF=_empty python3 rt_gen.py classroom 2g4 0 && python3 rt_eval.py classroom 2g4 _empty
-python3 rt_gen_extra.py classroom 2g4 0 && python3 rt_eval_x.py classroom 2g4       # 84 mm 판을 네 모서리에
-python3 rt_gen_frame4.py classroom 2g4 0 && python3 rt_eval_frame4.py classroom 2g4  # 20 cm 틀을 네 모서리에
-python3 rt_gen_mbar.py 2g4 0 && python3 rt_eval_mbar.py motel 2g4                    # 숙소, 47 cm 막대 4개
-python3 sanity_los.py classroom 2g4 ; python3 check_approx.py classroom 2g4 ; python3 check_sampling.py
-```
-
-## 결과 기록
-
-- `rt/results/ev_ladder_*.log`: 1번. `rt/results/ev_pe_*.log`, `ev_pe2_*.log`, `ai_rank_*.log`, `tables.md`: 2번. 나머지 `ev_*.log`, `checks.txt`: 3번.
-- `repo_sim/results/`: 저장소 벤치마크 JSON.
-- 경로 데이터(`rt/data/*.npy`, 수백 MB), 결과 배열(`res_*.npy`), 안테나 해석 결과(`em/*.npy`)는 용량 때문에 저장소에 넣지 않습니다. 위 명령으로 같은 난수에서 다시 만들어집니다. 메모리는 6 GB 이상, 광선 추적은 한 번에 하나씩 돌리세요.
-
-## 기록 읽는 법
-
-- `ev_pe2_*.log` 의 `one node, one spot` 은 수신기 한 대가 한 자리에서 한 번 잰 방향 오차(네 자리 평균), `fused x2 adj` 는 0 · 1번 자리(교실은 앞쪽 두 모서리)를 합친 것,
-  `always k spot(s)` 는 한 대를 k 자리로 옮겨 가며 합쳤을 때 첫 자리에서 본 방향 오차입니다.
-- 위치 오차 줄의 숫자는 중앙값 / 1 m 이내 / 0.5 m 이내, 교실은 뒤에 정확한 자리 / 주변 3 × 3 이 붙습니다.
-- `ev_*.log`(3번)의 `nano2_ideal` 은 저장소 가정(이상적인 점 안테나 12개), `nano2_em` 은 NEC2 로 구한 실제 판 응답, `repo MA-PINN+AI` 는 저장소 추정기와 학습된 가중치 그대로, `capon fusion` 은 단순 빔 합성입니다.
+- **빠른 계산(11-26 16시, 생각 확인용).** 상자 방 영상법으로 만든 간단한 모형에서 구조 후보 20개를 견줬다. Sionna RT가 아니라서 근거로 쓰지 않는다(AGENTS.md 5.3절). 이 계산에서 "유망"이던 큰 지그재그 고리 + 세로축 회전은 위 본 계산에서 지금 구조보다 13~21% 나빠 채택하지 않았다. 코드는 저장소에 넣지 않았다.

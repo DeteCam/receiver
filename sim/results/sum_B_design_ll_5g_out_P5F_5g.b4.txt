@@ -1,0 +1,5 @@
+# real_B_design_ll_5g_out.pkl cfg=P5F group=four: mean median p90 p95 | gross>20 | n   [simulation]
+  every spot, its own bearing (M1)                              15.43   3.1  48.8  78.7  19.8%  n=1920
+  most reliable spot (spread), its own bearing (B4)              6.38   2.1  17.4  27.8   8.3%  n=480
+  most reliable spot (spread), bearing to the fused position     4.71   2.2  11.5  17.1   4.2%  n=480
+  every spot, bearing to the fused position                      9.58   3.4  23.9  41.9  11.6%  n=1920

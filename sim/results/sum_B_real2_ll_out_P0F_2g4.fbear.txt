@@ -1,0 +1,23 @@
+# bearing read off the fused position, group 'four', real_B_real2_ll_out.pkl cfg=P0F 2g4   [simulation]
+# columns: mean median p90 p95 | gross>20 | n      (lines: mean <= 8.92, p95 < 27.53)
+  every spot, its own bearing (plan metric M1)                    17.43   5.8  50.1  83.6  22.7%  n=1920
+  every spot, bearing to the fused position                        9.69   4.5  22.1  37.8  11.4%  n=1920
+  most reliable spot (spread), its own bearing (B4)                9.57   4.0  22.2  37.9  12.1%  n=480
+  most reliable spot (learned), its own bearing                    8.73   4.2  22.2  32.8  12.1%  n=480
+  most reliable spot (spread), bearing to the fused position       5.32   3.2  11.6  15.0   3.3%  n=480
+  most reliable spot (learned), bearing to the fused position      6.32   3.7  13.2  20.1   5.2%  n=480
+  first spot, bearing to the fused position                        7.21   4.1  14.6  22.5   5.8%  n=480
+  first spot, its own bearing                                     14.43   4.9  38.0  69.8  17.9%  n=480
+  every spot: own bearing if spread <= 13.87, else fused          10.12   4.7  23.8  39.9  12.6%  n=1920
+  every spot: own bearing if learned p <= 0.2, else fused         11.04   4.8  27.2  43.3  14.4%  n=1920
+  fused, every spot, kind locker                                        6.88   3.3  16.3  24.8   6.5%  n=480
+  fused, every spot, kind lodging                                       8.81   4.2  16.0  30.7   7.4%  n=960
+  fused, every spot, kind restroom                                     14.27   8.3  34.7  46.6  24.4%  n=480
+# per room: M1 (every spot, own bearing) | N1 (most reliable spot by spread, bearing to the fused position) | fused position within 0.5 m
+  goshiwon_a    M1  15.31   5.1  37.1  89.0  16.5%  n=480 | N1   3.87   3.1   7.5   9.1   0.8%  n=120 | pos0.5  87.5%
+  restroom_e    M1  26.43  10.8  78.3 107.6  37.9%  n=480 | N1   8.32   5.5  16.7  22.5   7.5%  n=120 | pos0.5  42.5%
+  sauna_locker  M1  11.94   3.8  30.2  59.2  14.0%  n=480 | N1   4.65   2.4   8.1  12.3   1.7%  n=120 | pos0.5  53.3%
+  studio_b      M1  16.04   6.2  46.1  73.5  22.3%  n=480 | N1   4.45   3.0   7.6  11.0   3.3%  n=120 | pos0.5  58.3%
+  seed 0: N1   4.71   3.2   9.6  14.6   2.5%  n=160
+  seed 1: N1   5.54   3.2  11.9  15.9   4.4%  n=160
+  seed 2: N1   5.71   3.4  12.8  14.3   3.1%  n=160

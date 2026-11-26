@@ -391,7 +391,11 @@ def eval_file(npy_path, nec_db, configs, bw_hz=20e6, store_zone=True, node_overr
                 cls.__name__, repr(sorted(ekw.items())))
         def pat_key_for(n, key):
             if n in NODE_PAT:
-                return NODE_PAT[n]
+                base = NODE_PAT[n]
+                # a different estimator table (est_pat) keeps its own nodded versions: swap the pattern prefix
+                if key != cfg["pat"] and base.startswith(cfg["pat"]):
+                    return key + base[len(cfg["pat"]):]
+                return base
             if n >= n_base and cfg["aug_pat"]:
                 return cfg["aug_pat"]
             return key

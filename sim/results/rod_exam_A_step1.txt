@@ -1,0 +1,5 @@
+QF1s pair exam_s top1 52.5 % top3 90.8 % n=120 QF1s four exam_s top1 71.7 % top3 94.2 % n=120 QF1s low exam_s top1 50.0 % top3 79.2 % n=120 
+QF2s pair exam_s top1 55.0 % top3 90.8 % n=120 QF2s four exam_s top1 74.2 % top3 92.5 % n=120 QF2s low exam_s top1 50.0 % top3 79.2 % n=120 
+QR1s pair exam_s top1 51.7 % top3 92.5 % n=120 QR1s four exam_s top1 77.5 % top3 93.3 % n=120 QR1s low exam_s top1 52.5 % top3 82.5 % n=120 
+QR2s pair exam_s top1 43.3 % top3 79.2 % n=120 QR2s four exam_s top1 60.0 % top3 88.3 % n=120 QR2s low exam_s top1 35.8 % top3 69.2 % n=120 
+QR3s pair exam_s top1 36.7 % top3 81.7 % n=120 QR3s four exam_s top1 65.8 % top3 89.2 % n=120 QR3s low exam_s top1 35.8 % top3 70.0 % n=120 

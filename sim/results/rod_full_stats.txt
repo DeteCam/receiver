@@ -1,0 +1,28 @@
+## 2.4 GHz set A
+# cfg        M1 mean / median / p90 / p95 [deg]   worst room (mean M1)     N1 mean / median / p90 / p95 [deg]   pos <=0.5 m / <=1 m per room [%]
+  P0F      13.79 /  4.24 /  39.9 /  72.5   pension_a 16.4    4.40 /  2.45 /   8.1 /  12.5   fitting_a 66.7/87.5  motel_a 72.5/90.0  pension_a 66.7/90.0  restroom_d 65.8/90.8   n(M1)=1920 n(cam)=480
+  QK1s     13.93 /  4.17 /  39.9 /  77.6   pension_a 16.3    4.40 /  2.43 /   8.3 /  12.8   fitting_a 66.7/88.3  motel_a 73.3/89.2  pension_a 68.3/90.8  restroom_d 69.2/93.3   n(M1)=1920 n(cam)=480
+  QK2ns    13.94 /  4.37 /  41.2 /  70.6   restroom_d 16.4    5.10 /  2.67 /  10.2 /  13.7   fitting_a 65.8/88.3  motel_a 70.8/88.3  pension_a 67.5/90.0  restroom_d 65.0/92.5   n(M1)=1920 n(cam)=480
+  QK2is    13.98 /  4.26 /  40.0 /  74.0   restroom_d 16.4    4.47 /  2.60 /   8.6 /  12.7   fitting_a 68.3/88.3  motel_a 71.7/90.0  pension_a 64.2/89.2  restroom_d 70.8/95.0   n(M1)=1920 n(cam)=480
+## 2.4 GHz set B (outside rooms)
+  P0F      16.30 /  4.86 /  48.7 /  81.8   restroom_e 25.5    5.26 /  3.01 /  11.1 /  16.8   goshiwon_a 90.8/98.3  restroom_e 49.2/76.7  sauna_locker 61.7/84.2  studio_b 68.3/94.2   n(M1)=1920 n(cam)=480
+  QK1s     16.43 /  4.76 /  48.5 /  81.5   restroom_e 25.7    5.36 /  2.95 /  11.5 /  18.9   goshiwon_a 91.7/99.2  restroom_e 44.2/75.8  sauna_locker 58.3/82.5  studio_b 70.0/94.2   n(M1)=1920 n(cam)=480
+  QK2ns    16.88 /  5.10 /  51.3 /  82.7   restroom_e 26.9    5.40 /  3.07 /  12.0 /  19.0   goshiwon_a 90.8/98.3  restroom_e 43.3/74.2  sauna_locker 55.0/81.7  studio_b 70.8/93.3   n(M1)=1920 n(cam)=480
+  QK2is    16.59 /  4.87 /  50.1 /  81.5   restroom_e 26.3    5.40 /  3.04 /  10.9 /  18.1   goshiwon_a 90.8/98.3  restroom_e 46.7/75.8  sauna_locker 59.2/80.8  studio_b 69.2/94.2   n(M1)=1920 n(cam)=480
+## 2.4 GHz set C
+  P0F      13.95 /  4.44 /  43.9 /  65.8   restroom_f 17.2    5.36 /  2.64 /  10.5 /  15.8   fitting_b 82.5/96.7  guesthouse_d 72.5/89.2  hotel_c 52.5/74.2  pool_locker 54.2/66.7  restroom_f 85.8/96.7   n(M1)=2400 n(cam)=600
+  QK1s     13.74 /  4.43 /  43.5 /  65.8   restroom_f 17.1    5.08 /  2.58 /  10.5 /  15.4   fitting_b 81.7/94.2  guesthouse_d 73.3/88.3  hotel_c 52.5/75.0  pool_locker 53.3/67.5  restroom_f 84.2/96.7   n(M1)=2400 n(cam)=600
+  QK2ns    14.22 /  4.70 /  43.9 /  67.1   restroom_f 17.2    5.49 /  2.73 /  11.1 /  15.8   fitting_b 81.7/95.0  guesthouse_d 70.0/90.8  hotel_c 50.0/76.7  pool_locker 52.5/68.3  restroom_f 81.7/97.5   n(M1)=2400 n(cam)=600
+  QK2is    14.02 /  4.57 /  44.2 /  66.2   restroom_f 17.6    5.16 /  2.59 /  10.5 /  14.8   fitting_b 80.8/93.3  guesthouse_d 73.3/87.5  hotel_c 51.7/76.7  pool_locker 50.0/66.7  restroom_f 82.5/97.5   n(M1)=2400 n(cam)=600
+## 5 GHz set A
+  P0F      13.27 /  2.94 /  39.6 /  80.7   restroom_d 15.4    4.15 /  1.85 /   6.2 /  15.3   fitting_a 72.5/92.5  motel_a 80.8/89.2  pension_a 78.3/94.2  restroom_d 81.7/95.8   n(M1)=1920 n(cam)=480
+  QK2ns    12.85 /  2.94 /  39.4 /  76.8   restroom_d 15.1    4.14 /  1.95 /   6.3 /  15.4   fitting_a 69.2/90.8  motel_a 80.8/91.7  pension_a 75.0/94.2  restroom_d 82.5/95.8   n(M1)=1920 n(cam)=480
+  QK2is    12.78 /  2.96 /  38.3 /  75.4   restroom_d 14.7    3.98 /  1.77 /   6.1 /  12.0   fitting_a 71.7/93.3  motel_a 84.2/91.7  pension_a 75.0/95.0  restroom_d 85.0/95.8   n(M1)=1920 n(cam)=480
+## 5 GHz set B (outside rooms)
+  P0F      14.04 /  3.67 /  42.1 /  67.9   restroom_e 20.4    4.41 /  2.66 /   8.4 /  14.2   goshiwon_a 93.3/98.3  restroom_e 54.2/75.0  sauna_locker 68.3/84.2  studio_b 71.7/89.2   n(M1)=1920 n(cam)=480
+  QK2ns    14.09 /  3.54 /  42.1 /  68.2   restroom_e 21.6    4.91 /  2.61 /  10.0 /  14.6   goshiwon_a 92.5/99.2  restroom_e 51.7/72.5  sauna_locker 67.5/85.0  studio_b 72.5/87.5   n(M1)=1920 n(cam)=480
+  QK2is    14.23 /  3.42 /  42.2 /  70.3   restroom_e 21.8    4.76 /  2.56 /  10.1 /  14.1   goshiwon_a 93.3/99.2  restroom_e 47.5/75.0  sauna_locker 70.8/87.5  studio_b 73.3/88.3   n(M1)=1920 n(cam)=480
+## 5 GHz set C
+  P0F      13.32 /  3.11 /  44.0 /  69.5   restroom_f 16.5    4.36 /  1.99 /   7.6 /  12.3   fitting_b 88.3/97.5  guesthouse_d 89.2/98.3  hotel_c 62.5/80.8  pool_locker 65.8/77.5  restroom_f 83.3/96.7   n(M1)=2400 n(cam)=600
+  QK2ns    13.41 /  3.07 /  44.5 /  72.2   restroom_f 16.6    4.31 /  1.96 /   7.2 /  12.6   fitting_b 86.7/96.7  guesthouse_d 89.2/98.3  hotel_c 62.5/79.2  pool_locker 68.3/78.3  restroom_f 80.8/95.8   n(M1)=2400 n(cam)=600
+  QK2is    13.33 /  3.10 /  44.2 /  69.9   restroom_f 16.6    4.41 /  1.99 /   7.1 /  12.6   fitting_b 86.7/96.7  guesthouse_d 86.7/96.7  hotel_c 63.3/81.7  pool_locker 64.2/79.2  restroom_f 83.3/96.7   n(M1)=2400 n(cam)=600

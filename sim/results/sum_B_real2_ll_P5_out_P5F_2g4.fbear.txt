@@ -1,0 +1,15 @@
+# bearing read off the fused position, group 'four', real_B_real2_ll_P5_out.pkl cfg=P5F 2g4   [simulation]
+# columns: mean median p90 p95 | gross>20 | n      (lines: mean <= 8.92, p95 < 27.53)
+  every spot, its own bearing (plan metric M1)                    18.31   5.1  55.1  93.7  22.5%  n=1920
+  every spot, bearing to the fused position                       10.21   4.2  24.6  40.9  12.3%  n=1920
+  most reliable spot (spread), its own bearing (B4)               11.15   3.7  28.3  61.8  15.0%  n=480
+  most reliable spot (learned), its own bearing                    7.77   3.5  19.2  30.0   9.6%  n=480
+  most reliable spot (spread), bearing to the fused position       5.87   3.0  11.7  15.0   4.0%  n=480
+  most reliable spot (learned), bearing to the fused position      7.64   3.6  13.9  25.1   7.1%  n=480
+  first spot, bearing to the fused position                        7.36   3.7  15.4  22.8   6.7%  n=480
+  first spot, its own bearing                                     14.28   4.5  41.6  70.0  18.3%  n=480
+  every spot: own bearing if spread <= 13.87, else fused          10.24   4.2  24.7  40.9  12.4%  n=1920
+  every spot: own bearing if learned p <= 0.2, else fused         10.58   4.2  26.4  42.6  13.4%  n=1920
+  fused, every spot, kind locker                                        7.02   3.0  16.5  27.7   7.7%  n=480
+  fused, every spot, kind lodging                                       9.05   3.9  16.4  34.7   8.0%  n=960
+  fused, every spot, kind restroom                                     15.70   7.4  38.4  54.5  25.4%  n=480

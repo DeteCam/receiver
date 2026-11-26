@@ -1,0 +1,52 @@
+# real_C_real2_ll.pkl  cfg=P0F  (configs in file: P0F)   [simulation, not measured]
+
+## 2g4  single-spot bearing error (deg), four-combo spots, columns: mean median p90 p95 n
+  hotel_c        13.6   5.3  37.2  57.1    480
+  guesthouse_d   10.4   4.1  26.1  53.2    480
+  restroom_f     18.3   5.5  61.3  96.8    480
+  pool_locker    15.8   6.0  48.1  65.2    480
+  fitting_b      16.2   5.9  43.9  90.5    480
+  OUTSIDE pooled  14.8   5.3  44.1  68.5   2400   <- G2 proxy (line: mean <= 8.92, p95 < 27.53)
+     seed 0       14.5   5.3  39.7  68.1    800
+     seed 1       14.4   4.8  43.1  66.3    800
+     seed 2       15.6   5.8  49.6  69.8    800
+     locker       16.0   6.0  47.4  70.2    960
+     lodging      12.0   4.6  32.7  54.2    960
+     restroom     18.3   5.5  61.3  96.8    480
+     open cams    13.9   5.4  37.8  62.6   1328
+     hidden cams  16.1   5.2  49.6  75.2   1072
+     same zone    13.4   5.3  37.5  59.7   2092
+     behind part. 24.9   5.7  93.5 115.3    308
+  ALL pooled     14.8   5.3  44.1  68.5   2400
+  by spot type (all spots, outside rooms):
+     W            13.5   5.0  37.7  62.6   2160
+     F            14.0   5.1  41.8  62.9    960
+     T            18.0   6.7  50.8  91.3   1080
+     B            63.3  11.7 161.4 168.7    120
+
+## 2g4  position error (m): within 0.5 m / within 1 m / median   (line: >= 80 % within 0.5 m per kind)
+  group four
+     hotel_c        48.3 %  73.3 %   0.52 m  n=120
+     guesthouse_d   64.2 %  87.5 %   0.34 m  n=120
+     restroom_f     74.2 %  96.7 %   0.33 m  n=120
+     pool_locker    53.3 %  69.2 %   0.45 m  n=120
+     fitting_b      80.8 %  95.0 %   0.29 m  n=120
+     kind locker    67.1 %  82.1 %   0.35 m  n=240
+     kind lodging   56.2 %  80.4 %   0.42 m  n=240
+     kind restroom  74.2 %  96.7 %   0.33 m  n=120
+  group pair
+     hotel_c        32.5 %  49.2 %   1.02 m  n=120
+     guesthouse_d   53.3 %  85.0 %   0.46 m  n=120
+     restroom_f     46.7 %  75.0 %   0.53 m  n=120
+     pool_locker    31.7 %  45.8 %   1.13 m  n=120
+     fitting_b      64.2 %  85.0 %   0.40 m  n=120
+     kind locker    47.9 %  65.4 %   0.54 m  n=240
+     kind lodging   42.9 %  67.1 %   0.62 m  n=240
+     kind restroom  46.7 %  75.0 %   0.53 m  n=120
+  group low
+     hotel_c        50.8 %  80.8 %   0.46 m  n=120
+     guesthouse_d   58.3 %  84.2 %   0.44 m  n=120
+     pool_locker    19.2 %  35.8 %   1.24 m  n=120
+     fitting_b      58.3 %  85.0 %   0.38 m  n=120
+     kind locker    38.8 %  60.4 %   0.69 m  n=240
+     kind lodging   54.6 %  82.5 %   0.44 m  n=240

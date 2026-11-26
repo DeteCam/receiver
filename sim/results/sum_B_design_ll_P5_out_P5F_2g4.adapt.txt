@@ -1,0 +1,21 @@
+# measure more spots when unsure: stop when the fused map's spread falls under a threshold fixed on the old rooms   [simulation]
+rule                         | old rooms: within 0.5 m, mean spots | realistic rooms: within 0.5 m (lodging / restroom / locker), within 1 m, mean spots
+always 2 spots               |  64.2 %  2.00        |  50.6 % ( 65.4 /  29.2 /  42.5)   72.7 %  2.00
+always 3 spots               |  75.6 %  3.00        |  59.0 % ( 71.7 /  37.5 /  55.0)   78.8 %  3.00
+always 4 spots               |  84.6 %  4.00        |  68.1 % ( 80.0 /  50.8 /  61.7)   88.3 %  4.00
+always 5 spots               |  87.6 %  5.00        |  71.7 % ( 83.8 /  50.8 /  68.3)   88.5 %  5.00
+always 6 spots               |  90.3 %  6.00        |  74.8 % ( 90.8 /  50.8 /  66.7)   90.6 %  5.75
+always 7 spots               |  92.4 %  7.00        |  75.6 % ( 90.8 /  50.8 /  70.0)   90.8 %  6.00
+always 8 spots               |  93.2 %  8.00        |  76.9 % ( 90.8 /  50.8 /  75.0)   90.8 %  6.25
+stop at spread <= 0.30 m     |  93.1 %  7.07        |  76.2 % ( 89.6 /  50.8 /  75.0)   90.8 %  5.65
+  .. at most 6 spots         |  90.1 %  5.75        |  74.2 % ( 89.6 /  50.8 /  66.7)   90.6 %  5.24
+stop at spread <= 0.35 m     |  92.8 %  6.53        |  75.0 % ( 87.5 /  50.0 /  75.0)   90.8 %  5.44
+  .. at most 6 spots         |  90.0 %  5.53        |  72.9 % ( 87.5 /  50.0 /  66.7)   90.6 %  5.04
+stop at spread <= 0.40 m     |  92.8 %  5.95        |  74.2 % ( 85.8 /  50.0 /  75.0)   90.4 %  5.20
+  .. at most 6 spots         |  89.9 %  5.24        |  72.1 % ( 85.8 /  50.0 /  66.7)   90.2 %  4.84
+stop at spread <= 0.46 m     |  91.2 %  5.34        |  72.9 % ( 83.8 /  49.2 /  75.0)   90.2 %  4.89
+  .. at most 6 spots         |  88.9 %  4.87        |  70.8 % ( 83.8 /  49.2 /  66.7)   90.0 %  4.59
+stop at spread <= 0.55 m     |  89.8 %  4.70        |  71.5 % ( 81.7 /  46.7 /  75.8)   89.4 %  4.39
+  .. at most 6 spots         |  87.8 %  4.44        |  69.6 % ( 81.7 /  46.7 /  68.3)   89.2 %  4.17
+stop at spread <= 0.67 m     |  86.0 %  4.04        |  68.3 % ( 78.8 /  45.8 /  70.0)   87.1 %  3.86
+  .. at most 6 spots         |  84.9 %  3.94        |  67.3 % ( 78.8 /  45.8 /  65.8)   87.1 %  3.72

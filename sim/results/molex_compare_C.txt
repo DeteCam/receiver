@@ -1,0 +1,8 @@
+# base P0F (real_C_design_ll.pkl)   [simulation, 2.4 GHz, set C rooms, seeds 0-2]
+# cfg      M1 mean/p95   dM1 (95% CI)          rel    N1 mean/p95   pos0.5 per room (fitting_b, guesthouse_d, hotel_c, pool_locker, restroom_f)
+  P0F      13.95 /  65.8   +0.00 (+0.00,+0.00)    +0.0%    5.36 /  15.8    82.5   72.5   52.5   54.2   85.8
+           N1 by seed: s0  5.28  s1  5.41  s2  5.37
+  QL1s     15.51 /  70.1   +1.56 (+1.01,+2.14)   +11.2%    5.29 /  15.8    76.7   66.7   51.7   47.5   70.0
+           N1 by seed: s0  5.50  s1  5.60  s2  4.76
+  QL5s     15.64 /  70.6   +1.69 (+1.08,+2.34)   +12.1%    5.87 /  19.2    74.2   73.3   49.2   48.3   74.2
+           N1 by seed: s0  6.07  s1  5.92  s2  5.61

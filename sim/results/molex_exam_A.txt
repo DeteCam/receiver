@@ -1,0 +1,13 @@
+P0F      pair  exam_s        top1  60.0 %  top3  93.3 %  n=120      four  exam_s        top1  75.0 %  top3  92.5 %  n=120 
+Q30      pair  exam_s        top1  58.3 %  top3  90.8 %  n=120      four  exam_s        top1  71.7 %  top3  92.5 %  n=120 
+Q15      pair  exam_s        top1  55.0 %  top3  89.2 %  n=120      four  exam_s        top1  69.2 %  top3  91.7 %  n=120 
+Q60C      pair  exam_s        top1  45.0 %  top3  81.7 %  n=120      four  exam_s        top1  51.7 %  top3  85.8 %  n=120 
+Q60Cs      pair  exam_s        top1  43.3 %  top3  81.7 %  n=120      four  exam_s        top1  52.5 %  top3  85.8 %  n=120 
+Q30C      pair  exam_s        top1  26.7 %  top3  63.3 %  n=120      four  exam_s        top1  41.7 %  top3  72.5 %  n=120 
+Q30Cs      pair  exam_s        top1  33.3 %  top3  70.8 %  n=120      four  exam_s        top1  44.2 %  top3  76.7 %  n=120 
+Q15C      pair  exam_s        top1  16.7 %  top3  40.8 %  n=120      four  exam_s        top1  27.5 %  top3  54.2 %  n=120 
+Q15Cs      pair  exam_s        top1  20.8 %  top3  50.8 %  n=120      four  exam_s        top1  36.7 %  top3  66.7 %  n=120 
+QL1s      pair  exam_s        top1  55.0 %  top3  90.0 %  n=120      four  exam_s        top1  74.2 %  top3  92.5 %  n=120 
+QL2s      pair  exam_s        top1  48.3 %  top3  85.8 %  n=120      four  exam_s        top1  77.5 %  top3  92.5 %  n=120 
+QL5s      pair  exam_s        top1  45.8 %  top3  85.0 %  n=120      four  exam_s        top1  70.0 %  top3  91.7 %  n=120 
+QL6s      pair  exam_s        top1  45.0 %  top3  89.2 %  n=120      four  exam_s        top1  71.7 %  top3  91.7 %  n=120 

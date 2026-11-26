@@ -1,0 +1,31 @@
+
+## seat nod_board seeds [0, 1, 2] n=1200: 모든 책상 1위 61% 3곳 85% | 한 칸씩 띄움 1위 73% 3곳 92%
+   방별(띄움 3곳): classroom_a 92% · classroom_b 95% · classroom_c 89% · lecture_a 90% · lecture_b 94%
+   시드별(띄움 3곳): s0 90% · s1 93% · s2 92%
+
+## seat board seeds [0, 1, 2] n=1200: 모든 책상 1위 55% 3곳 80% | 한 칸씩 띄움 1위 67% 3곳 88%
+   방별(띄움 3곳): classroom_a 89% · classroom_b 92% · classroom_c 85% · lecture_a 84% · lecture_b 90%
+   시드별(띄움 3곳): s0 87% · s1 88% · s2 88%
+
+## seat_snr14 nod_board seeds [0, 1, 2] n=1200: 모든 책상 1위 60% 3곳 84% | 한 칸씩 띄움 1위 73% 3곳 92%
+   방별(띄움 3곳): classroom_a 92% · classroom_b 95% · classroom_c 89% · lecture_a 89% · lecture_b 94%
+   시드별(띄움 3곳): s0 91% · s1 93% · s2 92%
+
+## seat_snr14 board seeds [0, 1, 2] n=1200: 모든 책상 1위 53% 3곳 79% | 한 칸씩 띄움 1위 66% 3곳 88%
+   방별(띄움 3곳): classroom_a 89% · classroom_b 91% · classroom_c 86% · lecture_a 84% · lecture_b 90%
+   시드별(띄움 3곳): s0 87% · s1 88% · s2 89%
+
+## seat_cal10 nod_board seeds [0, 1, 2] n=1200: 모든 책상 1위 59% 3곳 84% | 한 칸씩 띄움 1위 73% 3곳 92%
+   방별(띄움 3곳): classroom_a 92% · classroom_b 95% · classroom_c 88% · lecture_a 90% · lecture_b 93%
+   시드별(띄움 3곳): s0 90% · s1 93% · s2 92%
+
+## seat_cal10 board seeds [0, 1, 2] n=1200: 모든 책상 1위 53% 3곳 79% | 한 칸씩 띄움 1위 66% 3곳 88%
+   방별(띄움 3곳): classroom_a 89% · classroom_b 91% · classroom_c 85% · lecture_a 85% · lecture_b 89%
+   시드별(띄움 3곳): s0 86% · s1 89% · s2 89%
+
+## 짝지은 차이 (띄움 3곳 비율 %p, 방 부트스트랩 95%)
+   nod_board seat_snr14: +0.0%p [-0.2, +0.2]
+   nod_board seat_cal10: -0.1%p [-0.3, +0.2]
+   board seat_snr14: +0.0%p [-0.5, +0.5]
+   board seat_cal10: +0.1%p [-0.7, +0.9]
+   끄덕이기 이득(띄움 3곳): +3.9%p
